@@ -1,0 +1,2 @@
+reporting_month,geography,visitor_origin,origin_level,metric,value,unit,value_status,source,original_label,publication_date,collection_date
+2025-01,Japan,United States,country,visitor_arrivals,182556,persons,final,JNTO,米国,2025-02-19,2025-03-01

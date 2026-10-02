@@ -1,0 +1,16 @@
+business,tour_name,area,price,currency,duration,language,url,date_observed,notes,source
+Sample Lantern Tours,Shinjuku Izakaya Evening (sample),Shinjuku,13500,JPY,3h,English,https://example.com/shinjuku-izakaya-evening,2026-06-20,"Max 8, 5 stops, drinks extra",SYNTHETIC DEMO DATA
+Sample Lantern Tours,Shinjuku Izakaya Evening (sample),Shinjuku,13500,JPY,3h,Spanish,https://example.com/shinjuku-izakaya-evening,2026-06-20,Monthly departures,SYNTHETIC DEMO DATA
+Demo Alley Walks,Yanaka Old Town Morning Walk (sample),Yanaka,7000,JPY,2.5h,English,https://example.com/yanaka-old-town-morning-walk,2026-06-20,"Max 10, no food",SYNTHETIC DEMO DATA
+Demo Alley Walks,Asakusa Street Snack Crawl (sample),Asakusa,11000,JPY,3h,English,https://example.com/asakusa-street-snack-crawl,2026-06-20,8 tastings,SYNTHETIC DEMO DATA
+Example Bites Japan,Tsukiji Outer Market Breakfast (sample),Tsukiji,16800,JPY,3h30m,English,https://example.com/tsukiji-outer-market-breakfast,2026-06-20,Vegetarian option on request,SYNTHETIC DEMO DATA
+Example Bites Japan,Tsukiji Outer Market Breakfast (sample),Tsukiji,16800,JPY,3h30m,Chinese,https://example.com/tsukiji-outer-market-breakfast,2026-06-20,,SYNTHETIC DEMO DATA
+Fictional Fox Guides,Shibuya After Dark Food Tour (sample),Shibuya,18500,JPY,3h,English,https://example.com/shibuya-after-dark-food-tour,2026-06-20,Includes 3 drinks,SYNTHETIC DEMO DATA
+Fictional Fox Guides,Harajuku Sweets Walk (sample),Harajuku,9800,JPY,2h,English,https://example.com/harajuku-sweets-walk,2026-06-20,Family friendly,SYNTHETIC DEMO DATA
+Placeholder Paths,Private Vegan Tokyo Tour (sample),"Shibuya, Ebisu",32000,JPY,4h,English,https://example.com/private-vegan-tokyo-tour,2026-06-20,"Private, price per group of up to 4",SYNTHETIC DEMO DATA
+Placeholder Paths,Ginza Depachika Tasting (sample),Ginza,,,2h,English,https://example.com/ginza-depachika-tasting,2026-06-20,Price on request,SYNTHETIC DEMO DATA
+Mock Matsuri Walks,Kagurazaka Hidden Lanes (sample),Kagurazaka,8500,JPY,2h30m,English,https://example.com/kagurazaka-hidden-lanes,2026-06-20,Max 6,SYNTHETIC DEMO DATA
+Mock Matsuri Walks,Kagurazaka Hidden Lanes (sample),Kagurazaka,8500,JPY,2h30m,French,https://example.com/kagurazaka-hidden-lanes,2026-06-20,,SYNTHETIC DEMO DATA
+Test Tanuki Tours,Omoide Yokocho Night Walk (sample),Shinjuku,12000,JPY,,English,https://example.com/omoide-yokocho-night-walk,2026-06-20,Duration not published,SYNTHETIC DEMO DATA
+Test Tanuki Tours,Halal-Friendly Tokyo Food Walk (sample),"Asakusa, Ueno",14500,JPY,3h,English,https://example.com/halal-friendly-tokyo-food-walk,2026-06-20,Halal-certified stops,SYNTHETIC DEMO DATA
+Sample Lantern Tours,Shinjuku Izakaya Evening (sample),Shinjuku,14500,JPY,3h,English,https://example.com/shinjuku-izakaya-evening,2026-07-10,"Max 8, 5 stops, drinks extra",SYNTHETIC DEMO DATA

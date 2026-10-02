@@ -1,0 +1,11 @@
+# Runtime: Python 3.11+ (anthropic 1.x requires >= 3.10)
+fastapi==0.142.2
+uvicorn[standard]==0.54.0
+python-multipart==0.0.32
+pandas==3.0.6
+openpyxl==3.1.5
+pydantic==2.13.5
+pydantic-settings==2.15.0
+anthropic==1.11.0
+feedparser==6.0.14
+httpx==0.28.1

@@ -1,0 +1,448 @@
+reporting_month,geography,visitor_origin,origin_level,metric,value,unit,value_status,source,original_label,publication_date,collection_date
+2024-01,Japan (synthetic),United States,country,visitor_arrivals,220448,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),United States,country,visitor_arrivals,221969,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),United States,country,visitor_arrivals,236053,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),United States,country,visitor_arrivals,228969,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),United States,country,visitor_arrivals,226181,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Japan (synthetic),United States,country,visitor_arrivals,201006,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),United States,country,visitor_arrivals,182427,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),United States,country,visitor_arrivals,150987,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),United States,country,visitor_arrivals,154200,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),United States,country,visitor_arrivals,156981,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),United States,country,visitor_arrivals,182629,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),United States,country,visitor_arrivals,218476,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),United States,country,visitor_arrivals,233132,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Japan (synthetic),United States,country,visitor_arrivals,258641,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Japan (synthetic),United States,country,visitor_arrivals,281541,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),United States,country,visitor_arrivals,271449,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),United States,country,visitor_arrivals,242321,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),United States,country,visitor_arrivals,226793,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),United States,country,visitor_arrivals,205995,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),United States,country,visitor_arrivals,170376,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),United States,country,visitor_arrivals,183963,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),United States,country,visitor_arrivals,194169,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),United States,country,visitor_arrivals,211341,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),United States,country,visitor_arrivals,238613,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),United States,country,visitor_arrivals,297240,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),United States,country,visitor_arrivals,299908,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),United States,country,visitor_arrivals,299877,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),United States,country,visitor_arrivals,292897,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),United States,country,visitor_arrivals,297754,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),United States,country,visitor_arrivals,258988,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Japan (synthetic),Australia,country,visitor_arrivals,91022,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),Australia,country,visitor_arrivals,101921,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),Australia,country,visitor_arrivals,103480,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),Australia,country,visitor_arrivals,103895,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),Australia,country,visitor_arrivals,85063,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Japan (synthetic),Australia,country,visitor_arrivals,70773,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),Australia,country,visitor_arrivals,56927,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),Australia,country,visitor_arrivals,44601,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),Australia,country,visitor_arrivals,42909,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),Australia,country,visitor_arrivals,47701,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),Australia,country,visitor_arrivals,62537,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),Australia,country,visitor_arrivals,74708,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),Australia,country,visitor_arrivals,93412,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Japan (synthetic),Australia,country,visitor_arrivals,106348,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Japan (synthetic),Australia,country,visitor_arrivals,107620,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),Australia,country,visitor_arrivals,104677,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),Australia,country,visitor_arrivals,90407,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),Australia,country,visitor_arrivals,75306,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),Australia,country,visitor_arrivals,61219,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),Australia,country,visitor_arrivals,47589,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),Australia,country,visitor_arrivals,44531,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),Australia,country,visitor_arrivals,50176,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),Australia,country,visitor_arrivals,65265,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),Australia,country,visitor_arrivals,91470,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),Australia,country,visitor_arrivals,108108,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),Australia,country,visitor_arrivals,121588,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),Australia,country,visitor_arrivals,119749,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),Australia,country,visitor_arrivals,122229,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),Australia,country,visitor_arrivals,100230,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),Australia,country,visitor_arrivals,83873,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Japan (synthetic),United Kingdom,country,visitor_arrivals,43333,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),United Kingdom,country,visitor_arrivals,45644,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),United Kingdom,country,visitor_arrivals,46653,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),United Kingdom,country,visitor_arrivals,45916,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),United Kingdom,country,visitor_arrivals,42752,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Japan (synthetic),United Kingdom,country,visitor_arrivals,37040,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),United Kingdom,country,visitor_arrivals,29766,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),United Kingdom,country,visitor_arrivals,25746,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),United Kingdom,country,visitor_arrivals,25870,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),United Kingdom,country,visitor_arrivals,27871,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),United Kingdom,country,visitor_arrivals,32315,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),United Kingdom,country,visitor_arrivals,41832,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),United Kingdom,country,visitor_arrivals,47911,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Japan (synthetic),United Kingdom,country,visitor_arrivals,49158,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Japan (synthetic),United Kingdom,country,visitor_arrivals,52865,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),United Kingdom,country,visitor_arrivals,49681,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),United Kingdom,country,visitor_arrivals,48278,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),United Kingdom,country,visitor_arrivals,39956,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),United Kingdom,country,visitor_arrivals,33486,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),United Kingdom,country,visitor_arrivals,29622,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),United Kingdom,country,visitor_arrivals,29849,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),United Kingdom,country,visitor_arrivals,31196,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),United Kingdom,country,visitor_arrivals,37874,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),United Kingdom,country,visitor_arrivals,46611,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),United Kingdom,country,visitor_arrivals,50721,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),United Kingdom,country,visitor_arrivals,54413,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),United Kingdom,country,visitor_arrivals,61595,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),United Kingdom,country,visitor_arrivals,56413,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),United Kingdom,country,visitor_arrivals,48981,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),United Kingdom,country,visitor_arrivals,42529,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Japan (synthetic),Canada,country,visitor_arrivals,43508,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),Canada,country,visitor_arrivals,50125,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),Canada,country,visitor_arrivals,52471,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),Canada,country,visitor_arrivals,48844,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),Canada,country,visitor_arrivals,43227,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),Canada,country,visitor_arrivals,35357,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),Canada,country,visitor_arrivals,34520,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),Canada,country,visitor_arrivals,31916,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),Canada,country,visitor_arrivals,35781,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),Canada,country,visitor_arrivals,39991,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),Canada,country,visitor_arrivals,41528,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),Canada,country,visitor_arrivals,51072,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Japan (synthetic),Canada,country,visitor_arrivals,54987,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Japan (synthetic),Canada,country,visitor_arrivals,55501,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),Canada,country,visitor_arrivals,52238,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),Canada,country,visitor_arrivals,50563,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),Canada,country,visitor_arrivals,42265,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),Canada,country,visitor_arrivals,38788,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),Canada,country,visitor_arrivals,35316,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),Canada,country,visitor_arrivals,36555,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),Canada,country,visitor_arrivals,38579,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),Canada,country,visitor_arrivals,40595,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),Canada,country,visitor_arrivals,48088,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),Canada,country,visitor_arrivals,52141,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),Canada,country,visitor_arrivals,61561,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),Canada,country,visitor_arrivals,62907,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),Canada,country,visitor_arrivals,57162,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),Canada,country,visitor_arrivals,55100,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),Canada,country,visitor_arrivals,48953,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Japan (synthetic),Singapore,country,visitor_arrivals,57387,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),Singapore,country,visitor_arrivals,68128,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),Singapore,country,visitor_arrivals,68321,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),Singapore,country,visitor_arrivals,67415,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),Singapore,country,visitor_arrivals,58725,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Japan (synthetic),Singapore,country,visitor_arrivals,46687,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),Singapore,country,visitor_arrivals,40242,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),Singapore,country,visitor_arrivals,33179,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),Singapore,country,visitor_arrivals,35359,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),Singapore,country,visitor_arrivals,38558,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),Singapore,country,visitor_arrivals,45952,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),Singapore,country,visitor_arrivals,52444,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),Singapore,country,visitor_arrivals,59540,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Japan (synthetic),Singapore,country,visitor_arrivals,72495,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Japan (synthetic),Singapore,country,visitor_arrivals,75229,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),Singapore,country,visitor_arrivals,65090,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),Singapore,country,visitor_arrivals,61334,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),Singapore,country,visitor_arrivals,49451,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),Singapore,country,visitor_arrivals,44515,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),Singapore,country,visitor_arrivals,38149,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),Singapore,country,visitor_arrivals,33734,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),Singapore,country,visitor_arrivals,38611,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),Singapore,country,visitor_arrivals,46680,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),Singapore,country,visitor_arrivals,54779,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),Singapore,country,visitor_arrivals,68970,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),Singapore,country,visitor_arrivals,72145,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),Singapore,country,visitor_arrivals,72377,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),Singapore,country,visitor_arrivals,72260,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),Singapore,country,visitor_arrivals,66289,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),Singapore,country,visitor_arrivals,52791,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Japan (synthetic),Germany,country,visitor_arrivals,28574,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),Germany,country,visitor_arrivals,33944,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),Germany,country,visitor_arrivals,33642,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),Germany,country,visitor_arrivals,31777,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),Germany,country,visitor_arrivals,29305,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Japan (synthetic),Germany,country,visitor_arrivals,24353,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),Germany,country,visitor_arrivals,21155,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),Germany,country,visitor_arrivals,19006,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),Germany,country,visitor_arrivals,18983,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),Germany,country,visitor_arrivals,19683,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),Germany,country,visitor_arrivals,22937,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),Germany,country,visitor_arrivals,26691,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),Germany,country,visitor_arrivals,32961,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Japan (synthetic),Germany,country,visitor_arrivals,34407,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),Germany,country,visitor_arrivals,37265,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),Germany,country,visitor_arrivals,33861,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),Germany,country,visitor_arrivals,26861,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),Germany,country,visitor_arrivals,23521,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),Germany,country,visitor_arrivals,21951,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),Germany,country,visitor_arrivals,20136,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),Germany,country,visitor_arrivals,21583,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),Germany,country,visitor_arrivals,27721,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),Germany,country,visitor_arrivals,31501,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),Germany,country,visitor_arrivals,35902,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),Germany,country,visitor_arrivals,40825,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),Germany,country,visitor_arrivals,42221,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),Germany,country,visitor_arrivals,37980,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),Germany,country,visitor_arrivals,34288,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),Germany,country,visitor_arrivals,31175,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Japan (synthetic),France,country,visitor_arrivals,32443,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),France,country,visitor_arrivals,35661,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),France,country,visitor_arrivals,37858,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),France,country,visitor_arrivals,36352,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),France,country,visitor_arrivals,34340,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Japan (synthetic),France,country,visitor_arrivals,26889,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),France,country,visitor_arrivals,23887,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),France,country,visitor_arrivals,20952,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),France,country,visitor_arrivals,21554,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),France,country,visitor_arrivals,21646,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),France,country,visitor_arrivals,25016,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),France,country,visitor_arrivals,30545,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),France,country,visitor_arrivals,35031,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Japan (synthetic),France,country,visitor_arrivals,38735,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),France,country,visitor_arrivals,37306,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),France,country,visitor_arrivals,36831,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),France,country,visitor_arrivals,30302,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),France,country,visitor_arrivals,27235,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),France,country,visitor_arrivals,23212,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),France,country,visitor_arrivals,21107,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),France,country,visitor_arrivals,25549,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),France,country,visitor_arrivals,29191,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),France,country,visitor_arrivals,35062,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),France,country,visitor_arrivals,40145,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),France,country,visitor_arrivals,43508,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),France,country,visitor_arrivals,41255,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),France,country,visitor_arrivals,41466,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),France,country,visitor_arrivals,36555,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),France,country,visitor_arrivals,32560,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Japan (synthetic),South Korea,country,visitor_arrivals,770435,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),South Korea,country,visitor_arrivals,841818,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),South Korea,country,visitor_arrivals,918366,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),South Korea,country,visitor_arrivals,827173,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),South Korea,country,visitor_arrivals,836742,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Japan (synthetic),South Korea,country,visitor_arrivals,749560,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),South Korea,country,visitor_arrivals,693605,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),South Korea,country,visitor_arrivals,699988,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),South Korea,country,visitor_arrivals,693649,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),South Korea,country,visitor_arrivals,681296,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),South Korea,country,visitor_arrivals,743644,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),South Korea,country,visitor_arrivals,753782,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),South Korea,country,visitor_arrivals,825423,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Japan (synthetic),South Korea,country,visitor_arrivals,938361,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Japan (synthetic),South Korea,country,visitor_arrivals,911115,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),South Korea,country,visitor_arrivals,889684,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),South Korea,country,visitor_arrivals,866567,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),South Korea,country,visitor_arrivals,742124,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),South Korea,country,visitor_arrivals,735430,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),South Korea,country,visitor_arrivals,690351,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),South Korea,country,visitor_arrivals,709735,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),South Korea,country,visitor_arrivals,674905,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),South Korea,country,visitor_arrivals,795309,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),South Korea,country,visitor_arrivals,776603,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),South Korea,country,visitor_arrivals,846732,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),South Korea,country,visitor_arrivals,934466,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),South Korea,country,visitor_arrivals,958376,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),South Korea,country,visitor_arrivals,891357,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),South Korea,country,visitor_arrivals,835266,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),South Korea,country,visitor_arrivals,853301,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Japan (synthetic),Taiwan,country,visitor_arrivals,525831,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),Taiwan,country,visitor_arrivals,575011,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),Taiwan,country,visitor_arrivals,584943,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),Taiwan,country,visitor_arrivals,559215,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),Taiwan,country,visitor_arrivals,541341,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Japan (synthetic),Taiwan,country,visitor_arrivals,499733,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),Taiwan,country,visitor_arrivals,486317,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),Taiwan,country,visitor_arrivals,421876,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),Taiwan,country,visitor_arrivals,442048,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),Taiwan,country,visitor_arrivals,430712,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),Taiwan,country,visitor_arrivals,469402,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),Taiwan,country,visitor_arrivals,525599,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),Taiwan,country,visitor_arrivals,539918,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Japan (synthetic),Taiwan,country,visitor_arrivals,567141,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Japan (synthetic),Taiwan,country,visitor_arrivals,605993,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),Taiwan,country,visitor_arrivals,546438,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),Taiwan,country,visitor_arrivals,543942,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),Taiwan,country,visitor_arrivals,538744,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),Taiwan,country,visitor_arrivals,499516,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),Taiwan,country,visitor_arrivals,423300,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),Taiwan,country,visitor_arrivals,424359,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),Taiwan,country,visitor_arrivals,440769,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),Taiwan,country,visitor_arrivals,510062,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),Taiwan,country,visitor_arrivals,549296,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),Taiwan,country,visitor_arrivals,589940,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),Taiwan,country,visitor_arrivals,582271,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),Taiwan,country,visitor_arrivals,575338,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),Taiwan,country,visitor_arrivals,611031,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),Taiwan,country,visitor_arrivals,571231,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),Taiwan,country,visitor_arrivals,525453,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Japan (synthetic),All origins,total,visitor_arrivals,3444664,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Japan (synthetic),All origins,total,visitor_arrivals,3751018,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Japan (synthetic),All origins,total,visitor_arrivals,3955393,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Japan (synthetic),All origins,total,visitor_arrivals,3704158,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Japan (synthetic),All origins,total,visitor_arrivals,3605585,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Japan (synthetic),All origins,total,visitor_arrivals,3146479,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Japan (synthetic),All origins,total,visitor_arrivals,2982395,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Japan (synthetic),All origins,total,visitor_arrivals,2756623,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Japan (synthetic),All origins,total,visitor_arrivals,2786328,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Japan (synthetic),All origins,total,visitor_arrivals,2774434,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Japan (synthetic),All origins,total,visitor_arrivals,3086404,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Japan (synthetic),All origins,total,visitor_arrivals,3354649,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Japan (synthetic),All origins,total,visitor_arrivals,3644961,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Japan (synthetic),All origins,total,visitor_arrivals,3954924,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Japan (synthetic),All origins,total,visitor_arrivals,4044338,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Japan (synthetic),All origins,total,visitor_arrivals,3902271,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Japan (synthetic),All origins,total,visitor_arrivals,3750796,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Japan (synthetic),All origins,total,visitor_arrivals,3366426,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Japan (synthetic),All origins,total,visitor_arrivals,3172438,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Japan (synthetic),All origins,total,visitor_arrivals,2811746,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Japan (synthetic),All origins,total,visitor_arrivals,2857542,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Japan (synthetic),All origins,total,visitor_arrivals,2879520,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Japan (synthetic),All origins,total,visitor_arrivals,3351675,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Japan (synthetic),All origins,total,visitor_arrivals,3556843,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Japan (synthetic),All origins,total,visitor_arrivals,3970810,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Japan (synthetic),All origins,total,visitor_arrivals,4200299,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Japan (synthetic),All origins,total,visitor_arrivals,4244020,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Japan (synthetic),All origins,total,visitor_arrivals,4147308,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Japan (synthetic),All origins,total,visitor_arrivals,3886817,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Japan (synthetic),All origins,total,visitor_arrivals,3666283,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Tokyo (synthetic),United States,country,visitors,110159,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Tokyo (synthetic),United States,country,visitors,115073,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Tokyo (synthetic),United States,country,visitors,109571,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Tokyo (synthetic),United States,country,visitors,118007,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Tokyo (synthetic),United States,country,visitors,103030,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Tokyo (synthetic),United States,country,visitors,96332,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Tokyo (synthetic),United States,country,visitors,88034,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Tokyo (synthetic),United States,country,visitors,72907,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Tokyo (synthetic),United States,country,visitors,71268,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Tokyo (synthetic),United States,country,visitors,76091,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Tokyo (synthetic),United States,country,visitors,91304,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Tokyo (synthetic),United States,country,visitors,101938,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Tokyo (synthetic),United States,country,visitors,120137,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Tokyo (synthetic),United States,country,visitors,132166,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Tokyo (synthetic),United States,country,visitors,128030,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Tokyo (synthetic),United States,country,visitors,131684,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Tokyo (synthetic),United States,country,visitors,116943,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Tokyo (synthetic),United States,country,visitors,107559,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Tokyo (synthetic),United States,country,visitors,99975,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Tokyo (synthetic),United States,country,visitors,90539,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Tokyo (synthetic),United States,country,visitors,81009,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Tokyo (synthetic),United States,country,visitors,90202,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Tokyo (synthetic),United States,country,visitors,100655,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Tokyo (synthetic),United States,country,visitors,112356,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Tokyo (synthetic),United States,country,visitors,139655,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Tokyo (synthetic),United States,country,visitors,149251,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Tokyo (synthetic),United States,country,visitors,147014,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Tokyo (synthetic),United States,country,visitors,152017,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Tokyo (synthetic),United States,country,visitors,138051,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Tokyo (synthetic),United States,country,visitors,121720,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Tokyo (synthetic),Australia,country,visitors,39658,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Tokyo (synthetic),Australia,country,visitors,45183,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Tokyo (synthetic),Australia,country,visitors,51729,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Tokyo (synthetic),Australia,country,visitors,49478,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Tokyo (synthetic),Australia,country,visitors,41661,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Tokyo (synthetic),Australia,country,visitors,35116,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Tokyo (synthetic),Australia,country,visitors,26546,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Tokyo (synthetic),Australia,country,visitors,20217,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Tokyo (synthetic),Australia,country,visitors,18857,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Tokyo (synthetic),Australia,country,visitors,22164,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Tokyo (synthetic),Australia,country,visitors,30701,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Tokyo (synthetic),Australia,country,visitors,39275,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Tokyo (synthetic),Australia,country,visitors,48357,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Tokyo (synthetic),Australia,country,visitors,54878,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Tokyo (synthetic),Australia,country,visitors,52508,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Tokyo (synthetic),Australia,country,visitors,50349,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Tokyo (synthetic),Australia,country,visitors,43405,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Tokyo (synthetic),Australia,country,visitors,38385,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Tokyo (synthetic),Australia,country,visitors,30247,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Tokyo (synthetic),Australia,country,visitors,22958,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Tokyo (synthetic),Australia,country,visitors,22028,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Tokyo (synthetic),Australia,country,visitors,23920,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Tokyo (synthetic),Australia,country,visitors,33891,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Tokyo (synthetic),Australia,country,visitors,43545,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Tokyo (synthetic),Australia,country,visitors,53900,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Tokyo (synthetic),Australia,country,visitors,59756,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Tokyo (synthetic),Australia,country,visitors,62580,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Tokyo (synthetic),Australia,country,visitors,53844,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Tokyo (synthetic),Australia,country,visitors,51559,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Tokyo (synthetic),Australia,country,visitors,40027,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Tokyo (synthetic),United Kingdom,country,visitors,20661,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Tokyo (synthetic),United Kingdom,country,visitors,22328,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Tokyo (synthetic),United Kingdom,country,visitors,23213,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Tokyo (synthetic),United Kingdom,country,visitors,22366,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Tokyo (synthetic),United Kingdom,country,visitors,19159,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Tokyo (synthetic),United Kingdom,country,visitors,17802,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Tokyo (synthetic),United Kingdom,country,visitors,14073,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Tokyo (synthetic),United Kingdom,country,visitors,13678,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Tokyo (synthetic),United Kingdom,country,visitors,13245,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Tokyo (synthetic),United Kingdom,country,visitors,13303,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Tokyo (synthetic),United Kingdom,country,visitors,16679,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Tokyo (synthetic),United Kingdom,country,visitors,18975,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Tokyo (synthetic),United Kingdom,country,visitors,21489,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Tokyo (synthetic),United Kingdom,country,visitors,24988,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Tokyo (synthetic),United Kingdom,country,visitors,24096,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Tokyo (synthetic),United Kingdom,country,visitors,22769,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Tokyo (synthetic),United Kingdom,country,visitors,21262,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Tokyo (synthetic),United Kingdom,country,visitors,18877,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Tokyo (synthetic),United Kingdom,country,visitors,17263,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Tokyo (synthetic),United Kingdom,country,visitors,15486,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Tokyo (synthetic),United Kingdom,country,visitors,13846,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Tokyo (synthetic),United Kingdom,country,visitors,15675,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Tokyo (synthetic),United Kingdom,country,visitors,17780,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Tokyo (synthetic),United Kingdom,country,visitors,22587,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Tokyo (synthetic),United Kingdom,country,visitors,24751,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Tokyo (synthetic),United Kingdom,country,visitors,28453,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Tokyo (synthetic),United Kingdom,country,visitors,26612,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Tokyo (synthetic),United Kingdom,country,visitors,28574,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Tokyo (synthetic),United Kingdom,country,visitors,23771,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Tokyo (synthetic),United Kingdom,country,visitors,22785,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Tokyo (synthetic),South Korea,country,visitors,379501,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Tokyo (synthetic),South Korea,country,visitors,390760,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Tokyo (synthetic),South Korea,country,visitors,413286,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Tokyo (synthetic),South Korea,country,visitors,419759,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Tokyo (synthetic),South Korea,country,visitors,379712,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Tokyo (synthetic),South Korea,country,visitors,366352,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Tokyo (synthetic),South Korea,country,visitors,336496,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Tokyo (synthetic),South Korea,country,visitors,314127,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Tokyo (synthetic),South Korea,country,visitors,317157,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Tokyo (synthetic),South Korea,country,visitors,315287,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Tokyo (synthetic),South Korea,country,visitors,356548,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Tokyo (synthetic),South Korea,country,visitors,354880,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Tokyo (synthetic),South Korea,country,visitors,426850,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Tokyo (synthetic),South Korea,country,visitors,428396,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Tokyo (synthetic),South Korea,country,visitors,444626,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Tokyo (synthetic),South Korea,country,visitors,437233,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Tokyo (synthetic),South Korea,country,visitors,412203,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Tokyo (synthetic),South Korea,country,visitors,370082,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Tokyo (synthetic),South Korea,country,visitors,331442,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Tokyo (synthetic),South Korea,country,visitors,337784,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Tokyo (synthetic),South Korea,country,visitors,320179,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Tokyo (synthetic),South Korea,country,visitors,330298,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Tokyo (synthetic),South Korea,country,visitors,376854,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Tokyo (synthetic),South Korea,country,visitors,402901,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Tokyo (synthetic),South Korea,country,visitors,412235,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Tokyo (synthetic),South Korea,country,visitors,433336,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Tokyo (synthetic),South Korea,country,visitors,445595,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Tokyo (synthetic),South Korea,country,visitors,436717,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Tokyo (synthetic),South Korea,country,visitors,409788,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Tokyo (synthetic),South Korea,country,visitors,373761,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-01,Tokyo (synthetic),All origins,total,visitors,1044960,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-02,Tokyo (synthetic),All origins,total,visitors,1089353,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-03,Tokyo (synthetic),All origins,total,visitors,1135818,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-04,Tokyo (synthetic),All origins,total,visitors,1158259,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-05,Tokyo (synthetic),All origins,total,visitors,1032767,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-06,Tokyo (synthetic),All origins,total,visitors,979645,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-07,Tokyo (synthetic),All origins,total,visitors,883784,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-08,Tokyo (synthetic),All origins,total,visitors,799764,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-09,Tokyo (synthetic),All origins,total,visitors,799001,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-10,Tokyo (synthetic),All origins,total,visitors,811006,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-11,Tokyo (synthetic),All origins,total,visitors,940942,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2024-12,Tokyo (synthetic),All origins,total,visitors,978630,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-01,Tokyo (synthetic),All origins,total,visitors,1171983,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-02,Tokyo (synthetic),All origins,total,visitors,1216814,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-03,Tokyo (synthetic),All origins,total,visitors,1233595,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-04,Tokyo (synthetic),All origins,total,visitors,1219867,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-05,Tokyo (synthetic),All origins,total,visitors,1128245,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-06,Tokyo (synthetic),All origins,total,visitors,1016314,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-07,Tokyo (synthetic),All origins,total,visitors,909962,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-08,Tokyo (synthetic),All origins,total,visitors,886858,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-09,Tokyo (synthetic),All origins,total,visitors,830418,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-10,Tokyo (synthetic),All origins,total,visitors,874180,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-11,Tokyo (synthetic),All origins,total,visitors,1005441,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-12,Tokyo (synthetic),All origins,total,visitors,1104638,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-01,Tokyo (synthetic),All origins,total,visitors,1198026,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-02,Tokyo (synthetic),All origins,total,visitors,1274514,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-03,Tokyo (synthetic),All origins,total,visitors,1295421,persons,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-04,Tokyo (synthetic),All origins,total,visitors,1275189,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-05,Tokyo (synthetic),All origins,total,visitors,1184021,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-06,Tokyo (synthetic),All origins,total,visitors,1060758,persons,estimate,SYNTHETIC DEMO DATA,,,2026-07-15
