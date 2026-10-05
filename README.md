@@ -190,6 +190,28 @@ frontend/src/
   lib/                  API client, types, formatting (missing → "—"), useApi hook
 ```
 
+### Optional: train your own feedback classifier (free, runs on your Mac)
+
+`backend/app/local_model/` fine-tunes [`xlm-roberta-base`](https://huggingface.co/FacebookAI/xlm-roberta-base)
+(MIT license, English + Japanese) on feedback **you** have labelled. It predicts the same themes as the keyword
+rules and the language model, plus a sentiment, and stores its labels with method `local`. No API costs.
+
+```bash
+cd backend && source .venv/bin/activate
+pip install -r requirements-ml.txt                  # torch + transformers (~1 GB)
+
+python -m app.local_model.labels --scope real       # 1. writes data/training/labels_real.csv
+#   open it in Numbers/Excel: fix `themes` (keys separated by ;) and `sentiment`, set reviewed=yes
+python -m app.local_model.train                     # 2. ~1-5 min on Apple silicon; downloads the base model once
+python -m app.local_model.predict --scope real      # 3. labels all feedback (or "Run trained model" in the UI)
+```
+
+- Only rows marked `reviewed=yes` are used. Re-running step 1 keeps your edits and appends new feedback.
+- At least 20 reviewed rows are required; aim for **300+** for useful results.
+- Training holds back 20% of rows and prints the model's score next to the keyword rules on those same rows.
+  Only switch to the trained model if it clearly beats them.
+- The labelling sheet and the model (~1.1 GB) live under `backend/data/`, which is not committed.
+
 ---
 
 ## 6. Data sources and usage conditions (checked 2 Oct 2026)

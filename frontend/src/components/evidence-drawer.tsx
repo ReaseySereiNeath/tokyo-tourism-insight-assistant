@@ -135,7 +135,7 @@ function RecordDetail({ d }: { d: EvidenceDetail }) {
               <li key={t.theme + t.method} className="flex flex-wrap items-center gap-2">
                 <Badge>{humanize(t.theme)}</Badge>
                 <span className="text-xs text-ink-3">
-                  {t.method === "llm" ? `language model (${t.model})` : "keyword rules"}
+                  {t.method === "llm" ? `language model (${t.model})` : t.method === "local" ? `trained model (${t.model})` : "keyword rules"}
                   {t.sentiment ? ` · ${t.sentiment}` : ""}
                 </span>
               </li>

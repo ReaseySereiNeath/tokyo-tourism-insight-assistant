@@ -232,9 +232,9 @@ def competitor_summary(conn: sqlite3.Connection) -> dict:
 def theme_summary(conn: sqlite3.Connection, method: str | None = None, examples_per_theme: int = 3) -> dict:
     """Theme counts with the denominator (feedback items classified by that method) made explicit."""
     total_feedback = conn.execute("SELECT COUNT(*) FROM feedback").fetchone()[0]
-    if method is None:  # prefer model labels when they exist, else keyword rules
-        has_llm = conn.execute("SELECT 1 FROM feedback_themes WHERE method='llm' LIMIT 1").fetchone()
-        method = "llm" if has_llm else "keyword"
+    if method is None:  # prefer language-model labels, then the local trained model, else keyword rules
+        present = {r[0] for r in conn.execute("SELECT DISTINCT method FROM feedback_themes")}
+        method = next((m for m in ("llm", "local") if m in present), "keyword")
     classified = conn.execute("SELECT COUNT(DISTINCT evidence_id) FROM feedback_themes WHERE method = ?",
                               (method,)).fetchone()[0]
     theme_rows = rows(conn.execute(

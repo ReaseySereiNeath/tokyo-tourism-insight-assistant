@@ -6,30 +6,36 @@ import { useScope } from "@/components/providers";
 import { Badge, Button, Card, EmptyState, ErrorState, EvidenceLink, Loading, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
 import { humanize } from "@/lib/format";
-import type { FeedbackItem, ThemeSummary } from "@/lib/types";
+import type { FeedbackItem, LabelMethod, ThemeSummary } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
+
+const METHOD_NAMES: Record<LabelMethod, { tab: string; done: string }> = {
+  keyword: { tab: "Keyword labels", done: "keyword rules" },
+  local: { tab: "Trained model labels", done: "your trained model" },
+  llm: { tab: "AI labels", done: "the language model" },
+};
 
 export default function NeedsPage() {
   const { scope } = useScope();
-  const [method, setMethod] = useState<"keyword" | "llm" | null>(null);
+  const [method, setMethod] = useState<LabelMethod | null>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<{ tone: "good" | "bad"; text: string } | null>(null);
   const [theme, setTheme] = useState<string | null>(null);
-  const health = useApi(() => api.get<{ ai_configured: boolean; model: string | null }>("/api/health", null), []);
+  const health = useApi(() => api.get<{ ai_configured: boolean; model: string | null; local_model_trained: boolean }>("/api/health", null), []);
   const summary = useApi(() => api.get<ThemeSummary>("/api/feedback/themes", scope, { method }), [scope, method]);
   const activeMethod = summary.data?.method ?? "keyword";
   const items = useApi(
     () => theme ? api.get<FeedbackItem[]>("/api/feedback", scope, { theme, method: activeMethod }) : Promise.resolve(null),
     [scope, theme, activeMethod]);
 
-  async function classify(m: "keyword" | "llm") {
+  async function classify(m: LabelMethod) {
     setBusy(true);
     setNotice(null);
     try {
       const r = await api.post<{ classified: number; error?: string | null; missing_labels?: number }>("/api/feedback/classify", scope, { method: m });
       setNotice(r.error
         ? { tone: "bad", text: `Stopped early: ${r.error} (${r.classified} items labeled before the error).` }
-        : { tone: "good", text: `${r.classified} items labeled using ${m === "llm" ? "the language model" : "keyword rules"}.` });
+        : { tone: "good", text: `${r.classified} items labeled using ${METHOD_NAMES[m].done}.` });
       setMethod(m);
       summary.reload();
     } catch (e) {
@@ -46,6 +52,11 @@ export default function NeedsPage() {
         description="Themes in visitor feedback, with counts, the sample size behind them, and the original comments."
         actions={<>
           <Button onClick={() => classify("keyword")} disabled={busy}>Re-run keyword rules</Button>
+          {health.data?.local_model_trained && (
+            <Button onClick={() => classify("local")} disabled={busy} title="Runs the classifier you trained, on this Mac (free)">
+              Run trained model
+            </Button>
+          )}
           <Button variant="primary" onClick={() => classify("llm")} disabled={busy || !health.data?.ai_configured}
             title={health.data?.ai_configured ? "Uses the language-model API (costs money)" : "Set ANTHROPIC_API_KEY to enable"}>
             {busy ? "Working…" : "Classify with AI"}
@@ -66,9 +77,9 @@ export default function NeedsPage() {
             subtitle={`${d.classified} of ${d.total_feedback} feedback items classified · percentages use the ${d.classified} classified items as the base · an item can have several themes`}
             actions={d.available_methods.length > 1 ? (
               <div className="inline-flex rounded-lg border border-line p-0.5 text-xs">
-                {(["keyword", "llm"] as const).filter((m) => d.available_methods.includes(m)).map((m) => (
+                {(["keyword", "local", "llm"] as const).filter((m) => d.available_methods.includes(m)).map((m) => (
                   <button key={m} onClick={() => setMethod(m)} className={`rounded-md px-2.5 py-1 ${activeMethod === m ? "bg-sunken font-medium text-ink" : "text-ink-2"}`}>
-                    {m === "llm" ? "AI labels" : "Keyword labels"}
+                    {METHOD_NAMES[m].tab}
                   </button>
                 ))}
               </div>
@@ -76,7 +87,9 @@ export default function NeedsPage() {
             <div className="mb-3 flex flex-wrap gap-2">
               {activeMethod === "keyword"
                 ? <Badge tone="warn">Keyword rules: simple word matching, not AI. Expect misses and mislabels.</Badge>
-                : <Badge tone="info">Labels from a language model. Spot-check the examples.</Badge>}
+                : activeMethod === "local"
+                  ? <Badge tone="info">Labels from the classifier you trained on your own reviewed feedback. Spot-check the examples.</Badge>
+                  : <Badge tone="info">Labels from a language model. Spot-check the examples.</Badge>}
               {d.classified < 30 && <Badge tone="warn">Small sample (n={d.classified})</Badge>}
             </div>
             {d.themes.length === 0 ? <EmptyState title="No themes yet — run a classification" /> : (
@@ -91,7 +104,7 @@ export default function NeedsPage() {
             {d.themes.map((t) => (
               <Card key={t.theme} title={humanize(t.theme)}
                 subtitle={<>{d.taxonomy[t.theme]} · <span className="num">{t.count} items ({t.share_pct ?? "—"}%)</span>
-                  {activeMethod === "llm" && <> · {t.negative ?? 0} negative / {t.positive ?? 0} positive / {t.mixed ?? 0} mixed</>}</>}
+                  {activeMethod !== "keyword" && <> · {t.negative ?? 0} negative / {t.positive ?? 0} positive / {t.mixed ?? 0} mixed</>}</>}
                 actions={<button onClick={() => setTheme(theme === t.theme ? null : t.theme)} className="text-xs text-accent underline">{theme === t.theme ? "Hide all" : "Show all"}</button>}>
                 <ul className="space-y-3">
                   {(theme === t.theme && items.data ? items.data : t.examples ?? []).map((f) => (

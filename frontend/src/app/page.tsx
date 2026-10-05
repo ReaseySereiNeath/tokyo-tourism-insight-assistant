@@ -102,7 +102,7 @@ export default function OverviewPage() {
               )}
             </Card>
             <Card title="Customer feedback themes"
-              subtitle={data.feedback_total ? `${data.feedback_classified} of ${data.feedback_total} items classified · ${data.theme_method === "llm" ? "language-model labels" : "keyword-rule labels"}` : undefined}
+              subtitle={data.feedback_total ? `${data.feedback_classified} of ${data.feedback_total} items classified · ${{ llm: "language-model labels", local: "trained-model labels" }[data.theme_method] ?? "keyword-rule labels"}` : undefined}
               actions={<Link href="/needs" className="text-sm text-accent underline">Details</Link>}>
               {data.top_themes.length === 0 ? <EmptyState title="No classified feedback yet" /> : (
                 <ul className="space-y-2">

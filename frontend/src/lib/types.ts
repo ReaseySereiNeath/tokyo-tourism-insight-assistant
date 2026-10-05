@@ -128,8 +128,10 @@ export interface Theme {
   examples?: FeedbackItem[];
 }
 
+export type LabelMethod = "keyword" | "llm" | "local";
+
 export interface ThemeSummary {
-  method: "keyword" | "llm";
+  method: LabelMethod;
   total_feedback: number;
   classified: number;
   unclassified: number;
