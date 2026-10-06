@@ -67,6 +67,43 @@ CREATE TABLE IF NOT EXISTS revisions (
     changed_at  TEXT NOT NULL
 );
 
+-- Visitor spending (Japan Tourism Agency, インバウンド消費動向調査). One row = one
+-- published figure: a metric for a (geography, visitor segment, category, item)
+-- in a reporting period. Values are stored in base units (JPY, persons, %).
+CREATE TABLE IF NOT EXISTS spending_stats (
+    evidence_id      TEXT PRIMARY KEY,
+    reporting_period TEXT NOT NULL,            -- 'YYYY-Qn' (quarter) or 'YYYY' (calendar year)
+    period_type      TEXT NOT NULL,            -- quarter | year
+    geography        TEXT NOT NULL,            -- 'Japan' (national tables) or a prefecture, e.g. 'Tokyo'
+    segment          TEXT NOT NULL,            -- 'All nationalities' or a nationality/region
+    purpose          TEXT NOT NULL DEFAULT 'all',  -- all | leisure
+    category         TEXT NOT NULL,            -- e.g. lodging, food_drink, entertainment, shopping, total
+    item             TEXT NOT NULL DEFAULT '', -- sub-item within the category, '' for the category itself
+    metric           TEXT NOT NULL,            -- spend_per_person | purchase_rate | spend_per_purchaser | total_spend | visitors | visit_rate
+    value            REAL NOT NULL,
+    unit             TEXT NOT NULL,            -- JPY | JPY per person | % | persons
+    respondents      INTEGER,                  -- survey sample behind the figure, when published
+    value_status     TEXT NOT NULL DEFAULT 'unknown',  -- final | preliminary | unknown
+    source           TEXT NOT NULL,
+    original_label   TEXT,
+    publication_date TEXT,
+    collection_date  TEXT NOT NULL,
+    batch_id         INTEGER NOT NULL REFERENCES import_batches(id),
+    created_at       TEXT NOT NULL,
+    updated_at       TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_sp_lookup ON spending_stats(geography, metric, segment, reporting_period);
+
+-- Automatic checks for new official releases (one row per file seen on a source page).
+CREATE TABLE IF NOT EXISTS update_checks (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    checked_at    TEXT NOT NULL,
+    source        TEXT NOT NULL,               -- JNTO | JTA
+    status        TEXT NOT NULL,               -- ok | failed
+    message       TEXT,
+    files_json    TEXT NOT NULL DEFAULT '[]'   -- [{url, label, result, batch_id}]
+);
+
 CREATE TABLE IF NOT EXISTS competitor_offers (
     evidence_id      TEXT PRIMARY KEY,
     business         TEXT NOT NULL,

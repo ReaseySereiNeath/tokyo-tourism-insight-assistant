@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     ai_classify_batch_size: int = 20          # feedback items per classification request
     ai_classify_max_items: int = 200          # feedback items per classification run
 
+    # --- Official data updates ---
+    # Check JNTO and the Japan Tourism Agency for new releases this often (hours). 0 turns it off.
+    auto_update_hours: float = 24
+
     # --- Upload limits ---
     max_upload_bytes: int = 20 * 1024 * 1024
 

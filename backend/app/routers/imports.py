@@ -13,6 +13,7 @@ from app.db import Scope, rows
 from app.importers.datasets import DATASETS
 from app.importers.feeds import FeedFetchError, fetch_feed, parse_feed
 from app.importers.jnto import parse_jnto_monthly_workbook
+from app.importers.jta import parse_jta_spending_workbook
 from app.importers.service import get_batch, run_import
 from app.importers.templates import column_guide, template_csv
 from app.routers.deps import db, scope_param
@@ -22,7 +23,11 @@ router = APIRouter(prefix="/api/imports", tags=["imports"])
 IMPORTERS = {
     "auto": "CSV or Excel file that follows the template",
     "jnto_monthly_xlsx": "JNTO monthly visitor arrivals workbook (XLSX, as downloaded from jnto.go.jp)",
+    "jta_spending_xlsx": "Japan Tourism Agency spending workbook (集計表 or 都道府県別集計表, XLSX or XLS)",
 }
+# Which dataset each source-specific importer produces.
+IMPORTER_DATASET = {"jnto_monthly_xlsx": "visitor_stats", "jta_spending_xlsx": "spending_stats"}
+PARSERS = {"jnto_monthly_xlsx": parse_jnto_monthly_workbook, "jta_spending_xlsx": parse_jta_spending_workbook}
 
 
 @router.get("/datasets")
@@ -45,8 +50,9 @@ async def upload(dataset: str = Form(...), importer: str = Form("auto"), file: U
         raise HTTPException(400, f"Unknown dataset '{dataset}'")
     if importer not in IMPORTERS:
         raise HTTPException(400, f"Unknown importer '{importer}'")
-    if importer == "jnto_monthly_xlsx" and dataset != "visitor_stats":
-        raise HTTPException(400, "The JNTO workbook importer produces visitor statistics only.")
+    if importer in IMPORTER_DATASET and dataset != IMPORTER_DATASET[importer]:
+        raise HTTPException(400, f"{IMPORTERS[importer]} can only be imported as "
+                                 f"{DATASETS[IMPORTER_DATASET[importer]].label.lower()}.")
     limit = get_settings().max_upload_bytes
     content = await file.read(limit + 1)
     if len(content) > limit:
@@ -54,7 +60,7 @@ async def upload(dataset: str = Form(...), importer: str = Form("auto"), file: U
     if not content:
         raise HTTPException(400, "The file is empty.")
     filename = Path(file.filename or "upload").name
-    parser = parse_jnto_monthly_workbook if importer == "jnto_monthly_xlsx" else None
+    parser = PARSERS.get(importer)
     batch = run_import(conn, scope, dataset, filename, content, parser=parser)
     if dataset == "feedback" and batch["status"] == "success" and batch["rows_inserted"]:
         classify_with_keywords(conn)  # keep the offline theme labels current

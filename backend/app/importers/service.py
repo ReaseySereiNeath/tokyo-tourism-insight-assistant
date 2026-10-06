@@ -27,6 +27,7 @@ from app.importers.common import ParseError, clean_text, make_evidence_id
 from app.importers.datasets import DATASETS, Dataset
 
 MAX_ERRORS_STORED = 200
+TABLES_WITH_UPDATED_AT = {"visitor_stats", "spending_stats"}
 
 
 class ImportRejected(Exception):
@@ -150,7 +151,7 @@ def write_records(conn: sqlite3.Connection, scope: Scope, dataset: Dataset, pars
         existing = conn.execute(f"SELECT * FROM {dataset.table} WHERE evidence_id = ?", (eid,)).fetchone()
         if existing is None:
             values = {**record, "evidence_id": eid, "batch_id": batch_id, "created_at": now}
-            if dataset.table == "visitor_stats":
+            if dataset.table in TABLES_WITH_UPDATED_AT:
                 values["updated_at"] = now
             cols = ", ".join(values)
             conn.execute(f"INSERT INTO {dataset.table} ({cols}) VALUES ({', '.join('?' * len(values))})",
@@ -170,7 +171,7 @@ def write_records(conn: sqlite3.Connection, scope: Scope, dataset: Dataset, pars
                 (eid, f, None if existing[f] is None else str(existing[f]), str(new), batch_id, now),
             )
         sets = {**changed, "batch_id": batch_id}
-        if dataset.table == "visitor_stats":
+        if dataset.table in TABLES_WITH_UPDATED_AT:
             sets["updated_at"] = now
         conn.execute(f"UPDATE {dataset.table} SET {', '.join(f'{k} = ?' for k in sets)} WHERE evidence_id = ?",
                      [*sets.values(), eid])

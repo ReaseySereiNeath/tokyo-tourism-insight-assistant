@@ -18,8 +18,9 @@ from app.ai.schemas import ReportOutput
 from app.config import Settings
 from app.db import utcnow
 
-RECORD_TABLES = {"VS": "visitor_stats", "CO": "competitor_offers", "FB": "feedback", "NW": "news"}
-RECORD_ID = re.compile(r"^(?:DEMO-)?(VS|CO|FB|NW)-[0-9A-F]{12}$")
+RECORD_TABLES = {"VS": "visitor_stats", "SP": "spending_stats", "CO": "competitor_offers", "FB": "feedback",
+                 "NW": "news"}
+RECORD_ID = re.compile(r"^(?:DEMO-)?(VS|SP|CO|FB|NW)-[0-9A-F]{12}$")
 
 
 def record_exists(conn: sqlite3.Connection, evidence_id: str) -> bool:

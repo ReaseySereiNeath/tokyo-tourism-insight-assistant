@@ -259,6 +259,7 @@ def theme_summary(conn: sqlite3.Connection, method: str | None = None, examples_
 
 DATASET_DATES = {
     "visitor_stats": ("reporting_month", "reporting period"),
+    "spending_stats": ("reporting_period", "reporting period"),
     "competitor_offers": ("date_observed", "observation date"),
     "feedback": ("collection_date", "collection date"),
     "news": ("publication_date", "publication date"),
