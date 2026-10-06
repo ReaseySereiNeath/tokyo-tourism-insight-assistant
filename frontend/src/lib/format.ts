@@ -52,6 +52,28 @@ export function fmtDateTime(iso: string | null | undefined): string {
   return new Date(iso).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
 }
 
+/** "1 tour", "3 tours". */
+export function plural(n: number, one: string, many = `${one}s`): string {
+  return `${fmtNumber(n)} ${n === 1 ? one : many}`;
+}
+
 export function humanize(s: string): string {
   return s.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+}
+
+export function fmtMonthLong(month: string | null | undefined): string {
+  if (!month) return MISSING;
+  const [y, m] = month.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+export function fmtDate(iso: string | null | undefined): string {
+  if (!iso) return "Never";
+  return new Date(iso).toLocaleDateString("en-US", { dateStyle: "medium" });
+}
+
+/** A YYYY-MM month or a YYYY-MM-DD day, written out. */
+export function fmtPeriod(value: string | null | undefined): string {
+  if (!value) return MISSING;
+  return value.length === 7 ? fmtMonth(value) : new Date(`${value}T00:00:00Z`).toLocaleDateString("en-US", { dateStyle: "medium", timeZone: "UTC" });
 }

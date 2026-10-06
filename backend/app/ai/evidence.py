@@ -122,8 +122,9 @@ def build_evidence_pack(conn: sqlite3.Connection, scope: str, settings: Settings
     elif themes["classified"] == 0:
         gaps.append("Feedback has not been classified into themes yet.")
     else:
-        method_note = ("labels from a language model" if themes["method"] == "llm"
-                       else "labels from simple keyword rules (crude; may miss or mislabel)")
+        method_note = {"llm": "labels from a language model",
+                       "local": "labels from a small classifier trained on the owner's own labelled feedback",
+                       }.get(themes["method"], "labels from simple keyword rules (crude; may miss or mislabel)")
         if themes["total_feedback"] < 30:
             gaps.append(f"Only {themes['total_feedback']} feedback items: theme counts are small samples.")
         for t in themes["themes"]:
@@ -131,7 +132,7 @@ def build_evidence_pack(conn: sqlite3.Connection, scope: str, settings: Settings
                 "SELECT evidence_id FROM feedback_themes WHERE method = ? AND theme = ? LIMIT 30",
                 (themes["method"], t["theme"]))]
             sentiment = (f" Sentiment: {t['negative'] or 0} negative, {t['positive'] or 0} positive, "
-                         f"{t['mixed'] or 0} mixed." if themes["method"] == "llm" else "")
+                         f"{t['mixed'] or 0} mixed." if themes["method"] in ("llm", "local") else "")
             b.fact("feedback_theme",
                    f"Feedback theme '{t['theme']}': {t['count']} of {themes['classified']} classified items "
                    f"({t['share_pct']}%), {method_note}.{sentiment}", ids)

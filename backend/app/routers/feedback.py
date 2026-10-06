@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/feedback", tags=["feedback"])
 
 
 @router.get("/themes")
-def themes(method: str | None = Query(None, pattern="^(keyword|llm)$"), conn: sqlite3.Connection = Depends(db)):
+def themes(method: str | None = Query(None, pattern="^(keyword|llm|local)$"), conn: sqlite3.Connection = Depends(db)):
     summary = stats.theme_summary(conn, method=method, examples_per_theme=3)
     summary["taxonomy"] = THEMES
     summary["available_methods"] = [r[0] for r in conn.execute("SELECT DISTINCT method FROM feedback_themes")]
@@ -22,7 +22,7 @@ def themes(method: str | None = Query(None, pattern="^(keyword|llm)$"), conn: sq
 
 
 @router.get("")
-def list_feedback(theme: str | None = None, method: str = Query("keyword", pattern="^(keyword|llm)$"),
+def list_feedback(theme: str | None = None, method: str = Query("keyword", pattern="^(keyword|llm|local)$"),
                   q: str | None = None, limit: int = Query(100, le=500), conn: sqlite3.Connection = Depends(db)):
     sql = ["SELECT f.* FROM feedback f WHERE 1=1"]
     params: list = []
@@ -38,10 +38,19 @@ def list_feedback(theme: str | None = None, method: str = Query("keyword", patte
 
 
 @router.post("/classify")
-def classify(method: str = Query("keyword", pattern="^(keyword|llm)$"), scope: Scope = Depends(scope_param),
+def classify(method: str = Query("keyword", pattern="^(keyword|llm|local)$"), scope: Scope = Depends(scope_param),
              conn: sqlite3.Connection = Depends(db)):
     if method == "keyword":
         return classify_with_keywords(conn)
+    if method == "local":
+        try:
+            from app.local_model.predict import ModelMissing, classify_feedback_local
+        except ImportError as exc:
+            raise HTTPException(400, "The local model needs extra packages: pip install -r requirements-ml.txt") from exc
+        try:
+            return classify_feedback_local(conn)
+        except ModelMissing as exc:
+            raise HTTPException(400, str(exc)) from exc
     settings = get_settings()
     try:
         provider = get_provider(scope, "anthropic", settings)

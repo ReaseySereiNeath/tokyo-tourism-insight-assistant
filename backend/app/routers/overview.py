@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends
 from app.analysis import stats
 from app.config import get_settings
 from app.db import Scope, rows
+from app.local_model import model_dir
 from app.routers.deps import db, scope_param
 
 router = APIRouter(prefix="/api", tags=["overview"])
@@ -13,7 +14,8 @@ router = APIRouter(prefix="/api", tags=["overview"])
 @router.get("/health")
 def health():
     s = get_settings()
-    return {"status": "ok", "ai_configured": s.ai_configured, "model": s.anthropic_model if s.ai_configured else None}
+    return {"status": "ok", "ai_configured": s.ai_configured, "model": s.anthropic_model if s.ai_configured else None,
+            "local_model_trained": (model_dir() / "meta.json").exists()}
 
 
 @router.get("/overview")
