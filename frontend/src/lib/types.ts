@@ -178,22 +178,28 @@ export interface Fact {
 export interface EvidencePack {
   generated_at: string;
   scope: string;
-  business_profile: Record<string, string>;
+  founder_profile: Record<string, string>;
   facts: Fact[];
   documents: ({ evidence_id: string; type: string } & Record<string, unknown>)[];
   data_gaps: string[];
   size: { chars: number; documents_dropped: number; limit_chars: number };
 }
 
-export interface Insight {
-  finding: string;
+export type BusinessType = "tours_activities" | "food_drink" | "accommodation" | "retail_shopping"
+  | "transport_mobility" | "wellness_beauty" | "events_entertainment" | "services_other";
+
+export interface Opportunity {
+  business_idea: string;
+  business_type: BusinessType;
+  demand_evidence: string;
   evidence_ids: string[];
-  interpretation: string;
-  customer_segment: string | null;
-  segment_support: string | null;
-  proposed_experiment: string;
+  why_it_could_work: string;
+  target_visitors: string | null;
+  target_support: string | null;
+  first_test: string;
   success_measure: string;
-  limitations: string[];
+  checks_before_starting: string[];
+  risks: string[];
   alternative_explanations: string[];
   confidence: "low" | "medium" | "high";
 }
@@ -202,8 +208,8 @@ export interface ReportResult {
   summary: string;
   data_sufficiency: "sufficient" | "limited" | "insufficient";
   sufficiency_notes: string[];
-  insights: Insight[];
-  customer_needs_to_investigate: string[];
+  opportunities: Opportunity[];
+  questions_to_research: string[];
 }
 
 export interface Report {
@@ -218,7 +224,7 @@ export interface Report {
   validation: {
     schema_valid?: boolean;
     schema_errors?: { location: string; message: string }[];
-    removed_insights?: { index: number; finding: string; invalid_ids: { id: string; reason: string }[] }[];
+    removed_opportunities?: { index: number; idea: string; invalid_ids: { id: string; reason: string }[] }[];
     checked_ids?: number;
     provider_error?: string;
   };
@@ -235,15 +241,15 @@ export interface ReportListItem {
   error: string | null;
 }
 
-export interface BusinessProfile {
-  business_name: string;
-  offerings: string;
-  operating_area: string;
-  capacity: string;
-  price_range: string;
-  monthly_budget: string;
+export interface FounderProfile {
+  budget: string;
+  time_available: string;
+  location: string;
+  languages: string;
+  skills: string;
+  interests: string;
+  limits: string;
   goals: string;
-  notes: string;
 }
 
 export interface EvidenceDetail {
@@ -259,10 +265,83 @@ export interface EvidenceDetail {
 export interface Overview {
   coverage: Coverage[];
   key_trends: KeyTrend[];
+  tokyo_market: Market;
+  spending_highlights: { period: string | null; comparison_period: string | null; growing: SpendingItem[]; largest: SpendingItem[] };
   competitors: CompetitorSummary;
   top_themes: Theme[];
   theme_method: string;
   feedback_classified: number;
   feedback_total: number;
   latest_report: { id: number; created_at: string; provider: string; is_example: number; status: string } | null;
+}
+
+// ---- Visitor spending (Japan Tourism Agency survey) ----
+
+export interface MarketFigure {
+  value: number | null;
+  evidence_id: string | null;
+  value_last_year: number | null;
+  evidence_id_last_year: string | null;
+  respondents: number | null;
+  value_status: string | null;
+  change: Change;
+}
+
+export interface Market {
+  geography: string;
+  period: string | null;
+  comparison_period?: string;
+  total?: MarketFigure;
+  categories: (MarketFigure & { category: string; label: string })[];
+  visitors: MarketFigure | null;
+  spend_per_person?: MarketFigure;
+  visit_rate?: MarketFigure;
+}
+
+export interface SpendingItem {
+  category: string;
+  item: string;
+  label: string;
+  category_label: string;
+  spend_per_person: number;
+  evidence_id: string;
+  spend_per_person_last_year: number | null;
+  spend_change: Change | { value: null; status: "not_comparable" };
+  purchase_rate: number | null;
+  purchase_rate_last_year: number | null;
+  purchase_rate_evidence_id: string | null;
+  spend_per_purchaser: number | null;
+  buyers: number | null;
+  small_sample: boolean;
+  value_status: string;
+  estimated_market: number | null;
+}
+
+export interface SpendingItems {
+  period: string | null;
+  comparison_period?: string;
+  segment: string;
+  comparable?: boolean;
+  total_spend_per_person?: number | null;
+  arrivals?: { value: number; evidence_ids: string[]; non_final: number } | null;
+  rows: SpendingItem[];
+}
+
+export interface SegmentRow {
+  segment: string;
+  buyers: number | null;
+  small_sample: boolean;
+  purchase_rate?: number;
+  purchase_rate_evidence_id?: string;
+  spend_per_purchaser?: number;
+  spend_per_person?: number;
+  arrivals: { value: number | null; value_last_year: number | null; change: Change } | null;
+}
+
+export interface UpdateStatus {
+  last_checks: Record<string, { checked_at: string; status: "ok" | "failed"; message: string | null;
+    files: { label: string; result: string; period: string | null; rows_inserted?: number; message?: string }[] }>;
+  latest: { visitor_month: string | null; spending_period: string | null };
+  running: boolean;
+  schedule: Record<string, string>;
 }

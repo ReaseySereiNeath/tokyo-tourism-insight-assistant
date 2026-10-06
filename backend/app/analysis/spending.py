@@ -212,7 +212,8 @@ def segments_for_item(conn: sqlite3.Connection, category: str, item: str = "", p
         s["small_sample"] = s.get("buyers") is not None and s["buyers"] < SMALL_SAMPLE
         s["arrivals"] = None if s["segment"] in NOT_COMPARABLE_SEGMENTS else growth.get(JNTO_ORIGIN.get(s["segment"], s["segment"]))
         out.append(s)
-    out.sort(key=lambda s: (s["segment"] != "All nationalities", -(s.get("purchase_rate") or 0)))
+    # All visitors first, then groups with enough buyers to trust, then small samples; each by how often they buy.
+    out.sort(key=lambda s: (s["segment"] != "All nationalities", s["small_sample"], -(s.get("purchase_rate") or 0)))
     return {"period": period, "category": category, "item": item, "label": label(category, item), "rows": out}
 
 

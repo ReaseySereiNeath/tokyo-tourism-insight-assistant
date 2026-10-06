@@ -1,6 +1,6 @@
-// The app is one route, walked in order: add data, read each kind of evidence,
-// then turn it into ideas to test. The navigation and the home page's
-// "next stop" both read this list.
+// The app is one route, walked in order: get the data, read who visits and what
+// they spend on, turn it into business ideas, then check the competition.
+// The navigation and the home page's "next stop" both read this list.
 import type { Overview } from "./types";
 
 export interface Station {
@@ -17,29 +17,29 @@ const records = (o: Overview, dataset: string) => o.coverage.find((c) => c.datas
 
 export const STATIONS: Station[] = [
   {
-    n: 1, href: "/sources", label: "Add your data", hint: "Files, templates and news feeds",
-    todo: "Import your first file. Start with the JNTO visitor workbook or one of the templates.",
+    n: 1, href: "/sources", label: "Add your data", hint: "Official data updates itself",
+    todo: "Check for the latest official statistics. They download by themselves once you have checked.",
     done: (o) => o.coverage.some((c) => c.records > 0),
   },
   {
     n: 2, href: "/trends", label: "Visitors", hint: "Who is travelling to Japan",
-    todo: "Import visitor statistics to see which countries are growing.",
+    todo: "Get the JNTO visitor numbers to see which countries are growing.",
     done: (o) => records(o, "visitor_stats") > 0,
   },
   {
-    n: 3, href: "/competitors", label: "Competitors", hint: "What other tours offer and charge",
-    todo: "Add a few competitor tours so you can compare prices and lengths.",
-    done: (o) => records(o, "competitor_offers") > 0,
+    n: 3, href: "/spending", label: "Spending", hint: "What visitors spend money on",
+    todo: "Get the Japan Tourism Agency spending survey to see where visitors' money goes.",
+    done: (o) => records(o, "spending_stats") > 0,
   },
   {
-    n: 4, href: "/needs", label: "Guest feedback", hint: "What your guests talk about",
-    todo: "Add guest reviews or survey answers to see what people ask for.",
-    done: (o) => records(o, "feedback") > 0,
-  },
-  {
-    n: 5, href: "/insights", label: "Ideas to test", hint: "Small experiments, with the evidence",
-    todo: "Turn your data into a short list of experiments to try.",
+    n: 4, href: "/insights", label: "Business ideas", hint: "Opportunities, with the evidence",
+    todo: "Turn the data into a ranked list of business ideas that fit you.",
     done: (o) => o.latest_report !== null,
+  },
+  {
+    n: 5, href: "/competitors", label: "Competitors", hint: "Check the competition for an idea",
+    todo: "Record a few existing businesses similar to your favourite idea, with their prices.",
+    done: (o) => records(o, "competitor_offers") > 0,
   },
 ];
 

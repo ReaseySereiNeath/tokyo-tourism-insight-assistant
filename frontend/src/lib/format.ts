@@ -72,8 +72,28 @@ export function fmtDate(iso: string | null | undefined): string {
   return new Date(iso).toLocaleDateString("en-US", { dateStyle: "medium" });
 }
 
-/** A YYYY-MM month or a YYYY-MM-DD day, written out. */
+/** A YYYY-MM month, a YYYY-Qn quarter or a YYYY-MM-DD day, written out. */
 export function fmtPeriod(value: string | null | undefined): string {
   if (!value) return MISSING;
+  if (/^\d{4}-Q[1-4]$/.test(value)) return fmtQuarter(value, true);
   return value.length === 7 ? fmtMonth(value) : new Date(`${value}T00:00:00Z`).toLocaleDateString("en-US", { dateStyle: "medium", timeZone: "UTC" });
+}
+
+/** ¥942.7 billion, ¥23.2 million, ¥2,227. */
+export function fmtYen(n: number | null | undefined): string {
+  if (n === null || n === undefined) return MISSING;
+  if (Math.abs(n) >= 1e9) return `¥${(n / 1e9).toLocaleString("en-US", { maximumFractionDigits: 1 })} billion`;
+  if (Math.abs(n) >= 1e6) return `¥${(n / 1e6).toLocaleString("en-US", { maximumFractionDigits: 1 })} million`;
+  return `¥${fmtNumber(n)}`;
+}
+
+const QUARTER_MONTHS = ["January–March", "April–June", "July–September", "October–December"];
+const QUARTER_SHORT = ["Jan–Mar", "Apr–Jun", "Jul–Sep", "Oct–Dec"];
+
+/** "2026-Q2" -> "April–June 2026" (or "Apr–Jun 2026" when short); "2026" -> "2026". */
+export function fmtQuarter(period: string | null | undefined, short = false): string {
+  if (!period) return MISSING;
+  const m = period.match(/^(\d{4})-Q([1-4])$/);
+  if (!m) return period;
+  return `${(short ? QUARTER_SHORT : QUARTER_MONTHS)[Number(m[2]) - 1]} ${m[1]}`;
 }

@@ -4,14 +4,15 @@ import Link from "next/link";
 import { useScope } from "@/components/providers";
 import { ButtonLink, DateLegend, ErrorState, Loading, MoreDetail, StationMark } from "@/components/ui";
 import { api } from "@/lib/api";
-import { fmtDate, fmtMonthLong, fmtPeriod, fmtNumber, humanize, plural } from "@/lib/format";
+import { fmtChange, fmtDate, fmtDateTime, fmtMonthLong, fmtNumber, fmtPeriod, fmtQuarter, fmtYen, humanize } from "@/lib/format";
 import { nextStation, STATIONS, type Station } from "@/lib/route";
-import type { ComparisonRow, KeyTrend, Overview } from "@/lib/types";
+import type { Change, ComparisonRow, KeyTrend, Market, Overview, SpendingItem } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
 
 const DATASET_LABELS: Record<string, string> = {
-  visitor_stats: "Visitor statistics",
-  competitor_offers: "Competitor tours",
+  visitor_stats: "Visitor numbers",
+  spending_stats: "Visitor spending",
+  competitor_offers: "Competitors",
   feedback: "Guest feedback",
   news: "News",
 };
@@ -30,12 +31,12 @@ export default function HomePage() {
 
   return (
     <div className="space-y-14">
-      {trend ? <Headline t={trend} /> : (
+      {data.tokyo_market.period ? <TokyoHeadline m={data.tokyo_market} /> : trend ? <Headline t={trend} /> : (
         <section>
-          <h1 className="text-[2.5rem] font-black leading-tight text-ink">Start by adding your data</h1>
+          <h1 className="text-[2.5rem] font-black leading-tight text-ink">Find a tourism business worth starting</h1>
           <p className="mt-3 max-w-xl text-base text-ink-2">
-            This app compares official visitor numbers, competitor tours and your guests&apos; feedback, then suggests small
-            experiments for your business. It needs at least one file to begin.
+            This app reads Japan&apos;s official tourism statistics (who visits, and what they spend money on) and suggests
+            business ideas that fit you, each with the numbers behind it. Start by getting the latest data.
           </p>
           {empty && scope === "real" && (
             <p className="mt-3 text-sm text-ink-2">
@@ -55,10 +56,10 @@ export default function HomePage() {
             {trend && <Movers t={trend} />}
           </StopSummary>
           <StopSummary station={STATIONS[2]} done={STATIONS[2].done(data)}>
-            <CompetitorSummaryText o={data} />
+            <SpendingSummary o={data} />
           </StopSummary>
           <StopSummary station={STATIONS[3]} done={STATIONS[3].done(data)}>
-            <FeedbackSummaryText o={data} />
+            <IdeasSummary o={data} />
           </StopSummary>
         </div>
       </section>
@@ -199,41 +200,82 @@ function MoverList({ title, rows }: { title: string; rows: ComparisonRow[] }) {
   );
 }
 
-function CompetitorSummaryText({ o }: { o: Overview }) {
-  const c = o.competitors;
-  const jpy = c.by_currency.find((x) => x.currency === "JPY") ?? c.by_currency[0];
+function TokyoHeadline({ m }: { m: Market }) {
+  const change = m.total?.change.status === "ok" ? m.total.change.value : null;
   return (
-    <div className="space-y-3 text-ink">
-      <p>You are tracking <strong>{plural(c.offers, "tour")}</strong> from {plural(c.businesses, "business", "businesses")}.</p>
-      {jpy && (
-        <p>
-          A typical price is <strong className="num">{jpy.currency} {fmtNumber(jpy.median)}</strong>.
-          <span className="text-ink-2"> They range from {fmtNumber(jpy.min)} to {fmtNumber(jpy.max)}.</span>
+    <section aria-labelledby="headline">
+      <h1 id="headline" className="font-display text-ink">
+        <span className="num block text-[clamp(3rem,9vw,6.5rem)] font-black leading-[0.95] tracking-tight">{fmtYen(m.total?.value)}</span>
+        <span className="mt-3 block text-2xl font-bold leading-snug sm:text-3xl">
+          spent by international visitors in Tokyo in {fmtQuarter(m.period)}.
+        </span>
+      </h1>
+      {change !== null && (
+        <p className={`num mt-4 text-xl font-bold ${change < 0 ? "text-down" : "text-route"}`}>
+          <span aria-hidden>{change < 0 ? "▼ " : "▲ "}</span>
+          {Math.abs(change).toFixed(1)}% {change < 0 ? "less" : "more"} than {fmtQuarter(m.comparison_period)}
         </p>
       )}
-      {c.missing_price > 0 && <p className="text-xs text-ink-3">{plural(c.missing_price, "tour")} {c.missing_price === 1 ? "doesn't" : "don't"} list a price.</p>}
+      <p className="mt-3 max-w-xl text-sm text-ink-2">
+        Source: Japan Tourism Agency visitor spending survey.
+        {m.total?.value_status !== "final" && " Recent quarters are early figures and may be revised."}
+      </p>
+    </section>
+  );
+}
+
+function SpendingSummary({ o }: { o: Overview }) {
+  const h = o.spending_highlights;
+  const tokyo = o.tokyo_market;
+  return (
+    <div className="space-y-5">
+      {h.growing.length > 0 && (
+        <div>
+          <div className="mb-1.5 text-ink-2">Growing fastest, per visitor</div>
+          <ItemList rows={h.growing.slice(0, 4)} />
+        </div>
+      )}
+      {tokyo.period && tokyo.categories.length > 0 && (
+        <div>
+          <div className="mb-1.5 text-ink-2">Biggest in Tokyo</div>
+          <ul className="num divide-y divide-line border-y border-line">
+            {tokyo.categories.slice(0, 3).map((c) => (
+              <li key={c.category} className="flex items-baseline justify-between gap-3 py-1.5">
+                <span className="text-ink">{c.label}</span>
+                <span className="text-ink-2">{fmtYen(c.value)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <p className="text-xs text-ink-3">Compared with {fmtQuarter(h.comparison_period)}.</p>
     </div>
   );
 }
 
-function FeedbackSummaryText({ o }: { o: Overview }) {
-  if (o.top_themes.length === 0) {
-    return <p className="text-ink-2">{plural(o.feedback_total, "review")} imported, but none are sorted into topics yet. Open Guest feedback to sort them.</p>;
-  }
+function ItemList({ rows }: { rows: SpendingItem[] }) {
   return (
-    <div>
-      <div className="mb-1.5 text-ink-2">Most talked about</div>
-      <ul className="num divide-y divide-line border-y border-line">
-        {o.top_themes.slice(0, 4).map((t) => (
-          <li key={t.theme} className="flex items-baseline justify-between gap-3 py-1.5">
-            <span className="text-ink">{humanize(t.theme)}</span>
-            <span className="text-ink-2">{t.count} of {o.feedback_classified}</span>
-          </li>
-        ))}
-      </ul>
-      <p className="mt-2 text-xs text-ink-3">
-        Topics found by {{ llm: "AI", local: "your trained model" }[o.theme_method] ?? "simple keyword matching"}.
-      </p>
+    <ul className="num divide-y divide-line border-y border-line">
+      {rows.map((r) => (
+        <li key={r.category + r.item} className="flex items-baseline justify-between gap-3 py-1.5">
+          <span className="text-ink">{r.label}</span>
+          <span className={`font-bold ${(r.spend_change.value ?? 0) < 0 ? "text-down" : "text-route"}`}>
+            {fmtChange(r.spend_change as Change)}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function IdeasSummary({ o }: { o: Overview }) {
+  const r = o.latest_report;
+  if (!r) return null;
+  return (
+    <div className="space-y-2 text-ink">
+      <p>Your latest ideas are from <strong>{fmtDateTime(r.created_at)}</strong>.</p>
+      {r.is_example ? <p className="text-ink-2">That&apos;s a sample report built from made-up data.</p>
+        : <p className="text-ink-2">Find new ideas whenever new data arrives.</p>}
     </div>
   );
 }

@@ -21,7 +21,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <aside className="border-b border-line bg-raised md:sticky md:top-0 md:h-screen md:w-72 md:shrink-0 md:overflow-y-auto md:border-b-0 md:border-r">
         <div className="flex items-center justify-between gap-3 px-4 pt-4 md:block md:px-6 md:pt-7">
           <Link href="/" className={`block rounded-md ${pathname === "/" ? "" : "hover:opacity-80"}`}>
-            <span className="font-display block text-lg font-black leading-tight text-ink">Tokyo Tour Insights</span>
+            <span className="font-display block text-lg font-black leading-tight text-ink">Tokyo Tourism Insights</span>
             <span className="block text-xs text-ink-3">{pathname === "/" ? "You are on the home page" : "Back to home"}</span>
           </Link>
         </div>
@@ -59,11 +59,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="hidden space-y-6 border-t border-line px-6 py-6 md:block">
-          <Link href="/profile" aria-current={pathname.startsWith("/profile") ? "page" : undefined}
-            className={`block text-sm ${pathname.startsWith("/profile") ? "font-bold text-ink" : "text-ink-2 hover:text-ink"}`}>
-            Your business
-            <span className="block text-xs font-normal text-ink-3">Capacity, prices and goals the ideas must fit</span>
-          </Link>
+          <SideLink href="/profile" pathname={pathname} label="About you" hint="Budget, skills and goals the ideas must fit" />
+          <SideLink href="/needs" pathname={pathname} label="Guest feedback" hint="For later, once you have customers" />
           <ScopeSwitch scope={scope} setScope={setScope} />
         </div>
       </aside>
@@ -79,11 +76,25 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8 lg:px-12 lg:py-12">{children}</main>
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-4 py-4 md:hidden">
-          <Link href="/profile" className="text-sm text-ink-2 underline">Your business</Link>
+          <span className="flex gap-4">
+            <Link href="/profile" className="text-sm text-ink-2 underline">About you</Link>
+            <Link href="/needs" className="text-sm text-ink-2 underline">Guest feedback</Link>
+          </span>
           <ScopeSwitch scope={scope} setScope={setScope} />
         </div>
       </div>
     </div>
+  );
+}
+
+function SideLink({ href, pathname, label, hint }: { href: string; pathname: string; label: string; hint: string }) {
+  const current = pathname.startsWith(href);
+  return (
+    <Link href={href} aria-current={current ? "page" : undefined}
+      className={`block text-sm ${current ? "font-bold text-ink" : "text-ink-2 hover:text-ink"}`}>
+      {label}
+      <span className="block text-xs font-normal text-ink-3">{hint}</span>
+    </Link>
   );
 }
 

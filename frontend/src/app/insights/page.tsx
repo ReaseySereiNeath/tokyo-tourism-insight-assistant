@@ -6,7 +6,7 @@ import { useScope } from "@/components/providers";
 import { Button, Callout, Card, EmptyState, ErrorState, EvidenceLink, Loading, MoreDetail, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
 import { fmtDateTime } from "@/lib/format";
-import type { BusinessProfile, EvidencePack, Fact, Insight, Report, ReportListItem } from "@/lib/types";
+import type { BusinessType, EvidencePack, Fact, FounderProfile, Opportunity, Report, ReportListItem } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
 
 const STATUS_WORDS: Record<string, string> = { success: "Complete", partial: "Partly complete", failed: "Failed" };
@@ -16,8 +16,13 @@ const SUFFICIENCY_WORDS = {
   insufficient: "No. Add more data before acting on anything here.",
 };
 const CONFIDENCE_WORDS = { low: "Not very sure", medium: "Fairly sure", high: "Quite sure" };
+const TYPE_WORDS: Record<BusinessType, string> = {
+  tours_activities: "Tours and activities", food_drink: "Food and drink", accommodation: "Accommodation",
+  retail_shopping: "Shop or retail", transport_mobility: "Transport", wellness_beauty: "Wellness and beauty",
+  events_entertainment: "Events and entertainment", services_other: "Services",
+};
 
-export default function IdeasPage() {
+export default function BusinessIdeasPage() {
   const { scope } = useScope();
   return <IdeasContent key={scope} />;
 }
@@ -25,7 +30,7 @@ export default function IdeasPage() {
 function IdeasContent() {
   const { scope } = useScope();
   const health = useApi(() => api.get<{ ai_configured: boolean; model: string | null }>("/api/health", null), []);
-  const profile = useApi(() => api.get<BusinessProfile>("/api/profile", scope), [scope]);
+  const profile = useApi(() => api.get<FounderProfile>("/api/profile", scope), [scope]);
   const list = useApi(() => api.get<ReportListItem[]>("/api/reports", scope), [scope]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [view, setView] = useState<"report" | "preview">("report");
@@ -56,8 +61,8 @@ function IdeasContent() {
 
   return (
     <>
-      <PageHeader title="Ideas to test"
-        description="Small experiments for your business, each tied to the numbers behind it. The app calculates every number itself; the AI only explains them and suggests what to try."
+      <PageHeader title="Business ideas"
+        description="Tourism businesses worth considering, ranked, each tied to the numbers behind it. The app calculates every number itself; the AI only explains them and matches them to you."
         actions={<>
           <Button onClick={() => setView("preview")}>See what the AI reads</Button>
           {scope === "demo" && (
@@ -67,7 +72,7 @@ function IdeasContent() {
           )}
           <Button variant={scope === "real" ? "primary" : "secondary"} onClick={() => generate("anthropic")} disabled={!aiReady || !!generating}
             title={aiReady ? `Uses ${health.data?.model}. Each report costs a small amount.` : "Add ANTHROPIC_API_KEY to backend/.env to turn on AI"}>
-            {generating === "anthropic" ? "Writing ideas… (about a minute)" : "Create ideas with AI"}
+            {generating === "anthropic" ? "Finding ideas… (about a minute)" : "Find business ideas with AI"}
           </Button>
         </>} />
 
@@ -80,8 +85,8 @@ function IdeasContent() {
         )}
         {profileEmpty && (
           <Callout tone="caution">
-            The ideas can&apos;t be sized to your business yet because you haven&apos;t described it.{" "}
-            <Link href="/profile" className="font-bold underline">Describe your business</Link>
+            The ideas can&apos;t be matched to you yet: tell the app your budget, skills and goals first.{" "}
+            <Link href="/profile" className="font-bold underline">Fill in About you</Link>
           </Callout>
         )}
         {genError && <ErrorState message={genError} />}
@@ -95,8 +100,8 @@ function IdeasContent() {
             <>
               {(list.loading || report.loading) && !report.data && <Loading />}
               {list.data && list.data.length === 0 && (
-                <EmptyState title="No ideas yet">
-                  Check what the AI will read first, then create your first report. It works best once visitors, competitors and feedback all have data.
+                <EmptyState title="No business ideas yet">
+                  Fill in About you, check what the AI will read, then find your first ideas. It works best once visitor and spending data are both in.
                 </EmptyState>
               )}
               {report.error && <ErrorState message={report.error} onRetry={report.reload} />}
@@ -133,13 +138,13 @@ function IdeasContent() {
 function ReportView({ report }: { report: Report }) {
   const facts = new Map(report.evidence.facts.map((f) => [f.id, f]));
   const r = report.result;
-  const removed = report.validation.removed_insights ?? [];
+  const removed = report.validation.removed_opportunities ?? [];
   return (
     <div className="space-y-6">
       {report.is_example ? (
         <Callout tone="caution" title="This is a sample report, not real analysis">
           It was made by fixed rules from the made-up sample data. No AI was used, and nothing here describes the real market.
-          It shows how reports and their evidence links work.
+          It shows how business ideas and their evidence links look.
         </Callout>
       ) : (
         <p className="text-sm text-ink-2">
@@ -169,12 +174,12 @@ function ReportView({ report }: { report: Report }) {
             )}
           </Card>
 
-          {r.insights.length === 0 && <EmptyState title="No ideas were well enough supported by the data to show" />}
-          {r.insights.map((ins, i) => <IdeaCard key={i} n={i + 1} ins={ins} facts={facts} />)}
+          {r.opportunities.length === 0 && <EmptyState title="No idea was well enough supported by the data to show" />}
+          {r.opportunities.map((o, i) => <IdeaCard key={i} n={i + 1} o={o} facts={facts} />)}
 
-          {r.customer_needs_to_investigate.length > 0 && (
-            <Card title="Questions to ask your guests" subtitle="Things the data hints at but can't confirm.">
-              <ul className="list-disc space-y-1 pl-5 text-sm text-ink">{r.customer_needs_to_investigate.map((q, i) => <li key={i}>{q}</li>)}</ul>
+          {r.questions_to_research.length > 0 && (
+            <Card title="Questions to answer before choosing" subtitle="Things the data hints at but can't confirm. Talking to visitors or business owners can.">
+              <ul className="list-disc space-y-1 pl-5 text-sm text-ink">{r.questions_to_research.map((q, i) => <li key={i}>{q}</li>)}</ul>
             </Card>
           )}
         </>
@@ -189,7 +194,7 @@ function ReportView({ report }: { report: Report }) {
         </ul>
         {removed.length > 0 && (
           <ul className="mt-2 space-y-1 text-xs text-ink-3">
-            {removed.map((x) => <li key={x.index}>Removed: “{x.finding}” (cited {x.invalid_ids.map((b) => b.id).join(", ")})</li>)}
+            {removed.map((x) => <li key={x.index}>Removed: “{x.idea}” (cited {x.invalid_ids.map((b) => b.id).join(", ")})</li>)}
           </ul>
         )}
         <MoreDetail summary={`What the AI was given (${report.evidence.facts.length} facts, ${report.evidence.documents.length} texts)`} className="mt-4">
@@ -200,20 +205,27 @@ function ReportView({ report }: { report: Report }) {
   );
 }
 
-function IdeaCard({ n, ins, facts }: { n: number; ins: Insight; facts: Map<string, Fact> }) {
-  const factIds = ins.evidence_ids.filter((id) => facts.has(id));
-  const recordIds = ins.evidence_ids.filter((id) => !facts.has(id));
+function IdeaCard({ n, o, facts }: { n: number; o: Opportunity; facts: Map<string, Fact> }) {
+  const factIds = o.evidence_ids.filter((id) => facts.has(id));
+  const recordIds = o.evidence_ids.filter((id) => !facts.has(id));
   return (
-    <Card title={`Idea ${n}`} actions={<span className="text-sm text-ink-2">{CONFIDENCE_WORDS[ins.confidence]}</span>}>
+    <section className="rounded-xl border border-line bg-raised p-6">
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
+        <div>
+          <div className="text-sm text-ink-3">Idea {n}, {TYPE_WORDS[o.business_type].toLowerCase()}</div>
+          <h2 className="mt-0.5 text-2xl font-bold text-ink">{o.business_idea}</h2>
+        </div>
+        <span className="text-sm text-ink-2">{CONFIDENCE_WORDS[o.confidence]}</span>
+      </div>
       <div className="space-y-6 text-sm">
-        <Part label="What the data shows">
-          <p className="text-base text-ink">{ins.finding}</p>
+        <Part label="Why there is demand">
+          <p className="text-base text-ink">{o.demand_evidence}</p>
           {(factIds.length > 0 || recordIds.length > 0) && (
             <div className="mt-3 space-y-1.5">
               {factIds.map((id) => {
                 const fact = facts.get(id)!;
-                // Skip the sentence when the finding already quotes it; keep the link to the calculation.
-                const repeated = ins.finding.includes(fact.statement);
+                // Skip the sentence when the evidence text already quotes it; keep the link to the calculation.
+                const repeated = o.demand_evidence.includes(fact.statement);
                 return (
                   <p key={id} className="text-ink-2">
                     {!repeated && <>{fact.statement} </>}
@@ -230,26 +242,31 @@ function IdeaCard({ n, ins, facts }: { n: number; ins: Insight; facts: Map<strin
             </div>
           )}
         </Part>
-        <Part label="What it might mean">
-          <p className="text-ink-2">{ins.interpretation}</p>
-          {ins.customer_segment && (
-            <p className="mt-1 text-ink-2"><strong className="text-ink">Who:</strong> {ins.customer_segment}{ins.segment_support && ` (${ins.segment_support})`}</p>
+        <Part label="Why it could suit you">
+          <p className="text-ink-2">{o.why_it_could_work}</p>
+          {o.target_visitors && (
+            <p className="mt-1 text-ink-2"><strong className="text-ink">Aim at:</strong> {o.target_visitors}{o.target_support && ` (${o.target_support})`}</p>
           )}
         </Part>
         <div className="grid gap-5 rounded-lg bg-route-soft p-5 md:grid-cols-2">
-          <Part label="Try this"><p className="text-ink">{ins.proposed_experiment}</p></Part>
-          <Part label="You'll know it worked if"><p className="text-ink">{ins.success_measure}</p></Part>
+          <Part label="Try this first"><p className="text-ink">{o.first_test}</p></Part>
+          <Part label="Go further if"><p className="text-ink">{o.success_measure}</p></Part>
         </div>
-        {(ins.limitations.length > 0 || ins.alternative_explanations.length > 0) && (
+        {o.checks_before_starting.length > 0 && (
+          <Part label="Check before you start">
+            <ul className="list-disc space-y-1 pl-5 text-ink">{o.checks_before_starting.map((c, j) => <li key={j}>{c}</li>)}</ul>
+          </Part>
+        )}
+        {(o.risks.length > 0 || o.alternative_explanations.length > 0) && (
           <MoreDetail summary="Why this might be wrong">
             <ul className="list-disc space-y-1 pl-5 text-ink-2">
-              {ins.limitations.map((l, j) => <li key={`l${j}`}>{l}</li>)}
-              {ins.alternative_explanations.map((l, j) => <li key={`a${j}`}>{l}</li>)}
+              {o.risks.map((l, j) => <li key={`r${j}`}>{l}</li>)}
+              {o.alternative_explanations.map((l, j) => <li key={`a${j}`}>{l}</li>)}
             </ul>
           </MoreDetail>
         )}
       </div>
-    </Card>
+    </section>
   );
 }
 

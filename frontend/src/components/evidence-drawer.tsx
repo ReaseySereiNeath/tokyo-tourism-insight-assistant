@@ -14,6 +14,7 @@ interface Target {
 
 const DATE_LABELS: Record<string, string> = {
   reporting_month: "Month described",
+  reporting_period: "Period described",
   publication_date: "Publication date",
   collection_date: "Collection date",
   date_observed: "Date checked",
