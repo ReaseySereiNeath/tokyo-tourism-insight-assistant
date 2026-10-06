@@ -73,7 +73,7 @@ def test_demo_report_journey_with_evidence_links(client):
     client.post("/api/demo/reset")
     report = client.post("/api/reports?scope=demo").json()
     assert report["is_example"] is True and report["status"] == "success"
-    record_ids = [i for ins in report["result"]["insights"] for i in ins["evidence_ids"] if "-" in i]
+    record_ids = [i for o in report["result"]["opportunities"] for i in o["evidence_ids"] if "-" in i]
     assert record_ids
     for eid in record_ids:
         assert client.get(f"/api/evidence/{eid}?scope=demo").status_code == 200
@@ -91,10 +91,12 @@ def test_visitor_series_endpoint(client):
 
 
 def test_profile_roundtrip(client):
-    body = {"business_name": "My Tours", "offerings": "Food walk", "operating_area": "Shinjuku", "capacity": "10",
-            "price_range": "10000", "monthly_budget": "50000", "goals": "More weekday bookings", "notes": ""}
+    body = {"budget": "JPY 2 million", "time_available": "Full time", "location": "Tokyo", "languages": "English",
+            "skills": "Cooking", "interests": "Anything", "limits": "No lease", "goals": "Side income"}
     assert client.put("/api/profile?scope=real", json=body).status_code == 200
-    assert client.get("/api/profile?scope=real").json()["business_name"] == "My Tours"
+    assert client.get("/api/profile?scope=real").json() == body
+    # Fields from the old tour-operator profile are ignored rather than rejected.
+    assert client.put("/api/profile?scope=real", json={"business_name": "Old"}).status_code == 200
 
 
 def test_feed_requires_permission_confirmation(client):

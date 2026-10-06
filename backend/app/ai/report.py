@@ -3,7 +3,7 @@
 Validation happens in two layers:
 1. Schema: the response must match ReportOutput (types, required fields, limits).
 2. Citations: every cited ID must be in the evidence pack that was sent, and
-   every record ID must exist in the database. An insight with any invalid
+   every record ID must exist in the database. An opportunity with any invalid
    citation is removed and the removal is recorded, never silently kept.
 """
 import json
@@ -32,7 +32,7 @@ def record_exists(conn: sqlite3.Connection, evidence_id: str) -> bool:
 
 
 def validate_report(raw: dict, pack: dict, conn: sqlite3.Connection) -> tuple[dict | None, dict]:
-    validation = {"schema_valid": False, "schema_errors": [], "removed_insights": [], "checked_ids": 0}
+    validation = {"schema_valid": False, "schema_errors": [], "removed_opportunities": [], "checked_ids": 0}
     try:
         report = ReportOutput.model_validate(raw)
     except ValidationError as exc:
@@ -44,21 +44,21 @@ def validate_report(raw: dict, pack: dict, conn: sqlite3.Connection) -> tuple[di
     allowed = citable_ids(pack)
     fact_ids = {f["id"] for f in pack["facts"]}
     kept = []
-    for index, insight in enumerate(report.insights):
+    for index, opp in enumerate(report.opportunities):
         bad = []
-        for eid in insight.evidence_ids:
+        for eid in opp.evidence_ids:
             validation["checked_ids"] += 1
             if eid not in allowed:
                 bad.append({"id": eid, "reason": "not in the evidence pack sent to the model"})
             elif eid not in fact_ids and not record_exists(conn, eid):
                 bad.append({"id": eid, "reason": "no such record in the database"})
         if bad:
-            validation["removed_insights"].append({"index": index, "finding": insight.finding[:200], "invalid_ids": bad})
+            validation["removed_opportunities"].append({"index": index, "idea": opp.business_idea[:200], "invalid_ids": bad})
             continue
-        if insight.customer_segment and not insight.segment_support:
-            insight.limitations.append("A customer segment was named without stating supporting evidence.")
-        kept.append(insight)
-    report.insights = kept
+        if opp.target_visitors and not opp.target_support:
+            opp.risks.append("A visitor group was named without stating supporting evidence.")
+        kept.append(opp)
+    report.opportunities = kept
     return report.model_dump(), validation
 
 
@@ -87,9 +87,9 @@ def generate_report(conn: sqlite3.Connection, scope: str, provider: LLMProvider,
     if result is None:
         return save_report(conn, provider, served_model, "failed", pack, None, validation,
                            "The model's answer did not match the required structure, so it was discarded.")
-    if validation["removed_insights"] and not result["insights"]:
-        status, error = "failed", "Every insight cited evidence that does not exist, so all were discarded."
-    elif validation["removed_insights"]:
+    if validation["removed_opportunities"] and not result["opportunities"]:
+        status, error = "failed", "Every opportunity cited evidence that does not exist, so all were discarded."
+    elif validation["removed_opportunities"]:
         status, error = "partial", None
     else:
         status, error = "success", None
@@ -106,4 +106,26 @@ def load_report(conn: sqlite3.Connection, report_id: int) -> dict | None:
     r["result"] = json.loads(result_json) if result_json else None
     r["validation"] = json.loads(r.pop("validation_json"))
     r["is_example"] = bool(r["is_example"])
+    _upgrade_legacy(r)
     return r
+
+
+def _upgrade_legacy(r: dict) -> None:
+    """Reports saved before opportunities existed (tour-operator 'insights') are shown in the new shape."""
+    result, validation = r["result"], r["validation"]
+    if result and "insights" in result and "opportunities" not in result:
+        result["opportunities"] = [{
+            "business_idea": f"Idea {i + 1}", "business_type": "tours_activities",
+            "demand_evidence": ins["finding"], "evidence_ids": ins["evidence_ids"],
+            "why_it_could_work": ins["interpretation"],
+            "target_visitors": ins.get("customer_segment"), "target_support": ins.get("segment_support"),
+            "first_test": ins["proposed_experiment"], "success_measure": ins["success_measure"],
+            "checks_before_starting": [], "risks": ins["limitations"],
+            "alternative_explanations": ins["alternative_explanations"], "confidence": ins["confidence"],
+        } for i, ins in enumerate(result.pop("insights"))]
+        result["questions_to_research"] = result.pop("customer_needs_to_investigate", [])
+    if "removed_insights" in validation:
+        validation["removed_opportunities"] = [{"index": x["index"], "idea": x["finding"], "invalid_ids": x["invalid_ids"]}
+                                               for x in validation.pop("removed_insights")]
+    if "business_profile" in r.get("evidence", {}):
+        r["evidence"]["founder_profile"] = r["evidence"].pop("business_profile")

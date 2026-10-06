@@ -2,7 +2,7 @@ import sqlite3
 
 from fastapi import APIRouter, Depends
 
-from app.analysis import stats
+from app.analysis import spending, stats
 from app.config import get_settings
 from app.db import Scope, rows
 from app.local_model import model_dir
@@ -25,6 +25,8 @@ def overview(scope: Scope = Depends(scope_param), conn: sqlite3.Connection = Dep
         "scope": scope,
         "coverage": stats.coverage(conn),
         "key_trends": stats.key_trends(conn, top_n=3),
+        "tokyo_market": spending.market(conn, "Tokyo"),
+        "spending_highlights": spending.highlights(conn),
         "competitors": stats.competitor_summary(conn),
         "top_themes": themes["themes"][:5],
         "theme_method": themes["method"],

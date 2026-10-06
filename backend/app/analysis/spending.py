@@ -235,3 +235,30 @@ def arrival_growth_by_origin(conn: sqlite3.Connection, period: str) -> dict[str,
         out[origin] = {"value": now, "value_last_year": before, "change": pct_change(now, before),
                        "evidence_ids": o["ids"]}
     return out
+
+
+def segment_preferences(conn: sqlite3.Connection, period: str, segment: str, top: int = 3) -> list[dict]:
+    """Items a visitor group buys more often than visitors overall (both samples large enough)."""
+    data = rows(conn.execute(
+        """SELECT s.category, s.item, s.value AS rate, s.respondents AS buyers, s.evidence_id,
+                  a.value AS rate_all, a.evidence_id AS evidence_id_all
+           FROM spending_stats s JOIN spending_stats a
+             ON a.geography = 'Japan' AND a.reporting_period = s.reporting_period AND a.metric = 'purchase_rate'
+            AND a.segment = 'All nationalities' AND a.category = s.category AND a.item = s.item
+           WHERE s.geography = 'Japan' AND s.reporting_period = ? AND s.metric = 'purchase_rate' AND s.segment = ?
+             AND s.item != '' AND s.respondents >= ? AND a.value >= 1""",
+        (period, segment, SMALL_SAMPLE)))
+    for r in data:
+        r["ratio"] = r["rate"] / r["rate_all"]
+        r["label"] = label(r["category"], r["item"])
+    return sorted((r for r in data if r["ratio"] > 1.2), key=lambda r: -r["ratio"])[:top]
+
+
+def highlights(conn: sqlite3.Connection, top: int = 5) -> dict:
+    """Fastest-growing and largest spending items (enough buyers, at least ¥300 per visitor)."""
+    data = items(conn)
+    usable = [r for r in data["rows"] if r["item"] and not r["small_sample"] and r["buyers"]
+              and r["spend_per_person"] >= 300]
+    growing = sorted([r for r in usable if r["spend_change"]["status"] == "ok"], key=lambda r: -r["spend_change"]["value"])
+    return {"period": data["period"], "comparison_period": data.get("comparison_period"),
+            "growing": growing[:top], "largest": sorted(usable, key=lambda r: -r["spend_per_person"])[:top]}
