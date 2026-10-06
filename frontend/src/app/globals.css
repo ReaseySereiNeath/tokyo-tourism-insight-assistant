@@ -1,16 +1,27 @@
 @import "tailwindcss";
 
-/* Design tokens. Light is the default; dark mode follows the OS setting. */
+/*
+ * Design tokens. The app is drawn like a Tokyo rail line: cool station-white
+ * paper, sumi-navy ink, one line colour (green) that marks the route and
+ * progress, platform yellow for "careful: sample data", and signal red only
+ * for declines and errors. Light is the default; dark follows the OS.
+ */
 :root {
-  --surface: #fcfcfb;
-  --surface-raised: #ffffff;
-  --surface-sunken: #f3f2ef;
-  --border: #e3e1dc;
-  --text-primary: #1a1a19;
-  --text-secondary: #52514e;
-  --text-muted: #7a7974;
-  --accent: #2a78d6;
-  --grid: #e8e6e1;
+  --paper: #f3f5f3;
+  --surface: #ffffff;
+  --sunken: #e9edeb;
+  --border: #d5dbd8;
+  --ink: #16202a;
+  --ink-2: #44505d;
+  --ink-3: #66707b;
+  --route: #24753a;        /* line colour: links, primary actions, growth */
+  --route-soft: #e1f0e4;
+  --down: #b9381f;         /* declines and errors */
+  --down-soft: #fbe8e3;
+  --caution: #f2b705;      /* platform yellow: sample data, early estimates */
+  --caution-soft: #fff4d1;
+  --caution-ink: #4f3b00;
+  --grid: #e4e8e6;
 
   /* Categorical chart slots, validated for colour-vision deficiency (fixed order). */
   --series-1: #2a78d6;
@@ -26,15 +37,21 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --surface: #161615;
-    --surface-raised: #1f1f1e;
-    --surface-sunken: #121211;
-    --border: #34332f;
-    --text-primary: #f4f3ef;
-    --text-secondary: #c3c2b7;
-    --text-muted: #8f8e86;
-    --accent: #5598e7;
-    --grid: #2c2b28;
+    --paper: #0f151b;
+    --surface: #17202a;
+    --sunken: #0b1015;
+    --border: #2b3642;
+    --ink: #edf1f3;
+    --ink-2: #b7c0c9;
+    --ink-3: #8c96a1;
+    --route: #63c477;
+    --route-soft: #16301f;
+    --down: #f2836b;
+    --down-soft: #3a1a13;
+    --caution: #f2b705;
+    --caution-soft: #2f2504;
+    --caution-ink: #ffe9a8;
+    --grid: #26313c;
 
     --series-1: #3987e5;
     --series-2: #d95926;
@@ -48,24 +65,58 @@
 }
 
 @theme inline {
-  --color-surface: var(--surface);
-  --color-raised: var(--surface-raised);
-  --color-sunken: var(--surface-sunken);
+  --color-paper: var(--paper);
+  --color-raised: var(--surface);
+  --color-sunken: var(--sunken);
   --color-line: var(--border);
-  --color-ink: var(--text-primary);
-  --color-ink-2: var(--text-secondary);
-  --color-ink-3: var(--text-muted);
-  --color-accent: var(--accent);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--route);
+  --color-route: var(--route);
+  --color-route-soft: var(--route-soft);
+  --color-down: var(--down);
+  --color-down-soft: var(--down-soft);
+  --color-caution: var(--caution);
+  --color-caution-soft: var(--caution-soft);
+  --color-caution-ink: var(--caution-ink);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display-face);
+
+  /* A larger reading scale than Tailwind's default: nothing below 13px. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.55;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.6;
 }
 
 body {
-  background: var(--surface);
-  color: var(--text-primary);
+  background: var(--paper);
+  color: var(--ink);
 }
 
-/* Tabular figures keep numbers aligned in tables and stats. */
+h1, h2, h3 {
+  font-family: var(--font-display-face), var(--font-body), sans-serif;
+  text-wrap: balance;
+}
+
+/* Numbers use the display face, whose evenly spaced figures line up in columns. */
 .num {
+  font-family: var(--font-display-face), var(--font-body), sans-serif;
   font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--route);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

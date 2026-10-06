@@ -3,18 +3,26 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useScope } from "@/components/providers";
-import { Badge, Button, Card, EmptyState, ErrorState, EvidenceLink, Loading, PageHeader } from "@/components/ui";
+import { Button, Callout, Card, EmptyState, ErrorState, EvidenceLink, Loading, MoreDetail, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
-import { fmtDateTime, humanize } from "@/lib/format";
-import type { BusinessProfile, EvidencePack, Fact, Report, ReportListItem } from "@/lib/types";
+import { fmtDateTime } from "@/lib/format";
+import type { BusinessProfile, EvidencePack, Fact, Insight, Report, ReportListItem } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
 
-export default function InsightsPage() {
+const STATUS_WORDS: Record<string, string> = { success: "Complete", partial: "Partly complete", failed: "Failed" };
+const SUFFICIENCY_WORDS = {
+  sufficient: "Yes, there is enough data for these ideas.",
+  limited: "Only partly. Treat these ideas as starting points.",
+  insufficient: "No. Add more data before acting on anything here.",
+};
+const CONFIDENCE_WORDS = { low: "Not very sure", medium: "Fairly sure", high: "Quite sure" };
+
+export default function IdeasPage() {
   const { scope } = useScope();
-  return <InsightsContent key={scope} />;
+  return <IdeasContent key={scope} />;
 }
 
-function InsightsContent() {
+function IdeasContent() {
   const { scope } = useScope();
   const health = useApi(() => api.get<{ ai_configured: boolean; model: string | null }>("/api/health", null), []);
   const profile = useApi(() => api.get<BusinessProfile>("/api/profile", scope), [scope]);
@@ -48,44 +56,48 @@ function InsightsContent() {
 
   return (
     <>
-      <PageHeader title="Insights"
-        description="Findings and suggested experiments, each linked to the evidence it rests on. Numbers come from the app's own calculations, not from the model."
+      <PageHeader title="Ideas to test"
+        description="Small experiments for your business, each tied to the numbers behind it. The app calculates every number itself; the AI only explains them and suggests what to try."
         actions={<>
-          <Button onClick={() => setView("preview")}>Preview evidence</Button>
+          <Button onClick={() => setView("preview")}>See what the AI reads</Button>
           {scope === "demo" && (
             <Button variant="primary" onClick={() => generate("demo")} disabled={!!generating}>
-              {generating === "demo" ? "Generating…" : "Generate example report"}
+              {generating === "demo" ? "Creating…" : "Create a sample report"}
             </Button>
           )}
           <Button variant={scope === "real" ? "primary" : "secondary"} onClick={() => generate("anthropic")} disabled={!aiReady || !!generating}
-            title={aiReady ? `Calls ${health.data?.model} (costs money)` : "Set ANTHROPIC_API_KEY in backend/.env to enable"}>
-            {generating === "anthropic" ? "Analysing… (can take a minute)" : scope === "demo" ? "Live AI on demo data" : "Generate report with AI"}
+            title={aiReady ? `Uses ${health.data?.model}. Each report costs a small amount.` : "Add ANTHROPIC_API_KEY to backend/.env to turn on AI"}>
+            {generating === "anthropic" ? "Writing ideas… (about a minute)" : "Create ideas with AI"}
           </Button>
         </>} />
 
-      {health.data && !aiReady && (
-        <div className="mb-4 rounded-lg border border-line bg-sunken p-3 text-sm text-ink-2">
-          Live AI analysis is off: no API key is configured. You can still preview the exact evidence a report would use
-          {scope === "real" ? ", or switch to Demo to see an example report." : ", and generate a clearly labeled example report from demo data."}
-        </div>
-      )}
-      {profileEmpty && (
-        <div className="mb-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
-          Your business profile is empty, so experiments can&apos;t be tailored to your capacity and budget.{" "}
-          <Link href="/profile" className="underline">Fill it in</Link>.
-        </div>
-      )}
-      {genError && <div className="mb-4"><ErrorState message={genError} /></div>}
+      <div className="mb-6 space-y-3">
+        {health.data && !aiReady && (
+          <Callout>
+            AI is off because no API key is set, so new ideas can&apos;t be created yet. You can still see exactly what the AI would read
+            {scope === "real" ? ", or switch to sample data to see an example report." : ", and create a sample report."}
+          </Callout>
+        )}
+        {profileEmpty && (
+          <Callout tone="caution">
+            The ideas can&apos;t be sized to your business yet because you haven&apos;t described it.{" "}
+            <Link href="/profile" className="font-bold underline">Describe your business</Link>
+          </Callout>
+        )}
+        {genError && <ErrorState message={genError} />}
+      </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_16rem]">
+      <div className="grid gap-8 lg:grid-cols-[1fr_15rem]">
         <div className="min-w-0">
           {view === "preview" ? (
             <PreviewView loading={preview.loading} error={preview.error} pack={preview.data} onClose={() => setView("report")} />
           ) : (
             <>
-              {(list.loading || report.loading) && <Loading />}
+              {(list.loading || report.loading) && !report.data && <Loading />}
               {list.data && list.data.length === 0 && (
-                <EmptyState title="No reports yet">Preview the evidence first, then generate a report.</EmptyState>
+                <EmptyState title="No ideas yet">
+                  Check what the AI will read first, then create your first report. It works best once visitors, competitors and feedback all have data.
+                </EmptyState>
               )}
               {report.error && <ErrorState message={report.error} onRetry={report.reload} />}
               {report.data && <ReportView report={report.data} />}
@@ -93,24 +105,25 @@ function InsightsContent() {
           )}
         </div>
         <aside>
-          <Card title="Report history">
-            {list.data?.length ? (
-              <ul className="space-y-1">
-                {list.data.map((r) => (
+          <h2 className="mb-3 text-base font-bold text-ink">Earlier reports</h2>
+          {list.data?.length ? (
+            <ul className="space-y-1">
+              {list.data.map((r) => {
+                const active = r.id === currentId && view === "report";
+                return (
                   <li key={r.id}>
-                    <button onClick={() => { setSelectedId(r.id); setView("report"); }}
-                      className={`w-full rounded-md px-2 py-1.5 text-left text-xs ${r.id === currentId && view === "report" ? "bg-sunken" : "hover:bg-sunken"}`}>
-                      <div className="font-medium text-ink">#{r.id} · {fmtDateTime(r.created_at)}</div>
-                      <div className="mt-0.5 flex flex-wrap gap-1">
-                        {r.is_example ? <Badge tone="warn">Example</Badge> : <Badge tone="info">Live AI</Badge>}
-                        <Badge tone={r.status === "success" ? "good" : r.status === "partial" ? "warn" : "bad"}>{r.status}</Badge>
+                    <button onClick={() => { setSelectedId(r.id); setView("report"); }} aria-current={active ? "true" : undefined}
+                      className={`w-full rounded-lg border px-3 py-2 text-left text-sm ${active ? "border-route bg-raised" : "border-transparent hover:bg-raised"}`}>
+                      <div className="font-bold text-ink">{fmtDateTime(r.created_at)}</div>
+                      <div className="text-xs text-ink-3">
+                        {r.is_example ? "Sample" : "AI"}, {(STATUS_WORDS[r.status] ?? r.status).toLowerCase()}
                       </div>
                     </button>
                   </li>
-                ))}
-              </ul>
-            ) : <p className="text-xs text-ink-3">None yet.</p>}
-          </Card>
+                );
+              })}
+            </ul>
+          ) : <p className="text-sm text-ink-3">None yet.</p>}
         </aside>
       </div>
     </>
@@ -124,99 +137,126 @@ function ReportView({ report }: { report: Report }) {
   return (
     <div className="space-y-6">
       {report.is_example ? (
-        <div className="rounded-xl border-2 border-amber-400 bg-amber-50 p-4 text-amber-950 dark:bg-amber-950/40 dark:text-amber-100" role="note">
-          <div className="text-sm font-bold uppercase tracking-wide">Example report — not live AI analysis</div>
-          <p className="mt-1 text-sm">Generated by fixed rules from synthetic demo data. No language model was called and nothing here describes the real market. It shows how reports, evidence links and validation work.</p>
-        </div>
+        <Callout tone="caution" title="This is a sample report, not real analysis">
+          It was made by fixed rules from the made-up sample data. No AI was used, and nothing here describes the real market.
+          It shows how reports and their evidence links work.
+        </Callout>
       ) : (
-        <div className="flex flex-wrap items-center gap-2 text-xs text-ink-3">
-          <Badge tone="info">Live AI analysis</Badge> model {report.model} · {fmtDateTime(report.created_at)}
-          {report.evidence.scope === "demo" && <Badge tone="warn">Input was SYNTHETIC demo data</Badge>}
-        </div>
+        <p className="text-sm text-ink-2">
+          Written by {report.model} on {fmtDateTime(report.created_at)}.
+          {report.evidence.scope === "demo" && <strong className="text-caution-ink"> It was given the made-up sample data.</strong>}
+        </p>
       )}
 
-      {report.status === "failed" && <ErrorState message={report.error ?? "The report failed."} />}
+      {report.status === "failed" && <ErrorState message={report.error ?? "The report could not be created."} />}
       {report.validation.schema_errors && report.validation.schema_errors.length > 0 && (
-        <Card title="Why the answer was rejected">
-          <ul className="list-disc pl-5 text-xs text-ink-2">
-            {report.validation.schema_errors.map((e, i) => <li key={i}><code>{e.location}</code>: {e.message}</li>)}
+        <Callout tone="bad" title="The AI's answer was rejected because it was in the wrong format">
+          <ul className="mt-1 list-disc pl-5 text-xs">
+            {report.validation.schema_errors.map((e, i) => <li key={i}>{e.location}: {e.message}</li>)}
           </ul>
-        </Card>
+        </Callout>
       )}
 
       {r && (
         <>
-          <Card title="Summary">
-            <p className="text-sm leading-relaxed text-ink">{r.summary}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Badge tone={r.data_sufficiency === "sufficient" ? "good" : r.data_sufficiency === "limited" ? "warn" : "bad"}>
-                Evidence: {r.data_sufficiency}
-              </Badge>
-            </div>
+          <Card title="In short">
+            <p className="text-base leading-relaxed text-ink">{r.summary}</p>
+            <p className="mt-4 text-sm text-ink-2">
+              <strong className="text-ink">Enough data?</strong> {SUFFICIENCY_WORDS[r.data_sufficiency]}
+            </p>
             {r.sufficiency_notes.length > 0 && (
-              <ul className="mt-3 list-disc space-y-0.5 pl-5 text-xs text-ink-2">{r.sufficiency_notes.map((n, i) => <li key={i}>{n}</li>)}</ul>
+              <ul className="mt-2 list-disc space-y-0.5 pl-5 text-sm text-ink-2">{r.sufficiency_notes.map((n, i) => <li key={i}>{n}</li>)}</ul>
             )}
           </Card>
 
-          {r.insights.length === 0 && <EmptyState title="No insights met the evidence requirements" />}
-          {r.insights.map((ins, i) => (
-            <Card key={i} title={`Insight ${i + 1}`} actions={<Badge tone={ins.confidence === "high" ? "good" : ins.confidence === "medium" ? "info" : "warn"}>{ins.confidence} confidence</Badge>}>
-              <div className="space-y-4 text-sm">
-                <Section label="Finding"><p className="text-ink">{ins.finding}</p></Section>
-                <Section label="Supporting evidence">
-                  <div className="flex flex-wrap gap-1.5">{ins.evidence_ids.map((id) => <EvidenceLink key={id} id={id} fact={facts.get(id)} />)}</div>
-                </Section>
-                <Section label="Interpretation"><p className="text-ink-2">{ins.interpretation}</p></Section>
-                <Section label="Customer segment">
-                  {ins.customer_segment
-                    ? <p className="text-ink-2">{ins.customer_segment}{ins.segment_support && <span className="text-ink-3"> — {ins.segment_support}</span>}</p>
-                    : <p className="text-ink-3">Not identified: the evidence does not support a specific segment.</p>}
-                </Section>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Section label="Proposed experiment"><p className="text-ink">{ins.proposed_experiment}</p></Section>
-                  <Section label="Success measure"><p className="text-ink">{ins.success_measure}</p></Section>
-                </div>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Section label="Limitations"><ul className="list-disc pl-5 text-ink-2">{ins.limitations.map((l, j) => <li key={j}>{l}</li>)}</ul></Section>
-                  <Section label="Alternative explanations"><ul className="list-disc pl-5 text-ink-2">{ins.alternative_explanations.map((l, j) => <li key={j}>{l}</li>)}</ul></Section>
-                </div>
-              </div>
-            </Card>
-          ))}
+          {r.insights.length === 0 && <EmptyState title="No ideas were well enough supported by the data to show" />}
+          {r.insights.map((ins, i) => <IdeaCard key={i} n={i + 1} ins={ins} facts={facts} />)}
 
           {r.customer_needs_to_investigate.length > 0 && (
-            <Card title="Customer needs to investigate">
-              <ul className="list-disc space-y-1 pl-5 text-sm text-ink-2">{r.customer_needs_to_investigate.map((q, i) => <li key={i}>{q}</li>)}</ul>
+            <Card title="Questions to ask your guests" subtitle="Things the data hints at but can't confirm.">
+              <ul className="list-disc space-y-1 pl-5 text-sm text-ink">{r.customer_needs_to_investigate.map((q, i) => <li key={i}>{q}</li>)}</ul>
             </Card>
           )}
         </>
       )}
 
-      <Card title="Validation" subtitle="Checks run on the model's answer before it was shown">
-        <ul className="space-y-1 text-xs text-ink-2">
-          <li>Structure matches the required format: {report.validation.schema_valid ? "yes" : "no"}</li>
-          <li>Evidence IDs checked: {report.validation.checked_ids ?? 0}</li>
-          <li>Insights removed for citing evidence that does not exist: {removed.length}</li>
-          {report.validation.provider_error && <li>Provider error: {report.validation.provider_error}</li>}
+      <MoreDetail summary="How this report was checked">
+        <ul className="space-y-1 text-sm text-ink-2">
+          <li>The answer was in the expected format: {report.validation.schema_valid ? "yes" : "no"}.</li>
+          <li>Every source the AI cited was checked against your data ({report.validation.checked_ids ?? 0} checked).</li>
+          <li>Ideas removed for citing sources that don&apos;t exist: {removed.length}.</li>
+          {report.validation.provider_error && <li>Error from the AI service: {report.validation.provider_error}</li>}
         </ul>
         {removed.length > 0 && (
           <ul className="mt-2 space-y-1 text-xs text-ink-3">
-            {removed.map((x) => <li key={x.index}>Removed: “{x.finding}” — {x.invalid_ids.map((b) => `${b.id} (${b.reason})`).join(", ")}</li>)}
+            {removed.map((x) => <li key={x.index}>Removed: “{x.finding}” (cited {x.invalid_ids.map((b) => b.id).join(", ")})</li>)}
           </ul>
         )}
-        <details className="mt-3 text-xs">
-          <summary className="cursor-pointer text-accent">Evidence pack this report received ({report.evidence.facts.length} facts, {report.evidence.documents.length} documents)</summary>
+        <MoreDetail summary={`What the AI was given (${report.evidence.facts.length} facts, ${report.evidence.documents.length} texts)`} className="mt-4">
           <PackDetails pack={report.evidence} />
-        </details>
-      </Card>
+        </MoreDetail>
+      </MoreDetail>
     </div>
   );
 }
 
-function Section({ label, children }: { label: string; children: React.ReactNode }) {
+function IdeaCard({ n, ins, facts }: { n: number; ins: Insight; facts: Map<string, Fact> }) {
+  const factIds = ins.evidence_ids.filter((id) => facts.has(id));
+  const recordIds = ins.evidence_ids.filter((id) => !facts.has(id));
+  return (
+    <Card title={`Idea ${n}`} actions={<span className="text-sm text-ink-2">{CONFIDENCE_WORDS[ins.confidence]}</span>}>
+      <div className="space-y-6 text-sm">
+        <Part label="What the data shows">
+          <p className="text-base text-ink">{ins.finding}</p>
+          {(factIds.length > 0 || recordIds.length > 0) && (
+            <div className="mt-3 space-y-1.5">
+              {factIds.map((id) => {
+                const fact = facts.get(id)!;
+                // Skip the sentence when the finding already quotes it; keep the link to the calculation.
+                const repeated = ins.finding.includes(fact.statement);
+                return (
+                  <p key={id} className="text-ink-2">
+                    {!repeated && <>{fact.statement} </>}
+                    <EvidenceLink id={id} fact={fact} label="How it was calculated" />
+                  </p>
+                );
+              })}
+              {recordIds.length > 0 && (
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-2">
+                  Based on:
+                  {recordIds.map((id, j) => <EvidenceLink key={id} id={id} label={`record ${j + 1}`} />)}
+                </div>
+              )}
+            </div>
+          )}
+        </Part>
+        <Part label="What it might mean">
+          <p className="text-ink-2">{ins.interpretation}</p>
+          {ins.customer_segment && (
+            <p className="mt-1 text-ink-2"><strong className="text-ink">Who:</strong> {ins.customer_segment}{ins.segment_support && ` (${ins.segment_support})`}</p>
+          )}
+        </Part>
+        <div className="grid gap-5 rounded-lg bg-route-soft p-5 md:grid-cols-2">
+          <Part label="Try this"><p className="text-ink">{ins.proposed_experiment}</p></Part>
+          <Part label="You'll know it worked if"><p className="text-ink">{ins.success_measure}</p></Part>
+        </div>
+        {(ins.limitations.length > 0 || ins.alternative_explanations.length > 0) && (
+          <MoreDetail summary="Why this might be wrong">
+            <ul className="list-disc space-y-1 pl-5 text-ink-2">
+              {ins.limitations.map((l, j) => <li key={`l${j}`}>{l}</li>)}
+              {ins.alternative_explanations.map((l, j) => <li key={`a${j}`}>{l}</li>)}
+            </ul>
+          </MoreDetail>
+        )}
+      </div>
+    </Card>
+  );
+}
+
+function Part({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="mb-1 text-xs font-medium uppercase tracking-wide text-ink-3">{label}</div>
+      <h3 className="mb-1 text-sm font-bold text-ink">{label}</h3>
       {children}
     </div>
   );
@@ -224,8 +264,8 @@ function Section({ label, children }: { label: string; children: React.ReactNode
 
 function PreviewView({ loading, error, pack, onClose }: { loading: boolean; error: string | null; pack: EvidencePack | null; onClose: () => void }) {
   return (
-    <Card title="Evidence preview" subtitle="Exactly what a report would receive right now. No AI is called."
-      actions={<button onClick={onClose} className="text-xs text-accent underline">Back to report</button>}>
+    <Card title="What the AI will read" subtitle="Exactly what a new report would be given right now. Nothing is sent until you create a report."
+      actions={<Button onClick={onClose}>Back to the report</Button>}>
       {loading && <Loading />}
       {error && <ErrorState message={error} />}
       {pack && <PackDetails pack={pack} />}
@@ -235,29 +275,30 @@ function PreviewView({ loading, error, pack, onClose }: { loading: boolean; erro
 
 function PackDetails({ pack }: { pack: EvidencePack }) {
   return (
-    <div className="mt-3 space-y-4 text-xs">
-      <div>
-        <div className="mb-1 font-medium text-ink-2">Data gaps</div>
-        {pack.data_gaps.length ? <ul className="list-disc pl-5 text-ink-2">{pack.data_gaps.map((g, i) => <li key={i}>{g}</li>)}</ul> : <p className="text-ink-3">None detected.</p>}
-      </div>
-      <div>
-        <div className="mb-1 font-medium text-ink-2">Computed facts ({pack.facts.length})</div>
-        {pack.facts.length === 0 ? <p className="text-ink-3">No facts: import data first.</p> : (
-          <ul className="space-y-1.5">
-            {pack.facts.map((f: Fact) => (
-              <li key={f.id} className="flex gap-2">
-                <EvidenceLink id={f.id} fact={f} />
-                <span className="text-ink-2"><span className="text-ink-3">[{humanize(f.kind)}]</span> {f.statement}</span>
+    <div className="space-y-6 text-sm">
+      <Part label="Missing data">
+        {pack.data_gaps.length ? <ul className="list-disc space-y-0.5 pl-5 text-ink-2">{pack.data_gaps.map((g, i) => <li key={i}>{g}</li>)}</ul>
+          : <p className="text-ink-3">Nothing obvious is missing.</p>}
+      </Part>
+      <Part label={`Facts calculated from your data (${pack.facts.length})`}>
+        {pack.facts.length === 0 ? <p className="text-ink-3">None yet. Import data first.</p> : (
+          <ul className="divide-y divide-line">
+            {pack.facts.map((f) => (
+              <li key={f.id} className="py-2 text-ink-2">
+                {f.statement} <EvidenceLink id={f.id} fact={f} label="Details" />
               </li>
             ))}
           </ul>
         )}
-      </div>
-      <div>
-        <div className="mb-1 font-medium text-ink-2">Documents ({pack.documents.length}, sent as untrusted text)</div>
-        <div className="flex flex-wrap gap-1.5">{pack.documents.map((d) => <EvidenceLink key={d.evidence_id} id={d.evidence_id} />)}</div>
-      </div>
-      <p className="text-ink-3">Size: {pack.size.chars.toLocaleString()} of {pack.size.limit_chars.toLocaleString()} characters · {pack.size.documents_dropped} documents left out.</p>
+      </Part>
+      <Part label={`Reviews, news and tours included as text (${pack.documents.length})`}>
+        <p className="mb-2 text-ink-2">The AI is told to treat these as quotes to read, never as instructions to follow.</p>
+        <div className="flex flex-wrap gap-x-3 gap-y-1">{pack.documents.map((d, i) => <EvidenceLink key={d.evidence_id} id={d.evidence_id} label={`${i + 1}`} />)}</div>
+      </Part>
+      <p className="text-xs text-ink-3">
+        Uses {pack.size.chars.toLocaleString()} of the {pack.size.limit_chars.toLocaleString()} characters allowed.
+        {pack.size.documents_dropped > 0 && ` ${pack.size.documents_dropped} texts were left out to stay within the limit.`}
+      </p>
     </div>
   );
 }

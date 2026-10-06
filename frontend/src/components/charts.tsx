@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import {
   Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
@@ -10,7 +10,7 @@ import type { SeriesResponse } from "@/lib/types";
 // Fixed categorical order: colour follows the series' position in the user's selection.
 export const SERIES_COLORS = Array.from({ length: 8 }, (_, i) => `var(--series-${i + 1})`);
 
-const axisStyle = { fontSize: 12, fill: "var(--text-muted)" };
+const axisStyle = { fontSize: 13, fill: "var(--ink-3)" };
 
 type Mode = "value" | "yoy";
 
@@ -31,15 +31,15 @@ export function TrendChart({ data, unit }: { data: SeriesResponse; unit: string 
   return (
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div className="inline-flex rounded-lg border border-line p-0.5 text-xs" role="radiogroup" aria-label="Chart measure">
-          {([["value", `Monthly ${unit}`], ["yoy", "Change vs same month last year"]] as const).map(([m, label]) => (
+        <div className="inline-flex rounded-lg border border-line bg-paper p-0.5 text-sm" role="radiogroup" aria-label="Chart measure">
+          {([["value", unit === "persons" ? "Number of visitors" : `Monthly ${unit}`], ["yoy", "Change vs same month last year"]] as const).map(([m, label]) => (
             <button key={m} role="radio" aria-checked={mode === m} onClick={() => setMode(m)}
-              className={`rounded-md px-2.5 py-1 ${mode === m ? "bg-sunken font-medium text-ink" : "text-ink-2"}`}>
+              className={`rounded-md px-3 py-1 ${mode === m ? "bg-raised font-bold text-ink shadow-sm" : "text-ink-2 hover:text-ink"}`}>
               {label}
             </button>
           ))}
         </div>
-        <button onClick={() => setShowTable((v) => !v)} className="text-xs text-accent underline">
+        <button onClick={() => setShowTable((v) => !v)} className="text-sm font-medium text-route underline underline-offset-2">
           {showTable ? "Show chart" : "Show as table"}
         </button>
       </div>
@@ -54,9 +54,9 @@ export function TrendChart({ data, unit }: { data: SeriesResponse; unit: string 
               <XAxis dataKey="month" tickFormatter={fmtMonth} tick={axisStyle} tickLine={false} axisLine={{ stroke: "var(--border)" }} minTickGap={24} />
               <YAxis tick={axisStyle} tickLine={false} axisLine={false} width={56}
                 tickFormatter={(v: number) => (mode === "yoy" ? `${v}%` : fmtCompact(v))} />
-              {mode === "yoy" && <ReferenceLine y={0} stroke="var(--text-muted)" />}
+              {mode === "yoy" && <ReferenceLine y={0} stroke="var(--ink-3)" />}
               <Tooltip
-                contentStyle={{ background: "var(--surface-raised)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
+                contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
                 labelFormatter={(m) => fmtMonth(String(m))}
                 formatter={(v, name, item) => {
                   const status = (item.payload as Record<string, string>)[`${name}__status`];
@@ -74,7 +74,7 @@ export function TrendChart({ data, unit }: { data: SeriesResponse; unit: string 
                     if (cx == null || cy == null || payload[s.origin] == null) return <g key={index} />;
                     // Estimates / provisional values get a hollow marker.
                     return status && status !== "final"
-                      ? <circle key={index} cx={cx} cy={cy} r={3.5} fill="var(--surface-raised)" stroke={SERIES_COLORS[i % 8]} strokeWidth={1.5} />
+                      ? <circle key={index} cx={cx} cy={cy} r={3.5} fill="var(--surface)" stroke={SERIES_COLORS[i % 8]} strokeWidth={1.5} />
                       : <g key={index} />;
                   }}
                   activeDot={{ r: 4 }} />
@@ -83,10 +83,10 @@ export function TrendChart({ data, unit }: { data: SeriesResponse; unit: string 
           </ResponsiveContainer>
         </div>
       )}
-      <p className="mt-2 text-xs text-ink-3">
-        Gaps in a line are months with no published value (missing, not zero). Hollow markers are provisional or
-        estimated figures. Year-over-year change is only shown when the same month a year earlier exists.
-      </p>
+      <ul className="mt-3 space-y-0.5 text-xs text-ink-3">
+        <li>A gap in a line means no figure was published that month. It is not zero.</li>
+        <li>Hollow dots are early estimates that may change.</li>
+      </ul>
     </div>
   );
 }
@@ -118,27 +118,38 @@ function TrendTable({ data }: { data: SeriesResponse }) {
           ))}
         </tbody>
       </table>
-      <p className="px-3 py-2 text-xs text-ink-3">* provisional or estimate. Second column per origin: change vs same month last year (— = not comparable).</p>
+      <p className="px-3 py-2 text-xs text-ink-3">* early estimate. The second column for each country is the change against the same month last year; “—” means there is nothing to compare with.</p>
     </div>
   );
+}
+
+const WIDE = "(min-width: 640px)";
+function useWide() {
+  return useSyncExternalStore(
+    (cb) => { const m = window.matchMedia(WIDE); m.addEventListener("change", cb); return () => m.removeEventListener("change", cb); },
+    () => window.matchMedia(WIDE).matches,
+    () => true);
 }
 
 /** Horizontal bars for one measure across categories (single hue: magnitude, not identity). */
 export function HBarChart({ rows, valueLabel, format = fmtNumber }: {
   rows: { label: string; value: number }[]; valueLabel: string; format?: (n: number) => string;
 }) {
+  // Phones get a narrower label column so the bars keep room to be compared.
+  const wide = useWide();
+  const maxChars = wide ? 34 : 18;
   return (
     <div style={{ height: Math.max(120, rows.length * 34 + 40) }} className="w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 24, bottom: 4, left: 8 }}>
           <CartesianGrid stroke="var(--grid)" horizontal={false} />
           <XAxis type="number" tick={axisStyle} tickLine={false} axisLine={false} tickFormatter={(v: number) => format(v)} />
-          <YAxis type="category" dataKey="label" tick={axisStyle} tickLine={false} axisLine={false} width={230} interval={0}
-            tickFormatter={(l: string) => (l.length > 34 ? `${l.slice(0, 33)}…` : l)} />
-          <Tooltip cursor={{ fill: "var(--surface-sunken)" }}
-            contentStyle={{ background: "var(--surface-raised)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
+          <YAxis type="category" dataKey="label" tick={axisStyle} tickLine={false} axisLine={false} width={wide ? 230 : 130} interval={0}
+            tickFormatter={(l: string) => (l.length > maxChars ? `${l.slice(0, maxChars - 1)}…` : l)} />
+          <Tooltip cursor={{ fill: "var(--sunken)" }}
+            contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
             formatter={(v) => [format(Number(v)), valueLabel]} />
-          <Bar dataKey="value" fill="var(--series-1)" radius={[0, 4, 4, 0]} barSize={16} isAnimationActive={false} />
+          <Bar dataKey="value" fill="var(--route)" radius={[0, 4, 4, 0]} barSize={16} isAnimationActive={false} />
         </BarChart>
       </ResponsiveContainer>
     </div>

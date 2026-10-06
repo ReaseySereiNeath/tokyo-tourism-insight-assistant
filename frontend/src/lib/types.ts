@@ -255,3 +255,14 @@ export interface EvidenceDetail {
   revisions: { field: string; old_value: string; new_value: string; changed_at: string; batch_id: number }[];
   themes?: { theme: string; method: string; model: string | null; sentiment: string | null }[];
 }
+
+export interface Overview {
+  coverage: Coverage[];
+  key_trends: KeyTrend[];
+  competitors: CompetitorSummary;
+  top_themes: Theme[];
+  theme_method: string;
+  feedback_classified: number;
+  feedback_total: number;
+  latest_report: { id: number; created_at: string; provider: string; is_example: number; status: string } | null;
+}
