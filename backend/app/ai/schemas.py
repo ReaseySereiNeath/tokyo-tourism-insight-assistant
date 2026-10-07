@@ -32,6 +32,14 @@ class Opportunity(BaseModel):
     risks: list[str] = Field(min_length=1, max_length=6, description="Weaknesses in the evidence and business risks.")
     alternative_explanations: list[str] = Field(min_length=1, max_length=6, description="Other reasons the data could look like this.")
     confidence: Literal["low", "medium", "high"]
+    why_now: str = Field(min_length=5, description="Timing: what is changing (growth, momentum, Tokyo share, season) that makes this worth doing now, from the facts.")
+    fit_with_you: Literal["strong", "moderate", "weak", "unknown"] = Field(description="How well the idea fits the founder profile; 'unknown' if the profile is empty.")
+    spending_items: list[str] = Field(max_length=3, description="Item keys from 'spending_items' in the pack (e.g. 'entertainment/local_tours_guides') whose demand this idea depends on; empty if none fits.")
+
+
+class RejectedIdea(BaseModel):
+    idea: str = Field(min_length=3, max_length=120)
+    reason: str = Field(min_length=5, description="Why it was not recommended: weak or shrinking demand, poor fit with the founder, or no evidence.")
 
 
 class ReportOutput(BaseModel):
@@ -40,6 +48,7 @@ class ReportOutput(BaseModel):
     sufficiency_notes: list[str] = Field(max_length=8, description="What data is missing or weak, and how that limits conclusions.")
     opportunities: list[Opportunity] = Field(max_length=8, description="Ranked best first.")
     questions_to_research: list[str] = Field(max_length=8, description="Open questions worth answering before choosing, e.g. by talking to visitors or businesses.")
+    rejected_ideas: list[RejectedIdea] = Field(max_length=6, description="Obvious ideas you considered and did not recommend, with the reason.")
 
 
 class FeedbackLabel(BaseModel):

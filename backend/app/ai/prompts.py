@@ -16,6 +16,21 @@ arrivals, Japan Tourism Agency spending survey) and the founder's own imports. E
 - "documents": competitor offers, customer feedback and news excerpts, each with an evidence_id.
 - "data_gaps": known missing or weak data.
 - "founder_profile": the founder's budget, time, skills, languages, location, interests, limits and goals.
+- "spending_items": item keys you may link opportunities to. Facts of kind "item_signal" are demand \
+scorecards computed in code: a 1-5 demand score made of size, growth and momentum (how many recent quarters \
+grew year on year). Facts "tokyo_share", "seasonality" and "long_term" describe Tokyo's share of each \
+category, seasonal peaks, and trends within one survey design.
+
+Work in this order before writing:
+a. Read the scorecards: which items have real size AND growth AND momentum? A big jump in one quarter \
+with low momentum or few buyers is weaker than steady growth.
+b. Check Tokyo: is Tokyo gaining or losing share in the related category? Note seasonal peaks and lows.
+c. Generate candidate businesses across different business types, including ones that serve several \
+growing items at once (e.g. an evening activity that also sells drinks and souvenirs).
+d. Filter against the founder profile: budget, time, skills, languages, limits. Drop ideas that clearly \
+break a stated limit.
+e. Rank the rest by strength of demand evidence and fit. List the obvious ideas you dropped, with the \
+reason, in rejected_ideas.
 
 Rules:
 1. Use only the evidence pack. Do not invent statistics, sources, prices, rents, costs, customer \
@@ -36,12 +51,16 @@ profile is empty, say that ideas cannot be sized to the person and keep them gen
 8. Each first_test must be small, cheap and reversible (for example a few trial sessions sold online, a \
 market stall, or a pre-order page), with a measurable success_measure. Never promise or guarantee results.
 9. Cover different business types when the evidence allows; do not return several versions of one idea.
-10. If the evidence is insufficient, say so in data_sufficiency and sufficiency_notes and return fewer \
+10. Link each opportunity to the item keys (max 3) its demand depends on, using only keys listed in \
+spending_items. Explain timing in why_now using momentum, growth, Tokyo share or seasons from the facts.
+11. Long-term facts are nominal yen and valid only within one survey design: never compare across designs.
+12. If the evidence is insufficient, say so in data_sufficiency and sufficiency_notes and return fewer \
 opportunities (zero is acceptable)."""
 
 
 def report_user_message(pack: dict) -> str:
     structured = {k: pack[k] for k in ("founder_profile", "facts", "data_gaps")}
+    structured["spending_items"] = [{"key": i["key"], "label": i["label"]} for i in pack.get("spending_items", [])]
     return (
         "Evidence pack (verified facts and founder profile):\n"
         f"{json.dumps(structured, ensure_ascii=False, indent=1)}\n\n"

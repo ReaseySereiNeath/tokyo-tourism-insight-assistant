@@ -39,12 +39,13 @@ def good_opportunity(ids):
         "success_measure": "At least 10 bookings and average rating >= 4.5.",
         "checks_before_starting": ["Competition nearby"], "risks": ["Small sample"],
         "alternative_explanations": ["Selection bias"], "confidence": "low",
+        "why_now": "Demand for this item grew in each recent quarter.", "fit_with_you": "moderate", "spending_items": [],
     }
 
 
 def report_with(opportunities):
     return {"summary": "Summary text for the founder.", "data_sufficiency": "limited", "sufficiency_notes": [],
-            "opportunities": opportunities, "questions_to_research": []}
+            "opportunities": opportunities, "questions_to_research": [], "rejected_ideas": []}
 
 
 # ------------------------------------------------------------ validation
@@ -102,7 +103,8 @@ def test_report_status_partial_and_failed(seeded_demo):
 
 def test_insufficient_evidence_with_no_opportunities_is_allowed(real_conn):
     raw = {"summary": "There is not enough data to draw conclusions.", "data_sufficiency": "insufficient",
-           "sufficiency_notes": ["No spending data imported."], "opportunities": [], "questions_to_research": []}
+           "sufficiency_notes": ["No spending data imported."], "opportunities": [], "questions_to_research": [],
+           "rejected_ideas": []}
     r = load_report(real_conn, generate_report(real_conn, "real", FixedProvider(raw), get_settings()))
     assert r["status"] == "success" and r["result"]["data_sufficiency"] == "insufficient"
 
@@ -297,3 +299,33 @@ def test_reports_saved_in_the_old_format_still_load(real_conn):
     assert r["result"]["questions_to_research"] == ["Which foods?"]
     assert r["validation"]["removed_opportunities"][0]["idea"] == "x"
     assert "founder_profile" in r["evidence"]
+
+
+
+def test_item_links_attach_scorecards_and_unknown_links_are_dropped(seeded_demo):
+    pack = build_evidence_pack(seeded_demo, "demo", get_settings())
+    key = pack["spending_items"][0]["key"]
+    opp = {**good_opportunity([pack["facts"][0]["id"]]), "spending_items": [key, "shopping/made_up"]}
+    result, validation = validate_report(report_with([opp]), pack, seeded_demo)
+    kept = result["opportunities"][0]
+    assert kept["spending_items"] == [key]
+    assert kept["scorecards"][0]["key"] == key and 1 <= kept["scorecards"][0]["score"] <= 5
+    assert validation["dropped_item_links"] == [{"index": 0, "keys": ["shopping/made_up"]}]
+
+
+def test_pack_has_scorecards_tokyo_share_and_reasoning_steps(seeded_demo):
+    pack = build_evidence_pack(seeded_demo, "demo", get_settings())
+    kinds = {f["kind"] for f in pack["facts"]}
+    assert {"item_signal", "tokyo_share"} <= kinds
+    signal = next(f for f in pack["facts"] if f["kind"] == "item_signal")
+    assert "demand score" in signal["statement"] and signal["data"]["key"] in {i["key"] for i in pack["spending_items"]}
+    msg = report_user_message(pack)
+    assert '"spending_items"' in msg and "scorecard" not in msg.split("<untrusted_documents>")[0].split('"spending_items"')[1][:400]
+    from app.ai.prompts import REPORT_SYSTEM
+    assert "Work in this order" in REPORT_SYSTEM and "rejected_ideas" in REPORT_SYSTEM
+
+
+def test_demo_report_links_items_and_lists_rejected_ideas(seeded_demo):
+    r = load_report(seeded_demo, generate_report(seeded_demo, "demo", DemoProvider(), get_settings()))
+    assert any(o["scorecards"] for o in r["result"]["opportunities"])
+    assert r["result"]["rejected_ideas"][0]["idea"].startswith("EXAMPLE")

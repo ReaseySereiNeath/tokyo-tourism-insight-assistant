@@ -98,8 +98,8 @@ are revised in place when the final release appears, and old values stay in each
 quarterly files: 2018 to March 2024 from the Japan Tourism Agency page, and 2010–2017 (plus January–March 2020)
 from the National Diet Library's web archive (WARP) copy of the old MLIT page, the only place they are still
 published. They are stored as separate survey designs (`source` = `JTA (2010-2017 design)` /
-`JTA (2018-2024 design)`) and appear only in **Spending → The long view**, drawn as separate line segments. They
-are never used for year-on-year comparisons or given to the AI. The 2010–2017 files are read at category level only
+`JTA (2018-2024 design)`) and appear in **Spending → The long view**, drawn as separate line segments. They are
+never used for year-on-year comparisons; the AI only receives change *within* one design, labelled as such. The 2010–2017 files are read at category level only
 (items were grouped differently then). April 2020 to September 2022 has no usable category data (COVID-19).
 
 ### Manual: the JNTO workbook
@@ -112,6 +112,21 @@ are never used for year-on-year comparisons or given to the AI. The 2010–2017 
 
 Other data uses the CSV templates (download them on the same page, or find them in `backend/templates/`).
 `*_example.csv` files contain one example row each.
+
+### How business ideas are reasoned
+
+Before the AI sees anything, the app computes (in `backend/app/analysis/signals.py`):
+
+- a **demand scorecard** per spending item: size (estimated market), growth vs the same quarter last year, and
+  steadiness (in how many of the last five quarters it grew), combined into a 1–5 score whose parts are shown;
+- **Tokyo's share** of each spending category (against the 47 prefectures added up) and how it moved;
+- **seasonal peaks** per category in Tokyo, and **long-term change within each survey design**.
+
+The AI is asked to work through these in order (scan the signals, check Tokyo, generate candidates across
+business types, filter by *About you*, rank), to link each idea to the items it depends on, say *why now*, rate
+the fit with you, and list the obvious ideas it rejected and why. The page shows the app's scorecard next to each
+idea, so the reasoning can be checked against the numbers. On **Spending**, *Strongest demand signals* shows the
+same scorecards without needing an API key.
 
 ### Optional: live AI
 

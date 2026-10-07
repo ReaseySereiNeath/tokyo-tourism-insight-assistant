@@ -32,7 +32,8 @@ def record_exists(conn: sqlite3.Connection, evidence_id: str) -> bool:
 
 
 def validate_report(raw: dict, pack: dict, conn: sqlite3.Connection) -> tuple[dict | None, dict]:
-    validation = {"schema_valid": False, "schema_errors": [], "removed_opportunities": [], "checked_ids": 0}
+    validation = {"schema_valid": False, "schema_errors": [], "removed_opportunities": [], "checked_ids": 0,
+                  "dropped_item_links": []}
     try:
         report = ReportOutput.model_validate(raw)
     except ValidationError as exc:
@@ -42,6 +43,7 @@ def validate_report(raw: dict, pack: dict, conn: sqlite3.Connection) -> tuple[di
     validation["schema_valid"] = True
 
     allowed = citable_ids(pack)
+    cards = {i["key"]: i["scorecard"] for i in pack.get("spending_items", [])}
     fact_ids = {f["id"] for f in pack["facts"]}
     kept = []
     for index, opp in enumerate(report.opportunities):
@@ -57,9 +59,17 @@ def validate_report(raw: dict, pack: dict, conn: sqlite3.Connection) -> tuple[di
             continue
         if opp.target_visitors and not opp.target_support:
             opp.risks.append("A visitor group was named without stating supporting evidence.")
+        unknown = [k for k in opp.spending_items if k not in cards]
+        if unknown:  # a wrong link is dropped, not the whole idea: the citations above were valid
+            validation["dropped_item_links"].append({"index": index, "keys": unknown})
+            opp.spending_items = [k for k in opp.spending_items if k in cards]
         kept.append(opp)
     report.opportunities = kept
-    return report.model_dump(), validation
+    result = report.model_dump()
+    # Attach the computed scorecards so the page shows the code's numbers next to the model's reasoning.
+    for opp in result["opportunities"]:
+        opp["scorecards"] = [cards[k] for k in opp["spending_items"]]
+    return result, validation
 
 
 def save_report(conn: sqlite3.Connection, provider: LLMProvider, model: str | None, status: str, pack: dict,
@@ -127,5 +137,12 @@ def _upgrade_legacy(r: dict) -> None:
     if "removed_insights" in validation:
         validation["removed_opportunities"] = [{"index": x["index"], "idea": x["finding"], "invalid_ids": x["invalid_ids"]}
                                                for x in validation.pop("removed_insights")]
+    if result:
+        result.setdefault("rejected_ideas", [])
+        for opp in result.get("opportunities", []):
+            opp.setdefault("why_now", "")
+            opp.setdefault("fit_with_you", "unknown")
+            opp.setdefault("spending_items", [])
+            opp.setdefault("scorecards", [])
     if "business_profile" in r.get("evidence", {}):
         r["evidence"]["founder_profile"] = r["evidence"].pop("business_profile")

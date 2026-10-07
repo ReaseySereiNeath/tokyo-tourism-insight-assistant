@@ -2,7 +2,7 @@ import sqlite3
 
 from fastapi import APIRouter, Depends, Query
 
-from app.analysis import spending
+from app.analysis import signals, spending
 from app.routers.deps import db
 
 router = APIRouter(prefix="/api/spending", tags=["visitor spending"])
@@ -47,3 +47,14 @@ def segment_names(conn: sqlite3.Connection = Depends(db)):
 def history(segment: str = "All nationalities", conn: sqlite3.Connection = Depends(db)):
     """Category spending per visitor since 2010, one series per survey design (never joined)."""
     return spending.history(conn, segment)
+
+
+@router.get("/scorecards")
+def scorecards(conn: sqlite3.Connection = Depends(db)):
+    """Demand scorecards per item: size, growth and momentum combined into a 1-5 score."""
+    return signals.item_scorecards(conn)
+
+
+@router.get("/tokyo-share")
+def tokyo_share(conn: sqlite3.Connection = Depends(db)):
+    return signals.tokyo_share(conn)

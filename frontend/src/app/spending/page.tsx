@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { HistoryChart } from "@/components/charts";
+import { ScorecardRow } from "@/components/scorecard";
 import { useScope } from "@/components/providers";
 import { Badge, Callout, Card, EmptyState, ErrorState, EvidenceLink, inputClass, Loading, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
 import { fmtChange, fmtNumber, fmtQuarter, fmtYen } from "@/lib/format";
-import type { Change, Market, SegmentRow, SpendingHistory, SpendingItem, SpendingItems } from "@/lib/types";
+import type { Change, Market, Scorecard, SegmentRow, SpendingHistory, SpendingItem, SpendingItems } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
 
 type Sort = "spend" | "growth";
@@ -57,6 +58,8 @@ function SpendingContent() {
       )}
 
       {market.data?.period && <TokyoMarket m={market.data} />}
+
+      {items.data?.period && <StrongestSignals />}
 
       {items.data?.period && (
         <Card title="What visitors buy, item by item" className="mt-6"
@@ -280,6 +283,29 @@ function LongTerm({ segment }: { segment: string }) {
           </ul>
         </>
       )}
+    </Card>
+  );
+}
+
+function StrongestSignals() {
+  const { scope } = useScope();
+  const [all, setAll] = useState(false);
+  const data = useApi(() => api.get<{ period: string | null; items: Scorecard[] }>("/api/spending/scorecards", scope), [scope]);
+  const cards = data.data?.items ?? [];
+  if (!data.data?.period || cards.length === 0) return null;
+  return (
+    <Card className="mt-6" title="Strongest demand signals"
+      subtitle="Each item scored 1 to 5 from three parts: how big it is, how fast it grew in the latest quarter, and how steadily it grew over the last five. Items under ¥300 per visitor or with few buyers are left out.">
+      <div className="divide-y divide-line border-y border-line">
+        {(all ? cards : cards.slice(0, 6)).map((c) => <ScorecardRow key={c.key} c={c} />)}
+      </div>
+      <button onClick={() => setAll(!all)}
+        className="mt-4 text-sm font-bold text-route underline decoration-route/40 underline-offset-4 hover:decoration-route">
+        {all ? "Show the top 6 only" : `Show all ${cards.length}`}
+      </button>
+      <p className="mt-3 text-xs text-ink-3">
+        A high score means strong demand, not an easy business: it says nothing about competition, costs or permits.
+      </p>
     </Card>
   );
 }

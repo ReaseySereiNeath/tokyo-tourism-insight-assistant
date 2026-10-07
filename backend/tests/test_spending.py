@@ -260,3 +260,38 @@ def test_history_links_come_from_the_jta_page_and_the_archive():
     assert [(r.period, r.url.rsplit("/", 1)[-1]) for r in arch] == [("2020-Q1", "001396836.xls"), ("2011-Q2", "000167659.xls")]
     assert arch[0].url.startswith("https://warp.ndl.go.jp/2024/1/http://www.mlit.go.jp/")
     assert "2010-2017 survey" in arch[1].label and "2018-2024 survey" in arch[0].label
+
+
+
+# ------------------------------------------------------------ demand signals
+
+from app.analysis import signals  # noqa: E402
+
+
+def test_scorecards_combine_size_growth_and_momentum(real_conn):
+    _load_two_years(real_conn)
+    s = signals.item_scorecards(real_conn)
+    assert s["period"] == "2026-Q2"
+    tour = next(c for c in s["items"] if c["key"] == "entertainment/local_tours_guides")
+    assert tour["quarters_compared"] == 1 and tour["quarters_growing"] == 1  # one comparable quarter, and it grew
+    assert set(tour["score_parts"]) == {"size", "growth", "momentum"} and 1 <= tour["score"] <= 5
+    expected = round(1 + 4 * sum(tour["score_parts"].values()) / 3, 1)
+    assert tour["score"] == expected
+    assert all(c["spend_per_person"] >= signals.MIN_SPEND for c in s["items"])
+
+
+def test_tokyo_share_uses_all_prefectures_as_the_base(real_conn):
+    _load_two_years(real_conn)
+    share = signals.tokyo_share(real_conn)
+    ent = next(c for c in share["categories"] if c["category"] == "entertainment")
+    # Fixture prefectures: Tokyo plus Kanagawa (which has no category columns), so Tokyo is the whole base.
+    assert ent["share"] == 100.0 and ent["share_change_points"] == 0.0
+
+
+def test_long_term_trends_stay_within_one_design(real_conn):
+    for name, wb in [("a.xlsx", legacy_workbook()), ("b.xlsx", legacy_workbook(period="平成28年(2016年) 4-6月期"))]:
+        run_import(real_conn, "real", "spending_stats", name, wb, parser=parse_jta_spending_workbook)
+    run_import(real_conn, "real", "spending_stats", "c.xlsx", national_workbook(period="2023年4-6月期 【確報】"),
+               parser=parse_jta_spending_workbook)
+    trends = signals.long_term(real_conn)
+    assert trends == []  # fewer than 5 quarters per design: nothing is claimed

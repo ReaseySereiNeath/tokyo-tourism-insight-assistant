@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useScope } from "@/components/providers";
-import { Button, Callout, Card, EmptyState, ErrorState, EvidenceLink, Loading, MoreDetail, PageHeader } from "@/components/ui";
+import { ScorecardRow } from "@/components/scorecard";
+import { Badge, Button, Callout, Card, EmptyState, ErrorState, EvidenceLink, Loading, MoreDetail, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
 import { fmtDateTime } from "@/lib/format";
 import type { BusinessType, EvidencePack, Fact, FounderProfile, Opportunity, Report, ReportListItem } from "@/lib/types";
@@ -16,6 +17,10 @@ const SUFFICIENCY_WORDS = {
   insufficient: "No. Add more data before acting on anything here.",
 };
 const CONFIDENCE_WORDS = { low: "Not very sure", medium: "Fairly sure", high: "Quite sure" };
+const FIT_WORDS = {
+  strong: { text: "Strong fit with you", tone: "good" }, moderate: { text: "Moderate fit with you", tone: "info" },
+  weak: { text: "Weak fit with you", tone: "warn" }, unknown: { text: "Fit unknown: fill in About you", tone: "neutral" },
+} as const;
 const TYPE_WORDS: Record<BusinessType, string> = {
   tours_activities: "Tours and activities", food_drink: "Food and drink", accommodation: "Accommodation",
   retail_shopping: "Shop or retail", transport_mobility: "Transport", wellness_beauty: "Wellness and beauty",
@@ -177,6 +182,19 @@ function ReportView({ report }: { report: Report }) {
           {r.opportunities.length === 0 && <EmptyState title="No idea was well enough supported by the data to show" />}
           {r.opportunities.map((o, i) => <IdeaCard key={i} n={i + 1} o={o} facts={facts} />)}
 
+          {r.rejected_ideas?.length > 0 && (
+            <Card title="Ideas considered but not recommended" subtitle="Obvious options the analysis looked at and set aside, with the reason.">
+              <ul className="divide-y divide-line">
+                {r.rejected_ideas.map((x, i) => (
+                  <li key={i} className="py-2.5 text-sm first:pt-0 last:pb-0">
+                    <span className="font-bold text-ink">{x.idea}</span>
+                    <span className="text-ink-2">: {x.reason}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
           {r.questions_to_research.length > 0 && (
             <Card title="Questions to answer before choosing" subtitle="Things the data hints at but can't confirm. Talking to visitors or business owners can.">
               <ul className="list-disc space-y-1 pl-5 text-sm text-ink">{r.questions_to_research.map((q, i) => <li key={i}>{q}</li>)}</ul>
@@ -215,7 +233,10 @@ function IdeaCard({ n, o, facts }: { n: number; o: Opportunity; facts: Map<strin
           <div className="text-sm text-ink-3">Idea {n}, {TYPE_WORDS[o.business_type].toLowerCase()}</div>
           <h2 className="mt-0.5 text-2xl font-bold text-ink">{o.business_idea}</h2>
         </div>
-        <span className="text-sm text-ink-2">{CONFIDENCE_WORDS[o.confidence]}</span>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-ink-2">
+          <Badge tone={FIT_WORDS[o.fit_with_you ?? "unknown"].tone}>{FIT_WORDS[o.fit_with_you ?? "unknown"].text}</Badge>
+          <span>{CONFIDENCE_WORDS[o.confidence]}</span>
+        </div>
       </div>
       <div className="space-y-6 text-sm">
         <Part label="Why there is demand">
@@ -242,6 +263,14 @@ function IdeaCard({ n, o, facts }: { n: number; o: Opportunity; facts: Map<strin
             </div>
           )}
         </Part>
+        {o.scorecards?.length > 0 && (
+          <Part label="Demand scorecard (calculated by the app, not the AI)">
+            <div className="divide-y divide-line border-y border-line">
+              {o.scorecards.map((c) => <ScorecardRow key={c.key} c={c} />)}
+            </div>
+          </Part>
+        )}
+        {o.why_now && <Part label="Why now"><p className="text-ink-2">{o.why_now}</p></Part>}
         <Part label="Why it could suit you">
           <p className="text-ink-2">{o.why_it_could_work}</p>
           {o.target_visitors && (

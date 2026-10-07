@@ -302,10 +302,12 @@ def history(conn: sqlite3.Connection, segment: str = "All nationalities") -> dic
     points: dict[tuple, dict] = {}
     for (source, period, category), m in cells.items():
         rate, buyer = m.get("purchase_rate"), m.get("spend_per_purchaser")
-        p = points.setdefault((source, period), {"period": period, "source": source, "values": {}, "evidence_ids": []})
+        p = points.setdefault((source, period), {"period": period, "source": source, "values": {}, "evidence": {},
+                                                 "evidence_ids": []})
         if rate and buyer:
             p["values"][category] = round(rate["value"] / 100 * buyer["value"], 1)
-            p["evidence_ids"] += [rate["evidence_id"], buyer["evidence_id"]]
+            p["evidence"][category] = [rate["evidence_id"], buyer["evidence_id"]]
+            p["evidence_ids"] += p["evidence"][category]
     designs = []
     for d in DESIGNS:
         old = {SOURCE_2010, SOURCE_2018}

@@ -202,6 +202,29 @@ export interface Opportunity {
   risks: string[];
   alternative_explanations: string[];
   confidence: "low" | "medium" | "high";
+  why_now: string;
+  fit_with_you: "strong" | "moderate" | "weak" | "unknown";
+  spending_items: string[];
+  scorecards: Scorecard[];
+}
+
+export interface Scorecard {
+  key: string;
+  label: string;
+  category_label: string;
+  period: string;
+  comparison_period: string;
+  spend_per_person: number;
+  purchase_rate: number | null;
+  spend_per_purchaser: number | null;
+  buyers: number | null;
+  estimated_market: number | null;
+  change: Change;
+  quarters_growing: number;
+  quarters_compared: number;
+  score: number;
+  score_parts: { size: number; growth: number; momentum: number };
+  evidence_ids: string[];
 }
 
 export interface ReportResult {
@@ -210,6 +233,7 @@ export interface ReportResult {
   sufficiency_notes: string[];
   opportunities: Opportunity[];
   questions_to_research: string[];
+  rejected_ideas: { idea: string; reason: string }[];
 }
 
 export interface Report {
