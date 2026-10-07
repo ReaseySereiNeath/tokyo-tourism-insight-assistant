@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS spending_stats (
     value            REAL NOT NULL,
     unit             TEXT NOT NULL,            -- JPY | JPY per person | % | persons
     respondents      INTEGER,                  -- survey sample behind the figure, when published
-    value_status     TEXT NOT NULL DEFAULT 'unknown',  -- final | preliminary | unknown
+    value_status     TEXT NOT NULL DEFAULT 'unknown',  -- final | preliminary | estimate | unknown
     source           TEXT NOT NULL,
     original_label   TEXT,
     publication_date TEXT,

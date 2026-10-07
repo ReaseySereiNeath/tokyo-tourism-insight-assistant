@@ -39,5 +39,11 @@ def segments(category: str, item: str = "", period: str | None = Query(None, pat
 @router.get("/segment-names")
 def segment_names(conn: sqlite3.Connection = Depends(db)):
     return [r[0] for r in conn.execute(
-        "SELECT DISTINCT segment FROM spending_stats WHERE geography = 'Japan' "
+        f"SELECT DISTINCT segment FROM spending_stats WHERE {spending.CURRENT} AND geography = 'Japan' "
         "ORDER BY segment != 'All nationalities', segment")]
+
+
+@router.get("/history")
+def history(segment: str = "All nationalities", conn: sqlite3.Connection = Depends(db)):
+    """Category spending per visitor since 2010, one series per survey design (never joined)."""
+    return spending.history(conn, segment)

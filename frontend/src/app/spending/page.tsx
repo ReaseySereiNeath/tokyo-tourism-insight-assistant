@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { HistoryChart } from "@/components/charts";
 import { useScope } from "@/components/providers";
 import { Badge, Callout, Card, EmptyState, ErrorState, EvidenceLink, inputClass, Loading, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
 import { fmtChange, fmtNumber, fmtQuarter, fmtYen } from "@/lib/format";
-import type { Change, Market, SegmentRow, SpendingItem, SpendingItems } from "@/lib/types";
+import type { Change, Market, SegmentRow, SpendingHistory, SpendingItem, SpendingItems } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
 
 type Sort = "spend" | "growth";
@@ -145,6 +146,8 @@ function SpendingContent() {
       )}
 
       {picked && items.data?.period && <WhoBuys item={picked} period={items.data.period} onClose={() => setPicked(null)} />}
+
+      {items.data?.period && <LongTerm segment={segment} />}
     </>
   );
 }
@@ -233,5 +236,50 @@ function WhoBuys({ item, period, onClose }: { item: SpendingItem; period: string
       )}
     </Card>
     </div>
+  );
+}
+
+function LongTerm({ segment }: { segment: string }) {
+  const { scope } = useScope();
+  const [only, setOnly] = useState<string | null>(null);
+  const data = useApi(() => api.get<SpendingHistory>("/api/spending/history", scope, { segment }), [scope, segment]);
+  const h = data.data;
+  const designs = h?.designs ?? [];
+  const first = designs[0]?.points[0]?.period;
+  return (
+    <Card className="mt-6" title={first ? `The long view, since ${first.slice(0, 4)}` : "The long view"}
+      subtitle={`Spending per visitor on the main categories, every quarter${segment === "All nationalities" ? "" : `, visitors from ${segment}`}.`}>
+      {data.loading && !h && <Loading />}
+      {data.error && <ErrorState message={data.error} onRetry={data.reload} />}
+      {h && designs.length <= 1 && (
+        <EmptyState title="Only the current survey is loaded" href="/sources" action="Download the history">
+          The history from 2010 is a one-off download on Add your data, under Official data.
+        </EmptyState>
+      )}
+      {h && designs.length > 1 && (
+        <>
+          <div className="mb-4 flex flex-wrap gap-1.5" aria-label="Show category">
+            {[{ key: null, label: "All five" }, ...h.categories].map((c) => (
+              <button key={c.label} onClick={() => setOnly(c.key)} aria-pressed={only === c.key}
+                className={`rounded-full border px-3 py-1 text-sm ${only === c.key ? "border-ink bg-raised font-bold text-ink" : "border-line text-ink-2 hover:border-ink-3"}`}>
+                {c.label}
+              </button>
+            ))}
+          </div>
+          <HistoryChart data={h} only={only} />
+          <ul className="mt-4 max-w-3xl space-y-1 text-xs text-ink-3">
+            <li>
+              The survey was redesigned twice ({designs.slice(1).map((d) => fmtQuarter(d.from, true)).join(" and ")}), so each
+              stretch is drawn separately. Compare within a stretch, not across a break.
+            </li>
+            <li>{h.gaps[0]?.reason}</li>
+            <li>
+              Calculated the same way throughout: share of visitors who bought × what buyers spent. It leaves out package-tour
+              fees, so it is a little lower than the “per visitor” figures above.
+            </li>
+          </ul>
+        </>
+      )}
+    </Card>
   );
 }

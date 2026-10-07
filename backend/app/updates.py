@@ -13,6 +13,13 @@ revisions recorded), into the REAL database only.
 
 Both pages allow reuse with credit (JNTO's citation terms; MLIT's PDL1.0). No
 robots.txt restricts these paths. Requests are few, sequential and identified.
+
+History (on demand only, never on the daily schedule): earlier survey designs.
+    2018-Q1..2024-Q1  JTA page (2019, 2022, 2023, 2024-Q1) and the archive (2018, 2020-Q1)
+    2010-Q2..2017-Q4  National Diet Library web archive (WARP) copy of the old MLIT page,
+                      the only place these files are still published
+2020-Q2..2021-Q3 were never surveyed (COVID-19); the limited 2021-Q4 estimate is skipped, and
+2022-Q1..Q3 rough estimates (試算値) are imported as status 'estimate' (they have no category figures).
 """
 import json
 import logging
@@ -35,6 +42,9 @@ log = logging.getLogger(__name__)
 
 JNTO_PAGE = "https://www.jnto.go.jp/statistics/data/visitors-statistics/"
 JTA_PAGE = "https://www.mlit.go.jp/kankocho/tokei_hakusyo/gaikokujinshohidoko.html"
+WARP_PAGE = ("https://warp.ndl.go.jp/20240302/20240301044436/"
+             "www.mlit.go.jp/kankocho/siryou/toukei/syouhityousa.html")
+WARP_HOST = "https://warp.ndl.go.jp"
 USER_AGENT = "TokyoTourismInsightAssistant/0.2 (local research tool; checks for new statistics releases)"
 FIRST_JTA_PERIOD = "2024-Q2"  # first quarter of the current survey design
 MAX_DOWNLOAD_BYTES = 30 * 1024 * 1024
@@ -79,7 +89,7 @@ def jnto_releases(html: str) -> list[Release]:
     return out[:1]  # the page links the one current workbook
 
 
-def jta_releases(html: str) -> list[Release]:
+def jta_releases(html: str, history: bool = False) -> list[Release]:
     """Walk the 'past results' section: year <summary>, then table-type <summary>, then links per quarter."""
     start = html.find("これまでの調査結果を見る", html.find("これまでの調査結果を見る") + 1)
     section = html[start:] if start > 0 else html
@@ -108,8 +118,10 @@ def jta_releases(html: str) -> list[Release]:
         if year is None or table is None or not q or int(q.group(1)) not in QUARTER_BY_START:
             continue  # calendar-year files and anything unexpected are skipped
         period = f"{year}-Q{QUARTER_BY_START[int(q.group(1))]}"
-        if period < FIRST_JTA_PERIOD:
-            continue
+        if history != (period < FIRST_JTA_PERIOD):
+            continue  # current mode: 2024-Q2 on; history mode: the earlier quarters only
+        if history and (table != "national" or period < "2018-Q1" or "2020" <= period[:4] <= "2021"):
+            continue  # history keeps national tables from the 2018 design, minus the COVID-era estimate
         name = href.rsplit("/", 1)[-1]
         stage = re.search(r"\((.*?速報|確報)\)", text)
         out.append(Release("JTA", urljoin(JTA_PAGE, href),
@@ -121,6 +133,32 @@ def jta_releases(html: str) -> list[Release]:
         for r in out:
             if r.period == newest:
                 r.publication_date = latest_pub_date
+    return out
+
+
+def archive_releases(html: str) -> list[Release]:
+    """Quarterly 集計結果 files on the archived MLIT page: 2010-Q2..2018-Q4 and 2020-Q1.
+
+    2019 and later come from the live JTA page instead. The archive also lists an airport-lounge
+    survey (ラウンジ調査) after the main results; that section is ignored."""
+    start = html.find("6. 調査の結果")
+    end = html.find("ラウンジ調査結果", start)
+    section = html[start:end if end > 0 else None]
+    token = re.compile(r'「(\d{4})年(\d{1,2})～\d{1,2}月期」|「\d{4}年[^」]*」|'
+                       r'<a[^>]+href="([^"]+\.xlsx?)"[^>]*>(.*?)</a>', re.S)
+    out, period = [], None
+    for m in token.finditer(section):
+        if m.group(1):
+            q = int(m.group(2))
+            period = f"{m.group(1)}-Q{QUARTER_BY_START[q]}" if q in QUARTER_BY_START else None
+        elif m.group(3) is None:
+            period = None  # an annual estimate or other heading: its files are skipped
+        elif period and _text(m.group(4)) == "集計結果" and (period < "2019-Q1" or period == "2020-Q1"):
+            name = m.group(3).rsplit("/", 1)[-1]
+            design = "2010-2017" if period < "2018-Q1" else "2018-2024"
+            out.append(Release("JTA", urljoin(WARP_HOST, m.group(3)),
+                               f"JTA {period} national tables, {design} survey ({name})", "spending_stats", period))
+            period = None  # one main file per quarter
     return out
 
 
@@ -139,12 +177,18 @@ def _import(conn: sqlite3.Connection, release: Release, content: bytes) -> dict:
 
 
 def check_source(conn: sqlite3.Connection, client: httpx.Client, source: str) -> dict:
-    page, finder = (JNTO_PAGE, jnto_releases) if source == "JNTO" else (JTA_PAGE, jta_releases)
+    """source: 'JNTO', 'JTA', or 'JTA history' (earlier survey designs from the JTA page and the archive)."""
     files: list[dict] = []
     try:
-        releases = finder(_get(client, page).decode("utf-8", errors="replace"))
+        if source == "JNTO":
+            releases = jnto_releases(_get(client, JNTO_PAGE).decode("utf-8", errors="replace"))
+        elif source == "JTA":
+            releases = jta_releases(_get(client, JTA_PAGE).decode("utf-8", errors="replace"))
+        else:
+            releases = (jta_releases(_get(client, JTA_PAGE).decode("utf-8", errors="replace"), history=True)
+                        + archive_releases(_get(client, WARP_PAGE).decode("utf-8", errors="replace")))
         if not releases:
-            raise UpdateError(f"No data files were found on {page}. The page layout may have changed.")
+            raise UpdateError(f"No data files were found for {source}. The page layout may have changed.")
         for release in sorted(releases, key=lambda r: r.period or ""):
             entry = {"label": release.label, "url": release.url, "period": release.period}
             if _already_imported(conn, release):
@@ -172,15 +216,16 @@ def check_source(conn: sqlite3.Connection, client: httpx.Client, source: str) ->
 _lock = threading.Lock()
 
 
-def check_all(conn: sqlite3.Connection | None = None, client: httpx.Client | None = None) -> list[dict]:
-    """Check every source once. Only one check runs at a time."""
+def check_all(conn: sqlite3.Connection | None = None, client: httpx.Client | None = None,
+              sources: tuple[str, ...] = ("JNTO", "JTA")) -> list[dict]:
+    """Check sources once (by default the current ones). Only one check runs at a time."""
     if not _lock.acquire(blocking=False):
         raise UpdateError("A check is already running. Try again in a minute.")
     own_conn, own_client = conn is None, client is None
     conn = conn or connect("real")
     client = client or httpx.Client(timeout=60, follow_redirects=True, headers={"User-Agent": USER_AGENT})
     try:
-        return [check_source(conn, client, s) for s in ("JNTO", "JTA")]
+        return [check_source(conn, client, s) for s in sources]
     finally:
         if own_client:
             client.close()
@@ -198,7 +243,11 @@ def status(conn: sqlite3.Connection) -> dict:
         "spending_period": conn.execute(
             "SELECT MAX(reporting_period) FROM spending_stats WHERE source = 'JTA' AND period_type = 'quarter'").fetchone()[0],
     }
-    return {"last_checks": last, "latest": latest, "running": _lock.locked(),
+    history = rows(conn.execute(
+        """SELECT source, MIN(reporting_period) AS first, MAX(reporting_period) AS last,
+                  COUNT(DISTINCT reporting_period) AS quarters
+           FROM spending_stats WHERE period_type = 'quarter' AND geography = 'Japan' GROUP BY source"""))
+    return {"last_checks": last, "latest": latest, "history": history, "running": _lock.locked(),
             "schedule": {"JNTO": "Monthly, usually around the middle of the following month.",
                          "JTA": "Quarterly. A first estimate about a month after the quarter ends, revised later."}}
 

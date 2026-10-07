@@ -342,6 +342,15 @@ export interface UpdateStatus {
   last_checks: Record<string, { checked_at: string; status: "ok" | "failed"; message: string | null;
     files: { label: string; result: string; period: string | null; rows_inserted?: number; message?: string }[] }>;
   latest: { visitor_month: string | null; spending_period: string | null };
+  history: { source: string; first: string; last: string; quarters: number }[];
   running: boolean;
   schedule: Record<string, string>;
+}
+
+export interface SpendingHistory {
+  segment: string;
+  categories: { key: string; label: string }[];
+  designs: { source: string; label: string; from: string; to: string | null;
+    points: { period: string; source: string; values: Record<string, number>; evidence_ids: string[] }[] }[];
+  gaps: { from: string; to: string; reason: string }[];
 }

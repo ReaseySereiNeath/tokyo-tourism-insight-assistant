@@ -96,3 +96,41 @@ JTA_PAGE_HTML = """<html><body>
   </ul></details>
 </details>
 </body></html>"""
+
+
+def legacy_workbook(period="平成23年(2011年) 4-6月期調査") -> bytes:
+    """The 2010-2017 layout: sheet 第４表 with (購入率 | 購入者単価) side by side per segment."""
+    wb = openpyxl.Workbook()
+    wb.active.title = "第１表"
+    t = wb.create_sheet("第４表")
+    t["B2"] = "第4表 国籍(16区分)別 費目別購入率および購入者単価"
+    t["B4"], t["P4"] = period, "(単位)購入率:%、購入者単価:円/人"
+    t["B5"], t["E5"], t["G5"] = "調査項目", "全体 2)", "中国(台湾)"
+    t["E6"], t["F6"], t["G6"], t["H6"] = "購入率", "購入者単価", "購入率", "購入者単価"
+    t.append([None, "旅行前支出", "パッケージツアー", None, 28.7, 98230.5, 43.9, 71256.9])
+    t.append([None, "日本訪問中の", "宿泊料金", None, 63.2, 58252.7, 52.0, 40682.1])
+    t.append([None, "1)", "娯楽サービス費", None, 19.1, 12512.7, 21.9, "-"])
+    t.append([None, None, None, "ゴルフ場・テーマパーク", 3.0, 10891.1, 4.2, 6914.9])  # item: ignored in this layout
+    return _save(wb)
+
+
+JTA_HISTORY_HTML = JTA_PAGE_HTML.replace("</body>", """
+<details><summary>2023年</summary>
+  <details><summary>　集計表</summary><ul><li><a href="/kankocho/content/N2023Q2.xls">4-6月期</a></li></ul></details>
+  <details><summary>　【参考】都道府県別集計表</summary><ul><li><a href="/kankocho/content/P2023Q2.xlsx">4-6月期</a></li></ul></details>
+</details>
+<details><summary>2021年</summary>
+  <details><summary>　集計表</summary><ul><li><a href="/kankocho/content/N2021Q4.xls">10-12月期</a></li></ul></details>
+</details>
+</body>""")
+
+ARCHIVE_HTML = """<html><body><h3>5．調査の方法</h3>
+<h3>6. 調査の結果</h3>
+「2023年7～9月期」※2次速報 <a href="/2024/1/http://www.mlit.go.jp/x/001715449.xls">集計結果</a>
+「2020年1～3月期」※確報値 <a href="/2024/1/http://www.mlit.go.jp/x/001396836.xls">集計結果</a>
+<a href="/2024/1/http://www.mlit.go.jp/x/001368175.xlsx">【参考】都道府県集計表</a>
+「2019年年間値の推計」 <a href="/2024/1/http://www.mlit.go.jp/x/001335738.xls">集計結果</a>
+「2011年4～6月期」 <a href="/2024/1/http://www.mlit.go.jp/x/000167659.xls">集計結果</a>
+<h3>ラウンジ調査結果（2015年～2017年に実施）</h3>
+「2015年4-6月期」 <a href="/2024/1/http://www.mlit.go.jp/x/001179945.xls">集計結果</a>
+</body></html>"""

@@ -266,7 +266,7 @@ def _spending_facts(conn: sqlite3.Connection, b: PackBuilder, gaps: list[str]) -
     # Growing visitor groups and what they buy more often than average.
     growth = spending.arrival_growth_by_origin(conn, period)
     groups = []
-    for seg in conn.execute("SELECT DISTINCT segment FROM spending_stats WHERE geography = 'Japan' AND "
+    for seg in conn.execute(f"SELECT DISTINCT segment FROM spending_stats WHERE {spending.CURRENT} AND geography = 'Japan' AND "
                             "reporting_period = ?", (period,)).fetchall():
         name = seg[0]
         g = growth.get(spending.JNTO_ORIGIN.get(name, name))

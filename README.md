@@ -94,6 +94,14 @@ The backend also checks by itself every `AUTO_UPDATE_HOURS` hours (default 24; s
 turn it off). The first check downloads about 18 files (around 30 seconds). Preliminary spending figures (速報)
 are revised in place when the final release appears, and old values stay in each record's revision history.
 
+**History, 2010 to early 2024 (one-off).** Under *Official data*, **Download history** fetches about 50 more
+quarterly files: 2018 to March 2024 from the Japan Tourism Agency page, and 2010–2017 (plus January–March 2020)
+from the National Diet Library's web archive (WARP) copy of the old MLIT page, the only place they are still
+published. They are stored as separate survey designs (`source` = `JTA (2010-2017 design)` /
+`JTA (2018-2024 design)`) and appear only in **Spending → The long view**, drawn as separate line segments. They
+are never used for year-on-year comparisons or given to the AI. The 2010–2017 files are read at category level only
+(items were grouped differently then). April 2020 to September 2022 has no usable category data (COVID-19).
+
 ### Manual: the JNTO workbook
 
 1. Download the monthly “訪日外客数（総数）” XLSX from

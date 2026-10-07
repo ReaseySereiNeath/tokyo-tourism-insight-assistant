@@ -133,6 +133,12 @@ const SOURCES = [
   { key: "JTA", what: "Visitor spending", publisher: "Japan Tourism Agency", latest: (s: UpdateStatus) => fmtQuarter(s.latest.spending_period) },
 ] as const;
 
+const DESIGN_NAMES: Record<string, string> = {
+  "JTA (2010-2017 design)": "2010–2017 survey",
+  "JTA (2018-2024 design)": "2018–2024 survey",
+  JTA: "Current survey",
+};
+
 function OfficialData({ onImported, demo }: { onImported: () => void; demo: boolean }) {
   const status = useApi(() => api.get<UpdateStatus>("/api/updates", null), []);
   const [starting, setStarting] = useState(false);
@@ -146,11 +152,11 @@ function OfficialData({ onImported, demo }: { onImported: () => void; demo: bool
     return () => { clearInterval(timer); onImported(); };
   }, [status.data?.running, status.reload, onImported]);
 
-  async function checkNow() {
+  async function start(path: "/api/updates/check" | "/api/updates/history") {
     setStarting(true);
     setError(null);
     try {
-      await api.post("/api/updates/check", null);
+      await api.post(path, null);
       status.reload();
     } catch (e) {
       setError((e as Error).message);
@@ -163,7 +169,7 @@ function OfficialData({ onImported, demo }: { onImported: () => void; demo: bool
   return (
     <Card title="Official data"
       subtitle="The app checks these sources once a day while it's running, and downloads only what's new. Everything goes into your own data."
-      actions={<Button variant="primary" onClick={checkNow} disabled={running}>{running ? "Checking…" : "Check for new data now"}</Button>}>
+      actions={<Button variant="primary" onClick={() => start("/api/updates/check")} disabled={running}>{running ? "Working…" : "Check for new data now"}</Button>}>
       {demo && <p className="mb-4 text-sm text-ink-2">You&apos;re viewing sample data. Checks always update your own data.</p>}
       {status.loading && !s && <Loading />}
       {status.error && <ErrorState message={status.error} onRetry={status.reload} />}
@@ -190,9 +196,37 @@ function OfficialData({ onImported, demo }: { onImported: () => void; demo: bool
               </li>
             );
           })}
+          <HistoryRow s={s} running={running} onStart={() => start("/api/updates/history")} />
         </ul>
       )}
     </Card>
+  );
+}
+
+function HistoryRow({ s, running, onStart }: { s: UpdateStatus; running: boolean; onStart: () => void }) {
+  const old = s.history.filter((h) => h.source !== "JTA" && DESIGN_NAMES[h.source]);
+  const last = s.last_checks["JTA history"];
+  return (
+    <li className="grid gap-x-6 gap-y-2 py-4 last:pb-0 sm:grid-cols-[1fr_auto]">
+      <div>
+        <div className="font-bold text-ink">Spending history, 2010 to early 2024</div>
+        <div className="text-sm text-ink-2">
+          Earlier survey designs, for the long view on Spending. A one-off download of about 50 files, from the Japan Tourism
+          Agency and the National Diet Library&apos;s web archive. It doesn&apos;t change, so it isn&apos;t checked daily.
+        </div>
+      </div>
+      <div className="text-sm sm:text-right">
+        {old.length > 0 ? (
+          <ul className="text-ink">
+            {old.map((h) => <li key={h.source}>{DESIGN_NAMES[h.source]}: {h.quarters} quarters</li>)}
+          </ul>
+        ) : <div className="text-ink-3">Not downloaded</div>}
+        {last?.status === "failed" && <div className="text-down">Last attempt failed: {last.message}</div>}
+        <Button className="mt-2" onClick={onStart} disabled={running}>
+          {old.length ? "Check the history again" : "Download history"}
+        </Button>
+      </div>
+    </li>
   );
 }
 

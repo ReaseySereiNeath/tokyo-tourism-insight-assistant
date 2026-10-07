@@ -92,7 +92,7 @@ def normalize_visitor_stat(row: dict) -> dict:
     }
 
 
-SPENDING_STATUSES = {"final", "preliminary", "unknown"}
+SPENDING_STATUSES = {"final", "preliminary", "estimate", "unknown"}
 
 
 def normalize_spending_stat(row: dict) -> dict:

@@ -8,6 +8,8 @@ Rules:
 - 'Other' nationalities changed definition in 2026, so it is never compared
   across years.
 - Figures resting on fewer than SMALL_SAMPLE respondents are flagged.
+- Only the CURRENT survey design (source 'JTA', 2024-Q2 on) is used for comparisons.
+  Earlier designs appear only in history(), as separate series.
 - Market size per item is an ESTIMATE: average spend per visitor (JTA) x
   arrivals in the same quarter (JNTO). It is labelled as such everywhere.
 """
@@ -15,6 +17,10 @@ import sqlite3
 
 from app.analysis.stats import pct_change
 from app.db import rows
+from app.importers.jta import CURRENT_SOURCE, SOURCE_2010, SOURCE_2018
+
+# Anything not from an earlier design counts as current (official JTA files, sample data, hand-made CSVs).
+CURRENT = f"source NOT IN ('{SOURCE_2010}', '{SOURCE_2018}')"
 
 SMALL_SAMPLE = 50
 NOT_COMPARABLE_SEGMENTS = {"Other"}
@@ -28,6 +34,7 @@ CATEGORY_LABELS = {
     "individual_package": "Individual travel packages",
     "international_fares": "International air and sea fares",
     "package_tours": "Package tours (local share)",
+    "package_tour": "Package tours",
     "lodging": "Accommodation",
     "food_drink": "Food and drink",
     "transport": "Transport in Japan",
@@ -50,7 +57,7 @@ ITEM_LABELS = {
     "medicines": "Medicines", "health_toiletries": "Health goods and toiletries", "clothing": "Clothing",
     "shoes_bags_leather": "Shoes, bags and leather", "electronics": "Electronics", "watches_cameras": "Watches and cameras",
     "jewellery": "Jewellery", "crafts_traditional": "Traditional crafts", "books_magazines": "Books and magazines",
-    "music_video_games": "Music, video and games", "other_shopping": "Other shopping",
+    "music_video_games": "Music, video and games", "other_shopping": "Other shopping", "golf": "Golf courses",
 }
 
 
@@ -86,7 +93,8 @@ def periods(conn: sqlite3.Connection) -> list[dict]:
 
 def latest_period(conn: sqlite3.Connection, national: bool = True) -> str | None:
     geo = "= 'Japan'" if national else "!= 'Japan'"
-    row = conn.execute(f"SELECT MAX(reporting_period) FROM spending_stats WHERE period_type = 'quarter' AND geography {geo}").fetchone()
+    row = conn.execute(f"SELECT MAX(reporting_period) FROM spending_stats WHERE {CURRENT} AND period_type = 'quarter' "
+                       f"AND geography {geo}").fetchone()
     return row[0] if row else None
 
 
@@ -94,7 +102,7 @@ def _value_map(conn, where: str, params: list) -> dict[tuple, dict]:
     out = {}
     for r in rows(conn.execute(
             f"SELECT evidence_id, segment, category, item, metric, value, respondents, value_status "
-            f"FROM spending_stats WHERE {where}", params)):
+            f"FROM spending_stats WHERE {CURRENT} AND {where}", params)):
         out[(r["segment"], r["category"], r["item"], r["metric"])] = r
     return out
 
@@ -196,8 +204,8 @@ def segments_for_item(conn: sqlite3.Connection, category: str, item: str = "", p
     if period is None:
         return {"period": None, "rows": []}
     data = rows(conn.execute(
-        """SELECT segment, metric, value, respondents, evidence_id FROM spending_stats
-           WHERE geography = 'Japan' AND reporting_period = ? AND category = ? AND item = ?""",
+        f"""SELECT segment, metric, value, respondents, evidence_id FROM spending_stats
+           WHERE {CURRENT} AND geography = 'Japan' AND reporting_period = ? AND category = ? AND item = ?""",
         (period, category, item)))
     by_segment: dict[str, dict] = {}
     for r in data:
@@ -241,12 +249,14 @@ def arrival_growth_by_origin(conn: sqlite3.Connection, period: str) -> dict[str,
 def segment_preferences(conn: sqlite3.Connection, period: str, segment: str, top: int = 3) -> list[dict]:
     """Items a visitor group buys more often than visitors overall (both samples large enough)."""
     data = rows(conn.execute(
-        """SELECT s.category, s.item, s.value AS rate, s.respondents AS buyers, s.evidence_id,
+        f"""SELECT s.category, s.item, s.value AS rate, s.respondents AS buyers, s.evidence_id,
                   a.value AS rate_all, a.evidence_id AS evidence_id_all
            FROM spending_stats s JOIN spending_stats a
-             ON a.geography = 'Japan' AND a.reporting_period = s.reporting_period AND a.metric = 'purchase_rate'
+             ON a.source = s.source AND a.geography = 'Japan' AND a.reporting_period = s.reporting_period
+            AND a.metric = 'purchase_rate'
             AND a.segment = 'All nationalities' AND a.category = s.category AND a.item = s.item
-           WHERE s.geography = 'Japan' AND s.reporting_period = ? AND s.metric = 'purchase_rate' AND s.segment = ?
+           WHERE s.{CURRENT} AND s.geography = 'Japan' AND s.reporting_period = ? AND s.metric = 'purchase_rate'
+             AND s.segment = ?
              AND s.item != '' AND s.respondents >= ? AND a.value >= 1""",
         (period, segment, SMALL_SAMPLE)))
     for r in data:
@@ -263,3 +273,50 @@ def highlights(conn: sqlite3.Connection, top: int = 5) -> dict:
     growing = sorted([r for r in usable if r["spend_change"]["status"] == "ok"], key=lambda r: -r["spend_change"]["value"])
     return {"period": data["period"], "comparison_period": data.get("comparison_period"),
             "growing": growing[:top], "largest": sorted(usable, key=lambda r: -r["spend_per_person"])[:top]}
+
+
+HISTORY_CATEGORIES = ["lodging", "food_drink", "transport", "entertainment", "shopping"]
+DESIGNS = [  # oldest first
+    {"source": SOURCE_2010, "label": "2010-2017 survey", "from": "2010-Q2", "to": "2017-Q4"},
+    {"source": SOURCE_2018, "label": "2018-2024 survey", "from": "2018-Q1", "to": "2024-Q1"},
+    {"source": CURRENT_SOURCE, "label": "Current survey", "from": "2024-Q2", "to": None},
+]
+
+
+def history(conn: sqlite3.Connection, segment: str = "All nationalities") -> dict:
+    """Spending per visitor on the main categories, every quarter since 2010, one series per survey design.
+
+    Computed the same way in every era: share of visitors who bought (purchase rate) x what buyers
+    spent. That leaves out package-tour fees split across categories, so values differ from the
+    'per visitor' figures elsewhere, but they are comparable within each design.
+    """
+    data = rows(conn.execute(
+        f"""SELECT source, reporting_period, category, metric, value, evidence_id FROM spending_stats
+            WHERE geography = 'Japan' AND segment = ? AND item = '' AND period_type = 'quarter'
+              AND metric IN ('purchase_rate', 'spend_per_purchaser')
+              AND category IN ({', '.join('?' * len(HISTORY_CATEGORIES))})""",
+        [segment, *HISTORY_CATEGORIES]))
+    cells: dict[tuple, dict] = {}
+    for r in data:
+        cells.setdefault((r["source"], r["reporting_period"], r["category"]), {})[r["metric"]] = r
+    points: dict[tuple, dict] = {}
+    for (source, period, category), m in cells.items():
+        rate, buyer = m.get("purchase_rate"), m.get("spend_per_purchaser")
+        p = points.setdefault((source, period), {"period": period, "source": source, "values": {}, "evidence_ids": []})
+        if rate and buyer:
+            p["values"][category] = round(rate["value"] / 100 * buyer["value"], 1)
+            p["evidence_ids"] += [rate["evidence_id"], buyer["evidence_id"]]
+    designs = []
+    for d in DESIGNS:
+        old = {SOURCE_2010, SOURCE_2018}
+        series = sorted((p for p in points.values()
+                         if p["source"] == d["source"] or (d["source"] == CURRENT_SOURCE and p["source"] not in old)),
+                        key=lambda p: p["period"])
+        if series:
+            designs.append({**d, "points": series})
+    return {"segment": segment, "categories": [{"key": c, "label": label(c)} for c in HISTORY_CATEGORIES],
+            "designs": designs,
+            "gaps": [{"from": "2020-Q2", "to": "2022-Q3",
+                      "reason": "No usable survey while entry was restricted for COVID-19: April 2020 to September "
+                                "2021 were not surveyed, and the rough estimates for October 2021 to September 2022 "
+                                "do not include spending by category."}]}

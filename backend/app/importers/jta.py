@@ -25,6 +25,13 @@ Rules:
 - The nationality groups changed in 2026 (21 -> 24 groups: Mexico, the Nordic
   countries and the Middle East left 'Other'), so 'Other' is not comparable
   across those years.
+
+Survey designs (each stored under its own `source`, never mixed in comparisons):
+- 'JTA'                       2024-Q2 on: インバウンド消費動向調査 (current design)
+- 'JTA (2018-2024 design)'    2018-Q1 to 2024-Q1: 訪日外国人消費動向調査, same sheet layout
+- 'JTA (2010-2017 design)'    2010-Q2 to 2017-Q4: older layout (第4表). Only the spending
+                              CATEGORIES are read, because items were grouped differently
+                              (e.g. 'golf and theme parks' as one item).
 """
 import io
 import re
@@ -34,8 +41,23 @@ from pathlib import Path
 
 from app.importers.service import ParsedFile, RowError
 
+CURRENT_SOURCE = "JTA"
+SOURCE_2018 = "JTA (2018-2024 design)"
+SOURCE_2010 = "JTA (2010-2017 design)"
+
+
+def source_for(period: str) -> str:
+    """Which survey design produced a period's figures."""
+    if period[:4] < "2018":
+        return SOURCE_2010
+    if period < "2024-Q2" and "-Q" in period or (period.isdigit() and period < "2024"):
+        return SOURCE_2018
+    return CURRENT_SOURCE
+
+
 SEGMENTS: dict[str, str] = {
-    "全国籍・地域": "All nationalities",
+    "全国籍・地域": "All nationalities", "全体": "All nationalities",
+    "中国(台湾)": "Taiwan", "中国 [香港]": "Hong Kong", "中国[香港]": "Hong Kong", "アメリカ": "United States",
     "韓国": "South Korea", "台湾": "Taiwan", "香港": "Hong Kong", "中国": "China", "タイ": "Thailand",
     "シンガポール": "Singapore", "マレーシア": "Malaysia", "インドネシア": "Indonesia", "フィリピン": "Philippines",
     "ベトナム": "Vietnam", "インド": "India", "英国": "United Kingdom", "ドイツ": "Germany", "フランス": "France",
@@ -55,6 +77,10 @@ CATEGORIES: dict[str, str] = {
     "娯楽等サービス費": "entertainment",
     "買物代": "shopping",
     "その他": "other",
+    # 2010-2017 design names
+    "パッケージツアー": "package_tour",
+    "宿泊料金": "lodging",
+    "娯楽サービス費": "entertainment",
 }
 ITEMS: dict[str, str] = {
     "航空(日本国内移動のみ)": "domestic_flights",
@@ -93,6 +119,8 @@ ITEMS: dict[str, str] = {
     "本・雑誌・ガイドブックなど": "books_magazines",
     "音楽・映像・ゲームなどソフトウェア": "music_video_games",
     "その他買物代": "other_shopping",
+    "ゴルフ場": "golf",
+    "ゴルフ場・スポーツ施設利用料・スポーツ施設利用料": "golf_sports_facilities",  # repeated words in one 2023 file
 }
 # Column order of the prefecture spending table (表1-3), after the total.
 PREFECTURE_CATEGORIES = ["package_tours", "lodging", "food_drink", "transport", "entertainment", "shopping", "other"]
@@ -111,7 +139,8 @@ PREFECTURES: dict[str, str] = {
     "鹿児島県": "Kagoshima", "沖縄県": "Okinawa",
 }
 
-PERIOD = re.compile(r"(\d{4})年(?:\(令和\d+年\))?\s*(?:(\d{1,2})-(\d{1,2})月期|(暦年))")
+# 2026年4-6月期 / 2026年(令和8年)4-6月期 / 2018年(平成30年) 4-6月期 / 平成23年(2011年) 4-6月期
+PERIOD = re.compile(r"(\d{4})年\)?\s*(?:\((?:令和|平成)\d+年\))?\s*(?:(\d{1,2})-(\d{1,2})月期|(暦年))")
 QUARTER_BY_START = {1: 1, 4: 2, 7: 3, 10: 4}
 
 
@@ -162,7 +191,9 @@ def find_period(sheets: dict[str, list[list]]) -> tuple[str, str, str] | None:
                 text = _n(value)
                 if not text:
                     continue
-                if "確報" in text:
+                if "試算" in text:
+                    status = "estimate"  # rough figures published while entry was restricted (2021-2022)
+                elif "確報" in text and status != "estimate":
                     status = "final"
                 elif "速報" in text and status == "unknown":
                     status = "preliminary"
@@ -183,6 +214,10 @@ def detect_kind(sheets: dict[str, list[list]]) -> str | None:
         return " ".join(_n(c) for row in sheets.get(name, [])[:4] for c in row if c not in (None, ""))
     if "参考2" in sheets and "費目別" in title("参考2") and "国籍" in title("参考2"):
         return "national"
+    if "第4表" in {_n(k) for k in sheets} or "第４表" in sheets:
+        name = next(k for k in sheets if _n(k) == "第4表")
+        if "費目別購入率" in title(name) and "国籍" in title(name):
+            return "national_2010"
     if "表1-3" in sheets and "都道府県" in title("表1-3") and "旅行消費額" in title("表1-3"):
         return "prefecture"
     return None
@@ -208,8 +243,14 @@ def parse_jta_spending_workbook(content: bytes, filename: str, collection_date: 
         result.errors.append(RowError(None, None, "Could not find the period (e.g. 2026年4-6月期) in the sheet headers."))
         return result
     reporting_period, period_type, status = period
+    source = source_for(reporting_period)
+    if kind == "national_2010" and source != SOURCE_2010:
+        result.errors.append(RowError(None, None, f"A 2010-2017 layout file says {reporting_period}; expected 2017 or earlier."))
+        return result
+    if status == "unknown" and source != CURRENT_SOURCE:
+        status = "final"  # archived results of a closed survey design are no longer revised
     base = {"reporting_period": reporting_period, "period_type": period_type, "purpose": "all",
-            "value_status": status, "source": "JTA", "publication_date": publication_date,
+            "value_status": status, "source": source, "publication_date": publication_date,
             "collection_date": collection_date or date.today().isoformat()}
 
     unknown: set[str] = set()
@@ -219,12 +260,18 @@ def parse_jta_spending_workbook(content: bytes, filename: str, collection_date: 
             _parse_national(sheets, "表2-1", base, result, unknown)
         else:
             result.warnings.append("Sheet 表2-1 (purchase rates) was not found; only spend per visitor was imported.")
+    elif kind == "national_2010":
+        name = next(k for k in sheets if _n(k) == "第4表")
+        _parse_national(sheets, name, base, result, unknown, categories_only=True)
     else:
         _parse_prefecture_visitors(sheets, base, result)
         _parse_prefecture_spending(sheets, base, result)
 
     if unknown:
         result.warnings.append("Labels without a translation were kept as-is: " + ", ".join(sorted(unknown)))
+    if source != CURRENT_SOURCE:
+        result.warnings.append(f"Stored as '{source}': an earlier survey design, shown in the long-term view only "
+                               "and never compared directly with current figures.")
     if status == "preliminary":
         result.warnings.append("These figures are preliminary (速報). Import the final (確報) release later to "
                                "update them; old values are kept in the revision history.")
@@ -238,8 +285,17 @@ METRICS = {"消費単価": ("spend_per_person", "JPY per person"),
            "購入者単価": ("spend_per_purchaser", "JPY per person")}
 
 
-def _parse_national(sheets, sheet: str, base: dict, result: ParsedFile, unknown: set[str]) -> None:
-    """Blocks start with a '調査項目' header row (segment names), followed by a row naming the metric per column."""
+def _segment(name: str) -> str | None:
+    name = re.sub(r"\s*\d+\)$", "", name).strip()  # drop footnote marks such as '全体 2)'
+    return SEGMENTS.get(name)
+
+
+def _parse_national(sheets, sheet: str, base: dict, result: ParsedFile, unknown: set[str],
+                    categories_only: bool = False) -> None:
+    """Blocks start with a '調査項目' header row (segment names), followed by a row naming the metric per column.
+
+    A segment spans two columns: (回答数 | value) in 表2-1, (消費単価 | 構成比) in 参考2, and
+    (購入率 | 購入者単価) in the 2010-2014 第4表, which holds two metrics side by side."""
     rows = sheets[sheet]
     columns: dict[int, tuple[str, str, str, int | None]] = {}  # value col -> (segment, metric, unit, respondents col)
     category = None
@@ -251,17 +307,18 @@ def _parse_national(sheets, sheet: str, base: dict, result: ParsedFile, unknown:
             for c, name in enumerate(cells):
                 if c < 3 or not name:
                     continue
-                segment = SEGMENTS.get(name)
+                segment = _segment(name)
                 if segment is None:
                     unknown.add(name)
-                    segment = name
-                # A segment spans two columns: (回答数 | value) in 表2-1, (消費単価 | 構成比) in 参考2.
+                    segment = re.sub(r"\s*\d+\)$", "", name).strip()
+                first = metric_row[c] if c < len(metric_row) else ""
                 for vc in (c, c + 1):
                     label = metric_row[vc] if vc < len(metric_row) else ""
                     if label in METRICS:
-                        resp = c if vc == c + 1 and (metric_row[c] if c < len(metric_row) else "") == "回答数" else None
+                        resp = c if vc == c + 1 and first == "回答数" else None
                         columns[vc] = (segment, *METRICS[label], resp)
-                        break
+                        if sheet == "参考2":
+                            break  # the second column is a share (構成比), not a metric
             continue
         if not columns:
             continue
@@ -279,6 +336,8 @@ def _parse_national(sheets, sheet: str, base: dict, result: ParsedFile, unknown:
                 key_cat = label_cat
             category, key_item, original = key_cat, "", label_cat
         elif label_item and category:
+            if categories_only:
+                continue
             key_item = ITEMS.get(label_item)
             if key_item is None:
                 unknown.add(label_item)

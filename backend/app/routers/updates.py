@@ -33,3 +33,19 @@ def check_now():
 
     threading.Thread(target=run, name="update-check-now", daemon=True).start()
     return {"started": True}
+
+
+@router.post("/history", status_code=202)
+def download_history():
+    """One-off: download earlier survey designs (2010-2024-Q1). Several dozen files; poll GET /api/updates."""
+    if updates._lock.locked():
+        raise HTTPException(409, "A check is already running.")
+
+    def run():
+        try:
+            updates.check_all(sources=("JTA history",))
+        except updates.UpdateError:
+            pass
+
+    threading.Thread(target=run, name="history-download", daemon=True).start()
+    return {"started": True}

@@ -192,3 +192,71 @@ def test_scheduler_is_off_in_tests_and_due_logic(real_conn):
     real_conn.execute("INSERT INTO update_checks (checked_at, source, status) VALUES (datetime('now'), 'JTA', 'ok')")
     real_conn.execute("UPDATE update_checks SET checked_at = strftime('%Y-%m-%dT%H:%M:%S+00:00', 'now')")
     assert updates.due(real_conn, 24) is False
+
+
+# ------------------------------------------------------------ earlier survey designs (history)
+
+from app.importers.jta import CURRENT_SOURCE, SOURCE_2010, SOURCE_2018, source_for  # noqa: E402
+from tests.jta_fixtures import ARCHIVE_HTML, JTA_HISTORY_HTML, legacy_workbook  # noqa: E402
+
+
+@pytest.mark.parametrize("period,source", [("2010-Q2", SOURCE_2010), ("2017-Q4", SOURCE_2010), ("2018-Q1", SOURCE_2018),
+                                           ("2024-Q1", SOURCE_2018), ("2024-Q2", CURRENT_SOURCE), ("2026-Q2", CURRENT_SOURCE)])
+def test_each_period_belongs_to_one_survey_design(period, source):
+    assert source_for(period) == source
+
+
+def test_2010s_layout_reads_categories_with_both_metrics():
+    parsed = parse_jta_spending_workbook(legacy_workbook(), "old.xls".replace(".xls", ".xlsx"))
+    assert not parsed.errors
+    r = by_key(parsed.records)
+    assert {x["source"] for x in parsed.records} == {SOURCE_2010}
+    assert parsed.records[0]["reporting_period"] == "2011-Q2" and parsed.records[0]["value_status"] == "final"
+    assert r[("All nationalities", "lodging", "", "purchase_rate")]["value"] == pytest.approx(63.2)
+    assert r[("All nationalities", "lodging", "", "spend_per_purchaser")]["value"] == pytest.approx(58252.7)
+    assert r[("Taiwan", "lodging", "", "purchase_rate")]["value"] == pytest.approx(52.0)
+    assert ("Taiwan", "entertainment", "", "spend_per_purchaser") not in r  # '-' is missing, not zero
+    assert not any(x["item"] for x in parsed.records)  # items were grouped differently then: not read
+    assert any("earlier survey design" in w for w in parsed.warnings)
+
+
+def test_earlier_designs_never_feed_current_comparisons(real_conn):
+    run_import(real_conn, "real", "spending_stats", "old.xlsx", national_workbook(period="2025年4-6月期 【確報】"),
+               parser=parse_jta_spending_workbook)
+    # A 2018-design file for the same quarter a year before the current one:
+    run_import(real_conn, "real", "spending_stats", "n23.xlsx", national_workbook(period="2023年4-6月期 【確報】"),
+               parser=parse_jta_spending_workbook)
+    run_import(real_conn, "real", "spending_stats", "n24.xlsx", national_workbook(period="2024年4-6月期 【確報】"),
+               parser=parse_jta_spending_workbook)
+    assert real_conn.execute("SELECT source FROM spending_stats WHERE reporting_period = '2023-Q2' LIMIT 1").fetchone()[0] == SOURCE_2018
+    data = spending.items(real_conn, period="2024-Q2")
+    tour = next(r for r in data["rows"] if r["item"] == "local_tours_guides")
+    assert tour["spend_change"]["status"] == "missing_previous"  # 2023-Q2 is another design: no comparison
+    assert spending.latest_period(real_conn) == "2025-Q2"
+
+
+def test_history_keeps_each_design_separate(real_conn):
+    run_import(real_conn, "real", "spending_stats", "old.xlsx", legacy_workbook(), parser=parse_jta_spending_workbook)
+    run_import(real_conn, "real", "spending_stats", "n23.xlsx", national_workbook(period="2023年4-6月期 【確報】"),
+               parser=parse_jta_spending_workbook)
+    run_import(real_conn, "real", "spending_stats", "n26.xlsx", national_workbook(), parser=parse_jta_spending_workbook)
+    h = spending.history(real_conn)
+    assert [d["source"] for d in h["designs"]] == [SOURCE_2010, SOURCE_2018, CURRENT_SOURCE]
+    first = h["designs"][0]["points"][0]
+    assert first["period"] == "2011-Q2"
+    assert first["values"]["lodging"] == pytest.approx(63.2 / 100 * 58252.7, rel=1e-3)  # share who buy x spend per buyer
+    assert (h["gaps"][0]["from"], h["gaps"][0]["to"]) == ("2020-Q2", "2022-Q3")
+    client = TestClient(app)
+    assert len(client.get("/api/spending/history?scope=real").json()["designs"]) == 3
+
+
+def test_history_links_come_from_the_jta_page_and_the_archive():
+    old = updates.jta_releases(JTA_HISTORY_HTML, history=True)
+    # 2024-Q1 (last quarter of the 2018 design) and 2023-Q2; no prefecture tables, no 2021 COVID estimate.
+    assert [(r.period, r.url.rsplit("/", 1)[-1]) for r in old] == [("2024-Q1", "N2024Q1.xls"), ("2023-Q2", "N2023Q2.xls")]
+    assert all(r.period >= "2024-Q2" for r in updates.jta_releases(JTA_HISTORY_HTML))  # daily check unchanged
+    arch = updates.archive_releases(ARCHIVE_HTML)
+    # 2019 on comes from the JTA page; annual estimates, prefecture tables and the lounge survey are skipped.
+    assert [(r.period, r.url.rsplit("/", 1)[-1]) for r in arch] == [("2020-Q1", "001396836.xls"), ("2011-Q2", "000167659.xls")]
+    assert arch[0].url.startswith("https://warp.ndl.go.jp/2024/1/http://www.mlit.go.jp/")
+    assert "2010-2017 survey" in arch[1].label and "2018-2024 survey" in arch[0].label
