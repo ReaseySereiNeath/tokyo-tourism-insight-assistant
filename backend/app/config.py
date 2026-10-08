@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     # Server-side refusal fallback (lets the API retry on another model if a request is declined).
     ai_enable_fallbacks: bool = True
 
+    # --- Local AI (optional, free): an open-source model served by Ollama on this Mac ---
+    ollama_url: str = "http://localhost:11434"
+    local_model: str = "qwen2.5:14b"
+    local_timeout_seconds: float = 900.0   # a long report can take several minutes on a laptop
+    local_context_tokens: int = 32768      # the evidence pack is about 13k tokens
+
     # --- Request-size bounds (protect cost and context) ---
     ai_max_evidence_chars: int = 60_000      # total characters of evidence sent per report
     ai_max_excerpt_chars: int = 500           # per feedback/news excerpt

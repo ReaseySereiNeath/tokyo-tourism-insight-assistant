@@ -7,7 +7,7 @@ import { ScorecardRow } from "@/components/scorecard";
 import { Badge, Button, Callout, Card, EmptyState, ErrorState, EvidenceLink, Loading, MoreDetail, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
 import { fmtDateTime } from "@/lib/format";
-import type { BusinessType, EvidencePack, Fact, FounderProfile, Opportunity, Report, ReportListItem } from "@/lib/types";
+import type { BusinessType, EvidencePack, Fact, FounderProfile, Opportunity, QualityAction, Report, ReportListItem, ReportResult } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
 
 const STATUS_WORDS: Record<string, string> = { success: "Complete", partial: "Partly complete", failed: "Failed" };
@@ -34,7 +34,9 @@ export default function BusinessIdeasPage() {
 
 function IdeasContent() {
   const { scope } = useScope();
-  const health = useApi(() => api.get<{ ai_configured: boolean; model: string | null }>("/api/health", null), []);
+  const health = useApi(() => api.get<{
+    ai_configured: boolean; model: string | null; local_ai: { running: boolean; model: string; ready: boolean };
+  }>("/api/health", null), []);
   const profile = useApi(() => api.get<FounderProfile>("/api/profile", scope), [scope]);
   const list = useApi(() => api.get<ReportListItem[]>("/api/reports", scope), [scope]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -46,7 +48,7 @@ function IdeasContent() {
   const report = useApi(() => currentId ? api.get<Report>(`/api/reports/${currentId}`, scope) : Promise.resolve(null), [scope, currentId]);
   const preview = useApi(() => view === "preview" ? api.get<EvidencePack>("/api/reports/preview", scope) : Promise.resolve(null), [scope, view]);
 
-  async function generate(provider: "anthropic" | "demo") {
+  async function generate(provider: "anthropic" | "local" | "demo") {
     setGenerating(provider);
     setGenError(null);
     try {
@@ -62,6 +64,8 @@ function IdeasContent() {
   }
 
   const aiReady = !!health.data?.ai_configured;
+  const local = health.data?.local_ai;
+  const localReady = !!local?.ready;
   const profileEmpty = profile.data && Object.values(profile.data).every((v) => !v);
 
   return (
@@ -75,17 +79,30 @@ function IdeasContent() {
               {generating === "demo" ? "Creating…" : "Create a sample report"}
             </Button>
           )}
-          <Button variant={scope === "real" ? "primary" : "secondary"} onClick={() => generate("anthropic")} disabled={!aiReady || !!generating}
-            title={aiReady ? `Uses ${health.data?.model}. Each report costs a small amount.` : "Add ANTHROPIC_API_KEY to backend/.env to turn on AI"}>
-            {generating === "anthropic" ? "Finding ideas… (about a minute)" : "Find business ideas with AI"}
+          <Button variant={scope === "real" && !aiReady ? "primary" : "secondary"} onClick={() => generate("local")}
+            disabled={!localReady || !!generating}
+            title={localReady ? `Runs ${local?.model} on this Mac. Free, and nothing leaves your computer.` : "Local AI isn't ready: see the note below"}>
+            {generating === "local" ? "Thinking on your Mac… (a few minutes)" : "Find ideas with local AI (free)"}
           </Button>
+          {aiReady && (
+            <Button variant={scope === "real" ? "primary" : "secondary"} onClick={() => generate("anthropic")} disabled={!!generating}
+              title={`Uses ${health.data?.model}. Each report costs a small amount.`}>
+              {generating === "anthropic" ? "Finding ideas… (about a minute)" : "Find ideas with Claude"}
+            </Button>
+          )}
         </>} />
 
       <div className="mb-6 space-y-3">
-        {health.data && !aiReady && (
+        {local && !localReady && (
+          <Callout title="Local AI isn't ready yet">
+            {!local.running
+              ? <>Ollama isn&apos;t running. Start it in Terminal with <code>brew services start ollama</code>, then reload this page.</>
+              : <>The model isn&apos;t downloaded. In Terminal, run <code>ollama pull {local.model}</code> (about 9 GB), then reload this page.</>}
+          </Callout>
+        )}
+        {generating === "local" && (
           <Callout>
-            AI is off because no API key is set, so new ideas can&apos;t be created yet. You can still see exactly what the AI would read
-            {scope === "real" ? ", or switch to sample data to see an example report." : ", and create a sample report."}
+            The open-source model is reading about 80 facts on your Mac. It usually takes 2 to 5 minutes; keep this page open.
           </Callout>
         )}
         {profileEmpty && (
@@ -209,6 +226,7 @@ function ReportView({ report }: { report: Report }) {
           <li>Every source the AI cited was checked against your data ({report.validation.checked_ids ?? 0} checked).</li>
           <li>Ideas removed for citing sources that don&apos;t exist: {removed.length}.</li>
           {report.validation.provider_error && <li>Error from the AI service: {report.validation.provider_error}</li>}
+          {(report.validation.quality?.actions ?? []).map((a, i) => <li key={i}>{qualityWords(a, r)}</li>)}
         </ul>
         {removed.length > 0 && (
           <ul className="mt-2 space-y-1 text-xs text-ink-3">
@@ -221,6 +239,20 @@ function ReportView({ report }: { report: Report }) {
       </MoreDetail>
     </div>
   );
+}
+
+function qualityWords(a: QualityAction, r: ReportResult | null): string {
+  const idea = a.index !== undefined ? `Idea ${a.index + 1}` : a.rejected_index !== undefined
+    ? `Rejected idea “${r?.rejected_ideas[a.rejected_index]?.idea ?? a.rejected_index + 1}”` : "The report";
+  switch (a.check) {
+    case "evidence_filled": return `${idea}: the AI listed fact numbers only, so the facts themselves are shown.`;
+    case "unverified_numbers": return `${idea}: contains numbers not found in the evidence (${a.numbers?.join(", ")}).`;
+    case "confidence_capped": return `${idea}: confidence lowered. ${a.note ?? ""}`;
+    case "big_first_test": return `${idea}: the first test is a big commitment; a cheaper trial is suggested.`;
+    case "sufficiency_lowered": return "“Enough data?” lowered to “only partly”, because About you is empty.";
+    case "type_corrected": return `${idea}: business type corrected to match the spending it relies on.`;
+    case "citations_fixed": return `${idea}: cited a fact about a different item; the right scorecard is shown instead.`;
+  }
 }
 
 function IdeaCard({ n, o, facts }: { n: number; o: Opportunity; facts: Map<string, Fact> }) {

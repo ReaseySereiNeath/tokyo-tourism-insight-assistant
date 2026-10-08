@@ -2,6 +2,7 @@
 
     LLMProvider
       ├── AnthropicProvider  real Claude API calls (needs ANTHROPIC_API_KEY)
+      ├── LocalProvider      an open-source model run by Ollama on this Mac (free, offline)
       └── DemoProvider       fixed rules, no AI; output is always labeled as an EXAMPLE
 
 Swapping in another vendor means writing one more class with the same two
@@ -12,6 +13,7 @@ import logging
 from typing import Protocol
 
 import anthropic
+import httpx
 
 from app.ai import prompts
 from app.ai.schemas import ClassificationOutput, ReportOutput
@@ -114,6 +116,81 @@ class AnthropicProvider:
                           self.settings.ai_effort_classify, 8000)
 
 
+def _inline_refs(schema: dict) -> dict:
+    """Ollama's schema-to-grammar step is happiest without $ref: inline the $defs."""
+    defs = schema.get("$defs", {})
+
+    def walk(node):
+        if isinstance(node, dict):
+            if "$ref" in node:
+                return walk(defs[node["$ref"].rsplit("/", 1)[-1]])
+            return {k: walk(v) for k, v in node.items() if k != "$defs"}
+        if isinstance(node, list):
+            return [walk(v) for v in node]
+        return node
+    return walk(schema)
+
+
+class LocalProvider:
+    """An open-source model served by Ollama (https://ollama.com) on this computer.
+
+    Same prompts and output schema as the Anthropic provider; Ollama constrains the
+    output to the JSON schema. Nothing leaves the machine and there is no per-call cost.
+    Smaller models reason less well, so the same citation validation applies.
+    """
+    name = "local"
+    is_example = False
+
+    def __init__(self, settings: Settings, client: httpx.Client | None = None):
+        self.settings = settings
+        self.model = settings.local_model
+        self.client = client or httpx.Client(base_url=settings.ollama_url, timeout=settings.local_timeout_seconds)
+        self.last_served_model: str | None = None
+
+    def _call(self, system: str, user: str, schema_model, max_tokens: int) -> dict:
+        body = {
+            "model": self.model, "stream": False,
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            "format": _inline_refs(schema_model.model_json_schema()),
+            "options": {"temperature": 0.2, "num_ctx": self.settings.local_context_tokens, "num_predict": max_tokens},
+        }
+        try:
+            r = self.client.post("/api/chat", json=body)
+        except httpx.TimeoutException as exc:
+            raise ProviderError("timeout", f"The local model did not finish within {self.settings.local_timeout_seconds:.0f}s.") from exc
+        except httpx.HTTPError as exc:
+            raise ProviderError("network", "Ollama isn't running. Start it with: brew services start ollama") from exc
+        if r.status_code == 404:
+            raise ProviderError("model", f"The model '{self.model}' isn't downloaded. Run: ollama pull {self.model}")
+        if r.status_code >= 400:
+            raise ProviderError("api_error", f"Ollama error {r.status_code}: {r.text[:200]}")
+        data = r.json()
+        self.last_served_model = data.get("model", self.model)
+        if data.get("done_reason") == "length":
+            raise ProviderError("truncated", "The local model's answer hit its length limit and was cut off.")
+        try:
+            return json.loads(data["message"]["content"])
+        except (KeyError, json.JSONDecodeError) as exc:
+            raise ProviderError("invalid_response", "The local model's answer was not valid JSON.") from exc
+
+    def generate_report(self, pack: dict) -> dict:
+        return self._call(prompts.REPORT_SYSTEM, prompts.report_user_message(pack), ReportOutput, 8192)
+
+    def classify_feedback(self, items: list[dict]) -> dict:
+        return self._call(prompts.CLASSIFY_SYSTEM, prompts.classify_user_message(items), ClassificationOutput, 4096)
+
+
+def local_status(settings: Settings) -> dict:
+    """Is Ollama running, and is the configured model downloaded? Quick: one short request."""
+    try:
+        r = httpx.get(f"{settings.ollama_url}/api/tags", timeout=1.5)
+        names = {m.get("name") for m in r.json().get("models", [])}
+    except (httpx.HTTPError, ValueError):
+        return {"running": False, "model": settings.local_model, "ready": False}
+    ready = settings.local_model in names or f"{settings.local_model}:latest" in names
+    return {"running": True, "model": settings.local_model, "ready": ready}
+
+
 class DemoProvider:
     """Builds an EXAMPLE opportunity report from the evidence pack with fixed rules. No AI is involved.
 
@@ -208,6 +285,8 @@ def get_provider(scope: str, requested: str | None, settings: Settings) -> LLMPr
         if scope != "demo":
             raise ProviderError("not_allowed", "Example reports are only available in demo mode.")
         return DemoProvider()
+    if choice == "local":
+        return LocalProvider(settings)
     if choice == "anthropic":
         if not settings.ai_configured:
             raise ProviderError("not_configured", "No ANTHROPIC_API_KEY is set, so live AI analysis is unavailable. "

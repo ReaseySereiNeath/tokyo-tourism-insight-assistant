@@ -19,7 +19,7 @@ def preview(scope: Scope = Depends(scope_param), conn: sqlite3.Connection = Depe
 
 
 @router.post("")
-def create(provider: str | None = Query(None, pattern="^(anthropic|demo)$"), scope: Scope = Depends(scope_param),
+def create(provider: str | None = Query(None, pattern="^(anthropic|local|demo)$"), scope: Scope = Depends(scope_param),
            conn: sqlite3.Connection = Depends(db)):
     settings = get_settings()
     try:

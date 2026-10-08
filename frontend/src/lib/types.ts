@@ -251,6 +251,8 @@ export interface Report {
     removed_opportunities?: { index: number; idea: string; invalid_ids: { id: string; reason: string }[] }[];
     checked_ids?: number;
     provider_error?: string;
+    dropped_item_links?: { index: number; keys: string[] }[];
+    quality?: { actions: QualityAction[] };
   };
   error: string | null;
 }
@@ -377,4 +379,12 @@ export interface SpendingHistory {
   designs: { source: string; label: string; from: string; to: string | null;
     points: { period: string; source: string; values: Record<string, number>; evidence_ids: string[] }[] }[];
   gaps: { from: string; to: string; reason: string }[];
+}
+
+export interface QualityAction {
+  check: "evidence_filled" | "unverified_numbers" | "confidence_capped" | "big_first_test" | "sufficiency_lowered" | "type_corrected" | "citations_fixed";
+  index?: number;
+  rejected_index?: number;
+  numbers?: string[];
+  note?: string;
 }

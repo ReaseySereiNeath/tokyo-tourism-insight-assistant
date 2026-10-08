@@ -329,3 +329,153 @@ def test_demo_report_links_items_and_lists_rejected_ideas(seeded_demo):
     r = load_report(seeded_demo, generate_report(seeded_demo, "demo", DemoProvider(), get_settings()))
     assert any(o["scorecards"] for o in r["result"]["opportunities"])
     assert r["result"]["rejected_ideas"][0]["idea"].startswith("EXAMPLE")
+
+
+# ------------------------------------------------------------ local (Ollama) provider with a fake server
+
+import httpx  # noqa: E402
+
+from app.ai.provider import LocalProvider, _inline_refs  # noqa: E402
+from app.ai.schemas import ReportOutput  # noqa: E402
+
+EMPTY_PACK = {"founder_profile": {}, "facts": [], "data_gaps": [], "documents": []}
+
+
+def ollama(handler):
+    return httpx.Client(base_url="http://ollama.test", transport=httpx.MockTransport(handler))
+
+
+def test_local_provider_sends_the_schema_and_parses_the_answer():
+    seen = {}
+
+    def handler(request):
+        seen.update(json.loads(request.content))
+        return httpx.Response(200, json={"model": "qwen2.5:14b", "done_reason": "stop",
+                                         "message": {"content": json.dumps(report_with([]))}})
+    provider = LocalProvider(get_settings(), client=ollama(handler))
+    assert provider.generate_report(EMPTY_PACK)["opportunities"] == []
+    assert seen["model"] == "qwen2.5:14b" and seen["stream"] is False
+    assert seen["format"]["properties"]["opportunities"]["items"]["properties"]["business_idea"]
+    assert "$ref" not in json.dumps(seen["format"])  # refs inlined for Ollama
+    assert seen["options"]["num_ctx"] >= 16384
+
+
+@pytest.mark.parametrize("response,kind", [
+    (httpx.Response(404, json={"error": "model not found"}), "model"),
+    (httpx.Response(200, json={"done_reason": "length", "message": {"content": "{"}}), "truncated"),
+    (httpx.Response(200, json={"done_reason": "stop", "message": {"content": "not json"}}), "invalid_response"),
+])
+def test_local_provider_failures_are_explained(response, kind):
+    provider = LocalProvider(get_settings(), client=ollama(lambda r: response))
+    with pytest.raises(ProviderError) as err:
+        provider.generate_report(EMPTY_PACK)
+    assert err.value.kind == kind
+
+
+def test_local_provider_says_how_to_start_ollama():
+    def down(request):
+        raise httpx.ConnectError("refused")
+    with pytest.raises(ProviderError) as err:
+        LocalProvider(get_settings(), client=ollama(down)).generate_report(EMPTY_PACK)
+    assert err.value.kind == "network" and "brew services start ollama" in err.value.message
+
+
+def test_local_reports_run_end_to_end_and_are_validated(seeded_demo):
+    def handler(request):
+        pack_fact = json.loads(request.content)["messages"][1]["content"].split('"id": "')[1].split('"')[0]
+        good = {**good_opportunity([pack_fact])}
+        bad = {**good_opportunity(["F999"])}
+        return httpx.Response(200, json={"model": "qwen2.5:14b", "done_reason": "stop",
+                                         "message": {"content": json.dumps(report_with([good, bad]))}})
+    r = load_report(seeded_demo, generate_report(seeded_demo, "demo", LocalProvider(get_settings(), client=ollama(handler)),
+                                                 get_settings()))
+    assert r["provider"] == "local" and r["is_example"] is False and r["status"] == "partial"
+    assert len(r["result"]["opportunities"]) == 1  # the made-up citation was removed
+
+
+def test_inline_refs_and_provider_choice():
+    schema = _inline_refs(ReportOutput.model_json_schema())
+    assert "$defs" not in schema and "$ref" not in json.dumps(schema)
+    assert isinstance(get_provider("real", "local", get_settings()), LocalProvider)
+
+
+# ------------------------------------------------------------ quality guardrails (any provider)
+
+from app.ai import quality  # noqa: E402
+
+
+def quality_pack(profile=None, gaps=()):
+    return {"facts": [{"id": "F1", "kind": "item_signal", "evidence_ids": [],
+                       "statement": "Local tours: ¥2,227 per visitor, +32.2% vs 2025-Q2; demand score 3.9/5; ¥23.2 billion."}],
+            "founder_profile": profile or {}, "data_gaps": list(gaps)}
+
+
+def opp(**kw):
+    return {**good_opportunity(["F1"]), **kw}
+
+
+def test_id_only_evidence_is_replaced_by_the_cited_facts():
+    result = report_with([opp(demand_evidence="F1, F1")])
+    q = quality.check(result, quality_pack())
+    assert result["opportunities"][0]["demand_evidence"].startswith("Local tours: ¥2,227")
+    assert q["actions"][0]["check"] == "evidence_filled"
+
+
+def test_numbers_missing_from_the_evidence_are_flagged_and_rounding_is_allowed():
+    result = report_with([opp(demand_evidence="Tours earn ¥2,227 per visitor, up 32% (score 3.9/5), market ¥23.2 billion.",
+                              why_now="Spending rose 47.5% last year.")])
+    q = quality.check(result, quality_pack(profile={"budget": "x"}))
+    flagged = [a for a in q["actions"] if a["check"] == "unverified_numbers"]
+    assert flagged and flagged[0]["numbers"] == ["47.5%"]  # 32% rounds 32.2%; the rest are exact
+    assert "47.5%" in result["opportunities"][0]["risks"][-1]
+
+
+def test_confidence_and_sufficiency_are_capped_without_a_profile():
+    result = {**report_with([opp(confidence="high")]), "data_sufficiency": "sufficient"}
+    quality.check(result, quality_pack())
+    assert result["opportunities"][0]["confidence"] == "medium"
+    assert result["data_sufficiency"] == "limited"
+    result = report_with([opp(confidence="high")])
+    quality.check(result, quality_pack(profile={"budget": "JPY 3 million"}))
+    assert result["opportunities"][0]["confidence"] == "high"  # profile filled, no preliminary data
+
+
+def test_a_full_launch_is_flagged_as_a_first_test_but_a_pop_up_is_not():
+    launch = report_with([opp(first_test="Open a small shop in Ginza selling watches.")])
+    popup = report_with([opp(first_test="Run a weekend pop-up stall selling watches.")])
+    assert any(a["check"] == "big_first_test" for a in quality.check(launch, quality_pack())["actions"])
+    assert not any(a["check"] == "big_first_test" for a in quality.check(popup, quality_pack())["actions"])
+
+
+def test_rejected_idea_numbers_are_checked_too():
+    result = {**report_with([]), "rejected_ideas": [{"idea": "Spa", "reason": "Score 1.2/5 is too weak."}]}
+    quality.check(result, quality_pack())
+    assert "Numbers not found in the evidence: 1.2/5" in result["rejected_ideas"][0]["reason"]
+
+
+
+def test_business_type_follows_the_linked_items_when_clearly_wrong():
+    wrong = report_with([opp(business_type="food_drink", spending_items=["shopping/clothing"])])
+    sake = report_with([opp(business_type="food_drink", spending_items=["shopping/alcohol"])])
+    q = quality.check(wrong, quality_pack())
+    assert wrong["opportunities"][0]["business_type"] == "retail_shopping"
+    assert any(a["check"] == "type_corrected" for a in q["actions"])
+    quality.check(sake, quality_pack())
+    assert sake["opportunities"][0]["business_type"] == "food_drink"  # alcohol can be a food-and-drink business
+
+
+
+def test_citations_about_a_different_item_are_replaced():
+    pack = {"facts": [
+        {"id": "F1", "kind": "item_signal", "evidence_ids": [], "data": {"key": "entertainment/local_tours_guides"},
+         "statement": "[Demand scorecard, Japan-wide, 2026-Q2] Local tours and guides (item key x): score 3.9/5."},
+        {"id": "F2", "kind": "spend_item_largest", "evidence_ids": [], "data": {},
+         "statement": "[Japan-wide, JTA spending survey, 2026-Q2] Other shopping (Shopping): ¥3,090 per visitor."},
+        {"id": "F3", "kind": "tokyo_share", "evidence_ids": [], "data": {}, "statement": "Tokyo took 35.6%."}],
+        "founder_profile": {}, "data_gaps": [],
+        "spending_items": [{"key": "entertainment/local_tours_guides", "label": "Local tours and guides"}]}
+    result = report_with([opp(evidence_ids=["F2", "F3"], spending_items=["entertainment/local_tours_guides"])])
+    q = quality.check(result, pack)
+    assert result["opportunities"][0]["evidence_ids"] == ["F1", "F3"]  # wrong item fact out, scorecard in, Tokyo kept
+    assert q["actions"][0] == {"index": 0, "check": "citations_fixed", "removed": ["F2"],
+                               "note": "Cited facts about a different item were replaced by the linked item's scorecard."}

@@ -12,6 +12,7 @@ import sqlite3
 
 from pydantic import ValidationError
 
+from app.ai import quality
 from app.ai.evidence import build_evidence_pack, citable_ids
 from app.ai.provider import LLMProvider, ProviderError
 from app.ai.schemas import ReportOutput
@@ -69,6 +70,7 @@ def validate_report(raw: dict, pack: dict, conn: sqlite3.Connection) -> tuple[di
     # Attach the computed scorecards so the page shows the code's numbers next to the model's reasoning.
     for opp in result["opportunities"]:
         opp["scorecards"] = [cards[k] for k in opp["spending_items"]]
+    validation["quality"] = quality.check(result, pack)
     return result, validation
 
 

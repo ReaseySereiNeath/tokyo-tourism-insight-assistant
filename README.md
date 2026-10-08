@@ -128,6 +128,22 @@ the fit with you, and list the obvious ideas it rejected and why. The page shows
 idea, so the reasoning can be checked against the numbers. On **Spending**, *Strongest demand signals* shows the
 same scorecards without needing an API key.
 
+### Free local AI (open source, runs on your Mac)
+
+Business ideas can be written by an open-source model on your own computer: no API key, no cost, and nothing
+leaves your Mac. It uses [Ollama](https://ollama.com) and **Qwen 2.5 14B** (Apache 2.0 licence, about 9 GB).
+
+```bash
+brew install ollama
+brew services start ollama          # runs in the background, also after restarts
+ollama pull qwen2.5:14b             # one-off download
+```
+
+Then **Business ideas → Find ideas with local AI (free)**. A report takes a few minutes on an M1 Max with 32 GB.
+Expect less depth than Claude; the same citation checks remove any idea that cites evidence that doesn't exist.
+Settings in `backend/.env`: `LOCAL_MODEL` (e.g. `qwen2.5:32b` for better quality if you have the memory),
+`OLLAMA_URL`, `LOCAL_TIMEOUT_SECONDS`, `LOCAL_CONTEXT_TOKENS`.
+
 ### Optional: live AI
 
 Put your key in `backend/.env`:

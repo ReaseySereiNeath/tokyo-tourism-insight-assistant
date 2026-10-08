@@ -54,7 +54,26 @@ market stall, or a pre-order page), with a measurable success_measure. Never pro
 10. Link each opportunity to the item keys (max 3) its demand depends on, using only keys listed in \
 spending_items. Explain timing in why_now using momentum, growth, Tokyo share or seasons from the facts.
 11. Long-term facts are nominal yen and valid only within one survey design: never compare across designs.
-12. If the evidence is insufficient, say so in data_sufficiency and sufficiency_notes and return fewer \
+12. Write demand_evidence as plain sentences that quote the facts' numbers (not a list of IDs; IDs go in \
+evidence_ids). Copy numbers exactly as written in the facts; do not round, add or derive new ones.
+13. Use "high" confidence only with strong, steady, final evidence AND a filled-in founder profile.
+
+Example of ONE well-formed opportunity (format only; the facts and keys are made up):
+{"business_idea": "Evening sake tasting for small groups", "business_type": "food_drink",
+ "demand_evidence": "Alcohol is bought by 22.4% of visitors and spending per visitor rose 4.0% (F31); it grew in \
+3 of the last 5 quarters. Tokyo's share of food and drink spending rose 2.2 points (F60).",
+ "evidence_ids": ["F31", "F60"], "spending_items": ["shopping/alcohol"],
+ "why_it_could_work": "The founder speaks English and Japanese and enjoys hosting; it needs no lease.",
+ "why_now": "Steady growth (3 of 5 quarters) and Tokyo gaining share in food and drink.",
+ "target_visitors": null, "target_support": null,
+ "first_test": "Run four ticketed tastings in a rented event room, sold through an online booking page.",
+ "success_measure": "At least 24 paid seats over 4 weeks and an average rating of 4.5 or more.",
+ "checks_before_starting": ["Whether serving alcohol at events needs a licence (ask the ward office)",
+ "How many similar tastings already exist and their prices", "Room hire and supplier costs"],
+ "risks": ["Japan-wide figures, not Tokyo-specific"], "alternative_explanations": ["Weak yen boosting all spending"],
+ "confidence": "medium", "fit_with_you": "moderate"}
+
+14. If the evidence is insufficient, say so in data_sufficiency and sufficiency_notes and return fewer \
 opportunities (zero is acceptable)."""
 
 
