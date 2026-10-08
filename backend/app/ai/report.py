@@ -3,7 +3,7 @@
 Validation happens in two layers:
 1. Schema: the response must match ReportOutput (types, required fields, limits).
 2. Citations: every cited ID must be in the evidence pack that was sent, and
-   every record ID must exist in the database. An insight with any invalid
+   every record ID must exist in the database. An opportunity with any invalid
    citation is removed and the removal is recorded, never silently kept.
 """
 import json
@@ -12,14 +12,16 @@ import sqlite3
 
 from pydantic import ValidationError
 
+from app.ai import quality
 from app.ai.evidence import build_evidence_pack, citable_ids
 from app.ai.provider import LLMProvider, ProviderError
 from app.ai.schemas import ReportOutput
 from app.config import Settings
 from app.db import utcnow
 
-RECORD_TABLES = {"VS": "visitor_stats", "CO": "competitor_offers", "FB": "feedback", "NW": "news"}
-RECORD_ID = re.compile(r"^(?:DEMO-)?(VS|CO|FB|NW)-[0-9A-F]{12}$")
+RECORD_TABLES = {"VS": "visitor_stats", "SP": "spending_stats", "CO": "competitor_offers", "FB": "feedback",
+                 "NW": "news"}
+RECORD_ID = re.compile(r"^(?:DEMO-)?(VS|SP|CO|FB|NW)-[0-9A-F]{12}$")
 
 
 def record_exists(conn: sqlite3.Connection, evidence_id: str) -> bool:
@@ -31,7 +33,8 @@ def record_exists(conn: sqlite3.Connection, evidence_id: str) -> bool:
 
 
 def validate_report(raw: dict, pack: dict, conn: sqlite3.Connection) -> tuple[dict | None, dict]:
-    validation = {"schema_valid": False, "schema_errors": [], "removed_insights": [], "checked_ids": 0}
+    validation = {"schema_valid": False, "schema_errors": [], "removed_opportunities": [], "checked_ids": 0,
+                  "dropped_item_links": []}
     try:
         report = ReportOutput.model_validate(raw)
     except ValidationError as exc:
@@ -41,24 +44,34 @@ def validate_report(raw: dict, pack: dict, conn: sqlite3.Connection) -> tuple[di
     validation["schema_valid"] = True
 
     allowed = citable_ids(pack)
+    cards = {i["key"]: i["scorecard"] for i in pack.get("spending_items", [])}
     fact_ids = {f["id"] for f in pack["facts"]}
     kept = []
-    for index, insight in enumerate(report.insights):
+    for index, opp in enumerate(report.opportunities):
         bad = []
-        for eid in insight.evidence_ids:
+        for eid in opp.evidence_ids:
             validation["checked_ids"] += 1
             if eid not in allowed:
                 bad.append({"id": eid, "reason": "not in the evidence pack sent to the model"})
             elif eid not in fact_ids and not record_exists(conn, eid):
                 bad.append({"id": eid, "reason": "no such record in the database"})
         if bad:
-            validation["removed_insights"].append({"index": index, "finding": insight.finding[:200], "invalid_ids": bad})
+            validation["removed_opportunities"].append({"index": index, "idea": opp.business_idea[:200], "invalid_ids": bad})
             continue
-        if insight.customer_segment and not insight.segment_support:
-            insight.limitations.append("A customer segment was named without stating supporting evidence.")
-        kept.append(insight)
-    report.insights = kept
-    return report.model_dump(), validation
+        if opp.target_visitors and not opp.target_support:
+            opp.risks.append("A visitor group was named without stating supporting evidence.")
+        unknown = [k for k in opp.spending_items if k not in cards]
+        if unknown:  # a wrong link is dropped, not the whole idea: the citations above were valid
+            validation["dropped_item_links"].append({"index": index, "keys": unknown})
+            opp.spending_items = [k for k in opp.spending_items if k in cards]
+        kept.append(opp)
+    report.opportunities = kept
+    result = report.model_dump()
+    # Attach the computed scorecards so the page shows the code's numbers next to the model's reasoning.
+    for opp in result["opportunities"]:
+        opp["scorecards"] = [cards[k] for k in opp["spending_items"]]
+    validation["quality"] = quality.check(result, pack)
+    return result, validation
 
 
 def save_report(conn: sqlite3.Connection, provider: LLMProvider, model: str | None, status: str, pack: dict,
@@ -86,9 +99,9 @@ def generate_report(conn: sqlite3.Connection, scope: str, provider: LLMProvider,
     if result is None:
         return save_report(conn, provider, served_model, "failed", pack, None, validation,
                            "The model's answer did not match the required structure, so it was discarded.")
-    if validation["removed_insights"] and not result["insights"]:
-        status, error = "failed", "Every insight cited evidence that does not exist, so all were discarded."
-    elif validation["removed_insights"]:
+    if validation["removed_opportunities"] and not result["opportunities"]:
+        status, error = "failed", "Every opportunity cited evidence that does not exist, so all were discarded."
+    elif validation["removed_opportunities"]:
         status, error = "partial", None
     else:
         status, error = "success", None
@@ -105,4 +118,33 @@ def load_report(conn: sqlite3.Connection, report_id: int) -> dict | None:
     r["result"] = json.loads(result_json) if result_json else None
     r["validation"] = json.loads(r.pop("validation_json"))
     r["is_example"] = bool(r["is_example"])
+    _upgrade_legacy(r)
     return r
+
+
+def _upgrade_legacy(r: dict) -> None:
+    """Reports saved before opportunities existed (tour-operator 'insights') are shown in the new shape."""
+    result, validation = r["result"], r["validation"]
+    if result and "insights" in result and "opportunities" not in result:
+        result["opportunities"] = [{
+            "business_idea": f"Idea {i + 1}", "business_type": "tours_activities",
+            "demand_evidence": ins["finding"], "evidence_ids": ins["evidence_ids"],
+            "why_it_could_work": ins["interpretation"],
+            "target_visitors": ins.get("customer_segment"), "target_support": ins.get("segment_support"),
+            "first_test": ins["proposed_experiment"], "success_measure": ins["success_measure"],
+            "checks_before_starting": [], "risks": ins["limitations"],
+            "alternative_explanations": ins["alternative_explanations"], "confidence": ins["confidence"],
+        } for i, ins in enumerate(result.pop("insights"))]
+        result["questions_to_research"] = result.pop("customer_needs_to_investigate", [])
+    if "removed_insights" in validation:
+        validation["removed_opportunities"] = [{"index": x["index"], "idea": x["finding"], "invalid_ids": x["invalid_ids"]}
+                                               for x in validation.pop("removed_insights")]
+    if result:
+        result.setdefault("rejected_ideas", [])
+        for opp in result.get("opportunities", []):
+            opp.setdefault("why_now", "")
+            opp.setdefault("fit_with_you", "unknown")
+            opp.setdefault("spending_items", [])
+            opp.setdefault("scorecards", [])
+    if "business_profile" in r.get("evidence", {}):
+        r["evidence"]["founder_profile"] = r["evidence"].pop("business_profile")

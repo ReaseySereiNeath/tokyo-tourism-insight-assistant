@@ -1,11 +1,12 @@
 # Tokyo Tourism Insight Assistant
 
-A local market-intelligence app for a small Tokyo tour operator running English-language walking and food tours.
-It combines official visitor statistics, competitor offers, customer feedback and news, calculates trends in
-Python, and (optionally) asks a language model to turn **verified numbers and cited evidence** into findings and
-small business experiments.
+A local app for someone deciding **which tourism business to start in Tokyo**. It keeps Japan's official
+statistics up to date by itself (JNTO visitor arrivals, Japan Tourism Agency visitor spending), calculates trends
+in Python, and (optionally) asks a language model to turn **verified numbers and cited evidence** into a ranked
+list of business ideas that fit your budget, skills and goals. Competitor offers, guest feedback and news can be
+added too.
 
-**Two roles, kept separate:** the *user* of this app is the business owner. The *customers being studied* are
+**Two roles, kept separate:** the *user* of this app is the founder. The *customers being studied* are
 international visitors.
 
 ![Overview](docs/screenshots/08-overview-real.png)
@@ -77,7 +78,31 @@ cd backend && source .venv/bin/activate && pytest -q      # 80 tests
 cd frontend && npm run lint && npx tsc --noEmit && npm run build
 ```
 
-## 4. First real data: the JNTO workbook
+## 4. First real data
+
+### Automatic: official statistics
+
+On **Add your data → Official data**, choose **Check for new data now**. The backend reads two public pages and
+downloads only files it hasn't imported yet, through the normal import pipeline, into the real database:
+
+| Source | What | Files |
+|---|---|---|
+| JNTO | Monthly visitor arrivals by nationality | The one current workbook |
+| Japan Tourism Agency | Quarterly visitor spending survey (インバウンド消費動向調査) | National tables and prefecture tables, 2024-Q2 onward (earlier quarters used a different survey design) |
+
+The backend also checks by itself every `AUTO_UPDATE_HOURS` hours (default 24; set `0` in `backend/.env` to
+turn it off). The first check downloads about 18 files (around 30 seconds). Preliminary spending figures (速報)
+are revised in place when the final release appears, and old values stay in each record's revision history.
+
+**History, 2010 to early 2024 (one-off).** Under *Official data*, **Download history** fetches about 50 more
+quarterly files: 2018 to March 2024 from the Japan Tourism Agency page, and 2010–2017 (plus January–March 2020)
+from the National Diet Library's web archive (WARP) copy of the old MLIT page, the only place they are still
+published. They are stored as separate survey designs (`source` = `JTA (2010-2017 design)` /
+`JTA (2018-2024 design)`) and appear in **Spending → The long view**, drawn as separate line segments. They are
+never used for year-on-year comparisons; the AI only receives change *within* one design, labelled as such. The 2010–2017 files are read at category level only
+(items were grouped differently then). April 2020 to September 2022 has no usable category data (COVID-19).
+
+### Manual: the JNTO workbook
 
 1. Download the monthly “訪日外客数（総数）” XLSX from
    <https://www.jnto.go.jp/statistics/data/visitors-statistics/> (manually, in your browser).
@@ -88,6 +113,37 @@ cd frontend && npm run lint && npx tsc --noEmit && npm run build
 Other data uses the CSV templates (download them on the same page, or find them in `backend/templates/`).
 `*_example.csv` files contain one example row each.
 
+### How business ideas are reasoned
+
+Before the AI sees anything, the app computes (in `backend/app/analysis/signals.py`):
+
+- a **demand scorecard** per spending item: size (estimated market), growth vs the same quarter last year, and
+  steadiness (in how many of the last five quarters it grew), combined into a 1–5 score whose parts are shown;
+- **Tokyo's share** of each spending category (against the 47 prefectures added up) and how it moved;
+- **seasonal peaks** per category in Tokyo, and **long-term change within each survey design**.
+
+The AI is asked to work through these in order (scan the signals, check Tokyo, generate candidates across
+business types, filter by *About you*, rank), to link each idea to the items it depends on, say *why now*, rate
+the fit with you, and list the obvious ideas it rejected and why. The page shows the app's scorecard next to each
+idea, so the reasoning can be checked against the numbers. On **Spending**, *Strongest demand signals* shows the
+same scorecards without needing an API key.
+
+### Free local AI (open source, runs on your Mac)
+
+Business ideas can be written by an open-source model on your own computer: no API key, no cost, and nothing
+leaves your Mac. It uses [Ollama](https://ollama.com) and **Qwen 2.5 14B** (Apache 2.0 licence, about 9 GB).
+
+```bash
+brew install ollama
+brew services start ollama          # runs in the background, also after restarts
+ollama pull qwen2.5:14b             # one-off download
+```
+
+Then **Business ideas → Find ideas with local AI (free)**. A report takes a few minutes on an M1 Max with 32 GB.
+Expect less depth than Claude; the same citation checks remove any idea that cites evidence that doesn't exist.
+Settings in `backend/.env`: `LOCAL_MODEL` (e.g. `qwen2.5:32b` for better quality if you have the memory),
+`OLLAMA_URL`, `LOCAL_TIMEOUT_SECONDS`, `LOCAL_CONTEXT_TOKENS`.
+
 ### Optional: live AI
 
 Put your key in `backend/.env`:
@@ -97,8 +153,8 @@ ANTHROPIC_API_KEY=sk-ant-...
 ANTHROPIC_MODEL=claude-opus-5
 ```
 
-Restart the backend. **Customer needs → Classify with AI** and **Insights → Generate report with AI** become
-available. Both call a paid API; request sizes are capped (see `.env.example`).
+Restart the backend. **Business ideas → Find business ideas with AI** and **Guest feedback → Sort with AI** become
+available. Fill in **About you** first, so ideas fit your budget, time and skills. Both call a paid API; request sizes are capped (see `.env.example`).
 The key is only read by the backend and never sent to the browser.
 
 ### Reset
@@ -219,13 +275,16 @@ python -m app.local_model.predict --scope real      # 3. labels all feedback (or
 | Source | What we found | How the app uses it |
 |---|---|---|
 | JNTO visitor statistics (<https://www.jnto.go.jp/statistics/data/visitors-statistics/>) | Monthly arrivals by nationality as XLSX/PDF, no API. Citation allowed if credited as “日本政府観光局（JNTO）”, no notification needed. The statistics portal (<https://statistics.jnto.go.jp/en/>) asks for a usage application form for published/media use. | Manual download + dedicated importer. Attribution shown on every record. |
+| Japan Tourism Agency spending survey (<https://www.mlit.go.jp/kankocho/tokei_hakusyo/gaikokujinshohidoko.html>) | Quarterly XLSX/XLS tables, no API. MLIT site content may be reused under the Public Data License (公共データ利用規約 PDL1.0) with the source credited (checked 7 Oct 2026). No robots.txt restrictions. | Automatic check (one page request, then only new files) + dedicated importer. Survey estimates: respondent counts are stored and small samples flagged. |
 | Tokyo Tourism Data Catalog (<https://data.tourism.metro.tokyo.lg.jp/en/>) | Dashboards and downloadable survey data; file formats and licence terms were **not stated** on the pages checked. | No automated collector. Confirm the dataset’s terms, then use the visitor-statistics CSV template with `geography = Tokyo`. |
 | Competitor offers | Public listings, entered by hand. | CSV template. Do not scrape sites whose terms forbid it. |
 | Feedback | Only data you may use; `permission_basis` is required per row. | CSV template. Remove names/emails first. |
 | News | Manual CSV, or one RSS/Atom feed whose terms you confirm. Titles + short excerpts only. | CSV template / feed form. |
 
 **Interpretation rules built into the app:** Japan-wide arrivals ≠ Tokyo visitors; nationality ≠ preferred tour
-language; frequency of a theme or positive sentiment ≠ willingness to pay.
+language; frequency of a theme or positive sentiment ≠ willingness to pay; spending data shows demand, not
+competition, costs or permits. Item-level spending exists for Japan as a whole only; Tokyo has 7 broad
+categories. Estimated market sizes (spend per visitor × arrivals) are labelled as estimates.
 
 ---
 

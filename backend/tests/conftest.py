@@ -8,6 +8,7 @@ def isolated_data_dir(tmp_path, monkeypatch):
     """Every test gets its own empty data folder and no API key (unless a test sets one)."""
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
     monkeypatch.setenv("ANTHROPIC_API_KEY", "")
+    monkeypatch.setenv("AUTO_UPDATE_HOURS", "0")  # never reach the internet from tests
     get_settings.cache_clear()
     yield tmp_path / "data"
     get_settings.cache_clear()

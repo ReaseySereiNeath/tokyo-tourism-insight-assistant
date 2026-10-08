@@ -2,10 +2,10 @@
 
 import { useState, useSyncExternalStore } from "react";
 import {
-  Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
+  Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ReferenceArea, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { changeReason, fmtChange, fmtCompact, fmtMonth, fmtNumber } from "@/lib/format";
-import type { SeriesResponse } from "@/lib/types";
+import type { SeriesResponse, SpendingHistory } from "@/lib/types";
 
 // Fixed categorical order: colour follows the series' position in the user's selection.
 export const SERIES_COLORS = Array.from({ length: 8 }, (_, i) => `var(--series-${i + 1})`);
@@ -151,6 +151,74 @@ export function HBarChart({ rows, valueLabel, format = fmtNumber }: {
             formatter={(v) => [format(Number(v)), valueLabel]} />
           <Bar dataKey="value" fill="var(--route)" radius={[0, 4, 4, 0]} barSize={16} isAnimationActive={false} />
         </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+/** "2026-Q2" -> "2026 Q2"; the axis shows the year at each first quarter. */
+const quarterLabel = (p: string) => p.replace("-", " ");
+
+function quarterGrid(first: string, last: string): string[] {
+  const out: string[] = [];
+  let [y, q] = first.split("-Q").map(Number);
+  const [ly, lq] = last.split("-Q").map(Number);
+  while (y < ly || (y === ly && q <= lq)) {
+    out.push(`${y}-Q${q}`);
+    [y, q] = q === 4 ? [y + 1, 1] : [y, q + 1];
+  }
+  return out;
+}
+
+/**
+ * Category spending per visitor over the long run. Each survey design is drawn as its own
+ * line segment (same colour per category), so a line never joins figures from two designs,
+ * and quarters without a survey stay empty.
+ */
+export function HistoryChart({ data, only }: { data: SpendingHistory; only: string | null }) {
+  const all = data.designs.flatMap((d) => d.points.map((p) => p.period));
+  if (all.length === 0) return null;
+  const grid = quarterGrid(all.reduce((a, b) => (a < b ? a : b)), all.reduce((a, b) => (a > b ? a : b)));
+  const cats = data.categories.filter((c) => !only || c.key === only);
+  const rows = grid.map((period) => {
+    const row: Record<string, string | number | null> = { period };
+    data.designs.forEach((d, di) => {
+      const point = d.points.find((p) => p.period === period);
+      for (const c of cats) row[`${c.key}@${di}`] = point?.values[c.key] ?? null;
+    });
+    return row;
+  });
+  const breaks = data.designs.slice(1).map((d) => d.points[0]?.period).filter(Boolean) as string[];
+  const last = data.designs.length - 1;
+  return (
+    <div className="h-96 w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={rows} margin={{ top: 24, right: 16, bottom: 4, left: 8 }}>
+          <CartesianGrid stroke="var(--grid)" vertical={false} />
+          <XAxis dataKey="period" tick={axisStyle} tickLine={false} axisLine={{ stroke: "var(--border)" }}
+            interval={0} tickFormatter={(p: string) => (p.endsWith("Q1") ? p.slice(0, 4) : "")} />
+          <YAxis tick={axisStyle} tickLine={false} axisLine={false} width={64}
+            tickFormatter={(v: number) => `¥${fmtCompact(v)}`} />
+          {data.gaps.map((g) => (
+            <ReferenceArea key={g.from} x1={g.from} x2={g.to} fill="var(--sunken)" fillOpacity={0.8}
+              label={{ value: "No survey (COVID-19)", position: "insideTop", fontSize: 12, fill: "var(--ink-3)" }} />
+          ))}
+          {breaks.map((b) => (
+            <ReferenceLine key={b} x={b} stroke="var(--ink-3)" strokeDasharray="4 4"
+              label={{ value: "Survey changed", position: "top", fontSize: 12, fill: "var(--ink-3)" }} />
+          ))}
+          <Tooltip
+            contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
+            labelFormatter={(p) => quarterLabel(String(p))}
+            formatter={(v, name) => [v == null ? "no survey" : `¥${fmtNumber(Number(v))}`, String(name)]} />
+          <Legend wrapperStyle={{ fontSize: 12 }} />
+          {data.designs.flatMap((_, di) => cats.map((c) => (
+            <Line key={`${c.key}@${di}`} dataKey={`${c.key}@${di}`} name={c.label} type="linear"
+              stroke={SERIES_COLORS[data.categories.findIndex((x) => x.key === c.key) % 8]} strokeWidth={2}
+              dot={false} connectNulls={false} isAnimationActive={false}
+              legendType={di === last ? "line" : "none"} />
+          )))}
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );

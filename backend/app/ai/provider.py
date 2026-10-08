@@ -2,6 +2,7 @@
 
     LLMProvider
       ├── AnthropicProvider  real Claude API calls (needs ANTHROPIC_API_KEY)
+      ├── LocalProvider      an open-source model run by Ollama on this Mac (free, offline)
       └── DemoProvider       fixed rules, no AI; output is always labeled as an EXAMPLE
 
 Swapping in another vendor means writing one more class with the same two
@@ -12,6 +13,7 @@ import logging
 from typing import Protocol
 
 import anthropic
+import httpx
 
 from app.ai import prompts
 from app.ai.schemas import ClassificationOutput, ReportOutput
@@ -114,8 +116,83 @@ class AnthropicProvider:
                           self.settings.ai_effort_classify, 8000)
 
 
+def _inline_refs(schema: dict) -> dict:
+    """Ollama's schema-to-grammar step is happiest without $ref: inline the $defs."""
+    defs = schema.get("$defs", {})
+
+    def walk(node):
+        if isinstance(node, dict):
+            if "$ref" in node:
+                return walk(defs[node["$ref"].rsplit("/", 1)[-1]])
+            return {k: walk(v) for k, v in node.items() if k != "$defs"}
+        if isinstance(node, list):
+            return [walk(v) for v in node]
+        return node
+    return walk(schema)
+
+
+class LocalProvider:
+    """An open-source model served by Ollama (https://ollama.com) on this computer.
+
+    Same prompts and output schema as the Anthropic provider; Ollama constrains the
+    output to the JSON schema. Nothing leaves the machine and there is no per-call cost.
+    Smaller models reason less well, so the same citation validation applies.
+    """
+    name = "local"
+    is_example = False
+
+    def __init__(self, settings: Settings, client: httpx.Client | None = None):
+        self.settings = settings
+        self.model = settings.local_model
+        self.client = client or httpx.Client(base_url=settings.ollama_url, timeout=settings.local_timeout_seconds)
+        self.last_served_model: str | None = None
+
+    def _call(self, system: str, user: str, schema_model, max_tokens: int) -> dict:
+        body = {
+            "model": self.model, "stream": False,
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            "format": _inline_refs(schema_model.model_json_schema()),
+            "options": {"temperature": 0.2, "num_ctx": self.settings.local_context_tokens, "num_predict": max_tokens},
+        }
+        try:
+            r = self.client.post("/api/chat", json=body)
+        except httpx.TimeoutException as exc:
+            raise ProviderError("timeout", f"The local model did not finish within {self.settings.local_timeout_seconds:.0f}s.") from exc
+        except httpx.HTTPError as exc:
+            raise ProviderError("network", "Ollama isn't running. Start it with: brew services start ollama") from exc
+        if r.status_code == 404:
+            raise ProviderError("model", f"The model '{self.model}' isn't downloaded. Run: ollama pull {self.model}")
+        if r.status_code >= 400:
+            raise ProviderError("api_error", f"Ollama error {r.status_code}: {r.text[:200]}")
+        data = r.json()
+        self.last_served_model = data.get("model", self.model)
+        if data.get("done_reason") == "length":
+            raise ProviderError("truncated", "The local model's answer hit its length limit and was cut off.")
+        try:
+            return json.loads(data["message"]["content"])
+        except (KeyError, json.JSONDecodeError) as exc:
+            raise ProviderError("invalid_response", "The local model's answer was not valid JSON.") from exc
+
+    def generate_report(self, pack: dict) -> dict:
+        return self._call(prompts.REPORT_SYSTEM, prompts.report_user_message(pack), ReportOutput, 8192)
+
+    def classify_feedback(self, items: list[dict]) -> dict:
+        return self._call(prompts.CLASSIFY_SYSTEM, prompts.classify_user_message(items), ClassificationOutput, 4096)
+
+
+def local_status(settings: Settings) -> dict:
+    """Is Ollama running, and is the configured model downloaded? Quick: one short request."""
+    try:
+        r = httpx.get(f"{settings.ollama_url}/api/tags", timeout=1.5)
+        names = {m.get("name") for m in r.json().get("models", [])}
+    except (httpx.HTTPError, ValueError):
+        return {"running": False, "model": settings.local_model, "ready": False}
+    ready = settings.local_model in names or f"{settings.local_model}:latest" in names
+    return {"running": True, "model": settings.local_model, "ready": ready}
+
+
 class DemoProvider:
-    """Builds an EXAMPLE report from the evidence pack with fixed rules. No AI is involved.
+    """Builds an EXAMPLE opportunity report from the evidence pack with fixed rules. No AI is involved.
 
     It exists so the whole journey (report -> validation -> evidence links) can
     be explored without an API key. Every output is stored with is_example=1
@@ -125,69 +202,72 @@ class DemoProvider:
     model = None
     is_example = True
 
-    def generate_report(self, pack: dict) -> dict:
-        facts = pack["facts"]
-        by_kind: dict[str, list[dict]] = {}
-        for f in facts:
-            by_kind.setdefault(f["kind"], []).append(f)
-        insights = []
+    # Fixed wording per spending item: (business idea, business type). EXAMPLE text, not analysis.
+    IDEAS = {
+        "entertainment/local_tours_guides": ("Small-group neighbourhood walking tours", "tours_activities"),
+        "entertainment/onsen_spa_relaxation": ("Drop-in relaxation or foot-spa studio", "wellness_beauty"),
+        "shopping/crafts_traditional": ("Hands-on craft workshops", "tours_activities"),
+        "shopping/clothing": ("Curated second-hand fashion pop-up", "retail_shopping"),
+        "entertainment/stage_music": ("Evening live-music nights for visitors", "events_entertainment"),
+        "transport/taxi": ("Private airport and day-trip transfers", "transport_mobility"),
+    }
 
-        themes = by_kind.get("feedback_theme", [])
-        for theme_fact in [f for f in themes if "'other'" not in f["statement"]][:2]:
-            name = theme_fact["statement"].split("'")[1]
-            insights.append({
-                "finding": f"EXAMPLE: {theme_fact['statement']}",
-                "evidence_ids": [theme_fact["id"], *theme_fact["evidence_ids"][:3]],
-                "interpretation": f"EXAMPLE TEXT (fixed template, not AI): mentions of '{name}' may point to "
-                                  "a need worth checking with customers.",
-                "customer_segment": None,
-                "segment_support": None,
-                "proposed_experiment": f"EXAMPLE: add one question about '{name}' to the post-tour survey for 4 weeks.",
-                "success_measure": "EXAMPLE: at least 30 survey answers collected; compare ratings for tours with and "
-                                   "without the change.",
-                "limitations": ["Example output generated by fixed rules from synthetic data.",
-                                "Theme counts come from keyword rules on a small sample."],
-                "alternative_explanations": ["Customers who write feedback may differ from those who do not."],
-                "confidence": "low",
-            })
-        price = by_kind.get("competitor_price", [])
-        if price:
-            insights.append({
-                "finding": f"EXAMPLE: {price[0]['statement']}",
-                "evidence_ids": [price[0]["id"], *price[0]["evidence_ids"][:3]],
-                "interpretation": "EXAMPLE TEXT (fixed template, not AI): compare your price with the observed range.",
-                "customer_segment": None,
-                "segment_support": None,
-                "proposed_experiment": "EXAMPLE: test a clearly described premium small-group option on one weekday.",
-                "success_measure": "EXAMPLE: booking conversion on that listing over 6 weeks versus the previous 6.",
-                "limitations": ["Example output.", "Listed prices do not show discounts or actual bookings."],
-                "alternative_explanations": ["Competitor prices may reflect inclusions (drinks, group size)."],
-                "confidence": "low",
-            })
-        growth = by_kind.get("visitor_growth", [])
-        if growth:
-            insights.append({
-                "finding": f"EXAMPLE: {growth[0]['statement']}",
-                "evidence_ids": [growth[0]["id"]],
-                "interpretation": "EXAMPLE TEXT (fixed template, not AI): arrival growth from a market is context, "
-                                  "not proof of demand for English-language tours.",
-                "customer_segment": None,
-                "segment_support": None,
-                "proposed_experiment": "EXAMPLE: ask bookers their country of residence and preferred language for "
-                                       "one month.",
-                "success_measure": "EXAMPLE: share of bookings by residence and language, with sample size.",
-                "limitations": ["Example output.", "Nationality does not indicate preferred tour language."],
-                "alternative_explanations": ["Seasonality or flight capacity changes."],
-                "confidence": "low",
-            })
+    @staticmethod
+    def _opportunity(idea: str, kind: str, fact: dict, why: str, test: str, items: list[str]) -> dict:
+        return {
+            "business_idea": f"EXAMPLE: {idea}",
+            "business_type": kind,
+            "demand_evidence": f"EXAMPLE: {fact['statement']}",
+            "evidence_ids": [fact["id"], *fact["evidence_ids"][:3]],
+            "why_it_could_work": f"EXAMPLE TEXT (fixed template, not AI): {why}",
+            "target_visitors": None,
+            "target_support": None,
+            "first_test": f"EXAMPLE: {test}",
+            "success_measure": "EXAMPLE: at least 20 paid bookings in 6 weeks with an average rating of 4.5 or more.",
+            "checks_before_starting": ["EXAMPLE: how many similar businesses already operate nearby, and their prices",
+                                       "EXAMPLE: which permits or registrations this needs (ask the ward office)",
+                                       "EXAMPLE: start-up and monthly running costs"],
+            "risks": ["Example output generated by fixed rules from synthetic data.",
+                      "Japan-wide spending does not show demand in one Tokyo neighbourhood."],
+            "alternative_explanations": ["A one-off event or exchange-rate swing may explain the change."],
+            "confidence": "low",
+            "why_now": "EXAMPLE: the linked item's demand score is among the highest in the pack.",
+            "fit_with_you": "unknown",
+            "spending_items": items,
+        }
+
+    def generate_report(self, pack: dict) -> dict:
+        by_kind: dict[str, list[dict]] = {}
+        for f in pack["facts"]:
+            by_kind.setdefault(f["kind"], []).append(f)
+        opportunities = []
+        for fact in by_kind.get("item_signal", []):
+            key = fact["data"].get("key")
+            if key in self.IDEAS:
+                idea, kind = self.IDEAS[key]
+                opportunities.append(self._opportunity(
+                    idea, kind, fact, "this item has one of the stronger demand scorecards in the data.",
+                    "sell a handful of trial sessions through an online booking page before renting anything.", [key]))
+            if len(opportunities) == 3:
+                break
+        share = next((f for f in by_kind.get("tokyo_share", []) if "entertainment" in f["statement"]), None)
+        if share:
+            opportunities.append(self._opportunity(
+                "Evening activity for visitors staying in Tokyo", "events_entertainment", share,
+                "Tokyo's share of activity spending is in the data.",
+                "run four pilot evenings in a rented space and sell tickets online.", []))
+        weakest = by_kind.get("item_signal", [])[-1:] if by_kind.get("item_signal") else []
         return {
             "summary": "EXAMPLE REPORT — generated by fixed rules from synthetic demonstration data. "
                        "No AI model was called and no real market analysis took place. It shows how a report, "
                        "its evidence links and its validation look.",
             "data_sufficiency": "limited",
             "sufficiency_notes": ["Synthetic data only.", *pack["data_gaps"][:5]],
-            "insights": insights,
-            "customer_needs_to_investigate": ["EXAMPLE: Which dietary needs are most common among your bookers?"],
+            "opportunities": opportunities,
+            "questions_to_research": ["EXAMPLE: Would visitors book this before arriving in Japan, or on the day?"],
+            "rejected_ideas": [{"idea": "EXAMPLE: a shop built on the weakest item in the data",
+                                "reason": f"EXAMPLE: lowest demand score in the pack ({weakest[0]['statement'][:80]}…)"
+                                if weakest else "EXAMPLE: no supporting evidence."}],
         }
 
     def classify_feedback(self, items: list[dict]) -> dict:
@@ -205,6 +285,8 @@ def get_provider(scope: str, requested: str | None, settings: Settings) -> LLMPr
         if scope != "demo":
             raise ProviderError("not_allowed", "Example reports are only available in demo mode.")
         return DemoProvider()
+    if choice == "local":
+        return LocalProvider(settings)
     if choice == "anthropic":
         if not settings.ai_configured:
             raise ProviderError("not_configured", "No ANTHROPIC_API_KEY is set, so live AI analysis is unavailable. "

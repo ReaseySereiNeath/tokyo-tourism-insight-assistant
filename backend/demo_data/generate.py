@@ -181,6 +181,69 @@ def news() -> list[dict]:
             for i, (t, e, d) in enumerate(items)]
 
 
+def spending() -> list[dict]:
+    """Invented quarterly spending survey figures in the JTA layout: Japan-wide items, Tokyo categories."""
+    r = random.Random(7)  # own generator, so the other demo files stay identical
+    # (category, item): (spend per visitor, share who buy it %, yearly growth) -- all invented
+    items = {
+        ("lodging", ""): (90_000, 84, -0.02), ("food_drink", ""): (52_000, 93, 0.06),
+        ("transport", ""): (24_000, 90, 0.03), ("entertainment", ""): (10_500, 56, 0.12),
+        ("shopping", ""): (58_000, 98, 0.05),
+        ("entertainment", "local_tours_guides"): (2_200, 8.8, 0.30),
+        ("entertainment", "theme_parks"): (3_100, 17, 0.04),
+        ("entertainment", "museums_zoos_aquariums"): (1_900, 33, 0.02),
+        ("entertainment", "onsen_spa_relaxation"): (900, 5, 0.18),
+        ("entertainment", "stage_music"): (850, 3.4, 0.09),
+        ("shopping", "sweets_snacks"): (7_800, 72, -0.05),
+        ("shopping", "clothing"): (14_000, 52, 0.14),
+        ("shopping", "cosmetics_perfume"): (8_400, 35, 0.06),
+        ("shopping", "crafts_traditional"): (1_300, 8.8, 0.11),
+        ("transport", "taxi"): (3_000, 26, 0.07),
+    }
+    segments = {"All nationalities": (1.0, 1.0, 7_900), "United States": (1.25, 1.0, 700),
+                "Australia": (1.2, 1.1, 420), "United Kingdom": (1.15, 1.2, 260), "South Korea": (0.45, 0.8, 900)}
+    rows = []
+    base = dict(geography="Japan", purpose="all", source=SOURCE, original_label="", publication_date="",
+                collection_date=COLLECTED)
+    for period, year_factor, status in (("2025-Q2", 1.0, "final"), ("2026-Q2", None, "preliminary")):
+        for segment, (spend_mult, rate_mult, n) in segments.items():
+            for (cat, item), (spend, rate, growth) in items.items():
+                f = 1.0 if year_factor else 1 + growth
+                spend_v = spend * spend_mult * f * r.uniform(0.95, 1.05)
+                rate_v = min(99.0, rate * rate_mult * (f ** 0.5) * r.uniform(0.95, 1.05))
+                buyers = round(n * rate_v / 100)
+                common = dict(base, reporting_period=period, segment=segment, category=cat, item=item,
+                              value_status=status)
+                rows += [
+                    dict(common, metric="spend_per_person", value=round(spend_v, 1), unit="JPY per person", respondents=""),
+                    dict(common, metric="purchase_rate", value=round(rate_v, 2), unit="%", respondents=buyers),
+                    dict(common, metric="spend_per_purchaser", value=round(spend_v / (rate_v / 100), 1),
+                         unit="JPY per person", respondents=buyers),
+                ]
+            total = sum(v[0] for (c, i), v in items.items() if not i) * spend_mult
+            rows.append(dict(base, reporting_period=period, segment=segment, category="total", item="",
+                             metric="spend_per_person", value=round(total * (1 if year_factor else 1.04)), unit="JPY per person",
+                             respondents="", value_status=status))
+        # Tokyo: the 7 broad categories, total spending in yen (invented).
+        tokyo = {"package_tours": 55e9, "lodging": 350e9, "food_drink": 165e9, "transport": 22e9,
+                 "entertainment": 26e9, "shopping": 260e9, "other": 0.5e9}
+        growth_t = {"package_tours": 0.12, "lodging": -0.03, "food_drink": 0.10, "transport": 0.08,
+                    "entertainment": 0.28, "shopping": 0.15, "other": 0.0}
+        for cat, value in tokyo.items():
+            v = value * (1 if year_factor else 1 + growth_t[cat])
+            rows.append(dict(base, geography="Tokyo", reporting_period=period, segment="All nationalities",
+                             category=cat, item="", metric="total_spend", value=round(v), unit="JPY",
+                             respondents="", value_status=status))
+        total_t = sum(tokyo[c] * (1 if year_factor else 1 + growth_t[c]) for c in tokyo)
+        rows.append(dict(base, geography="Tokyo", reporting_period=period, segment="All nationalities", category="total",
+                         item="", metric="total_spend", value=round(total_t), unit="JPY", respondents="",
+                         value_status=status))
+        rows.append(dict(base, geography="Tokyo", reporting_period=period, segment="All nationalities", category="total",
+                         item="", metric="visitors", value=5_400_000 if year_factor is None else 5_450_000,
+                         unit="persons", respondents=13000, value_status=status))
+    return rows
+
+
 if __name__ == "__main__":
     vs_header = ["reporting_month", "geography", "visitor_origin", "origin_level", "metric", "value", "unit",
                  "value_status", "source", "original_label", "publication_date", "collection_date"]
@@ -190,3 +253,6 @@ if __name__ == "__main__":
     write("demo_feedback.csv", ["text", "language", "source", "rating", "permission_basis", "publication_date",
                                 "collection_date"], feedback())
     write("demo_news.csv", ["title", "excerpt", "url", "publisher", "publication_date", "collection_date"], news())
+    write("demo_spending.csv", ["reporting_period", "geography", "segment", "purpose", "category", "item", "metric",
+                                "value", "unit", "respondents", "value_status", "source", "original_label",
+                                "publication_date", "collection_date"], spending())

@@ -3,13 +3,24 @@
 Run (from backend/):  uvicorn app.main:app --reload --port 8000
 API docs:             http://localhost:8000/docs
 """
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app import updates
 from app.config import get_settings
-from app.routers import competitors, evidence, feedback, imports, overview, profile, reports, visitors
+from app.routers import (competitors, evidence, feedback, imports, overview, profile, reports, spending,
+                         updates as updates_router, visitors)
 
-app = FastAPI(title="Tokyo Tourism Insight Assistant", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    updates.start_scheduler(get_settings().auto_update_hours)
+    yield
+
+
+app = FastAPI(title="Tokyo Tourism Insight Assistant", version="0.2.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,7 +29,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-for module in (overview, visitors, competitors, feedback, imports, evidence, reports, profile):
+for module in (overview, visitors, spending, competitors, feedback, imports, evidence, reports, profile,
+               updates_router):
     app.include_router(module.router)
 
 

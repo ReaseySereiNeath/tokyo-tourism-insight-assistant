@@ -4,30 +4,30 @@ import { useState } from "react";
 import { useScope } from "@/components/providers";
 import { Button, Card, ErrorState, inputClass, Loading, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
-import type { BusinessProfile } from "@/lib/types";
+import type { FounderProfile } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
 
-const FIELDS: { key: keyof BusinessProfile; label: string; hint: string; long?: boolean }[] = [
-  { key: "business_name", label: "Business name", hint: "" },
-  { key: "offerings", label: "Current offerings", hint: "Your tours: length, stops and languages", long: true },
-  { key: "operating_area", label: "Operating area", hint: "The neighbourhoods you run tours in" },
-  { key: "capacity", label: "Capacity", hint: "Number of guides, group size and tours per week" },
-  { key: "price_range", label: "Price range", hint: "For example: JPY 8,000 to 14,000 per adult" },
-  { key: "monthly_budget", label: "Budget for experiments", hint: "Money and time you can spend each month" },
-  { key: "goals", label: "Goals", hint: "What you want to achieve this quarter", long: true },
-  { key: "notes", label: "Other context", hint: "Limits, busy seasons, or anything else the ideas should respect", long: true },
+const FIELDS: { key: keyof FounderProfile; label: string; hint: string; long?: boolean }[] = [
+  { key: "budget", label: "Money you can put in", hint: "Savings or loans you could use to start, roughly" },
+  { key: "time_available", label: "Time you can give it", hint: "Full time, or evenings and weekends? From when?" },
+  { key: "location", label: "Where you could run it", hint: "City or ward, or “anywhere in Japan”" },
+  { key: "languages", label: "Languages you speak", hint: "And how well" },
+  { key: "skills", label: "Skills and experience", hint: "Jobs, qualifications and hobbies that could help, like cooking, guiding or design", long: true },
+  { key: "interests", label: "Kinds of business you'd consider", hint: "Or “open to anything”", long: true },
+  { key: "limits", label: "Limits", hint: "Things you can't or won't do: a long lease, night work, visa conditions", long: true },
+  { key: "goals", label: "What you want from it", hint: "Income you're aiming for, by when, or simply a side project", long: true },
 ];
 
-const EMPTY: BusinessProfile = { business_name: "", offerings: "", operating_area: "", capacity: "", price_range: "", monthly_budget: "", goals: "", notes: "" };
+const EMPTY: FounderProfile = { budget: "", time_available: "", location: "", languages: "", skills: "", interests: "", limits: "", goals: "" };
 
 export default function ProfilePage() {
   const { scope } = useScope();
-  const { data, error, loading, reload } = useApi(() => api.get<BusinessProfile>("/api/profile", scope), [scope]);
+  const { data, error, loading, reload } = useApi(() => api.get<FounderProfile>("/api/profile", scope), [scope]);
 
   return (
     <>
-      <PageHeader title="Your business"
-        description="This describes your business, not your guests. Ideas to test use it so experiments fit your capacity and budget." />
+      <PageHeader title="About you"
+        description="Business ideas are matched to what you have and want. Rough answers are fine, and you can change them any time." />
       {loading && <Loading />}
       {error && <ErrorState message={error} onRetry={reload} />}
       {data && !loading && <ProfileForm key={scope} initial={{ ...EMPTY, ...data }} />}
@@ -35,9 +35,9 @@ export default function ProfilePage() {
   );
 }
 
-function ProfileForm({ initial }: { initial: BusinessProfile }) {
+function ProfileForm({ initial }: { initial: FounderProfile }) {
   const { scope } = useScope();
-  const [form, setForm] = useState<BusinessProfile>(initial);
+  const [form, setForm] = useState<FounderProfile>(initial);
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -73,7 +73,7 @@ function ProfileForm({ initial }: { initial: BusinessProfile }) {
               <Button variant="primary" type="submit" disabled={status === "saving"}>{status === "saving" ? "Saving…" : "Save changes"}</Button>
               {status === "saved" && <span className="text-sm font-bold text-route" role="status">Changes saved</span>}
               {status === "error" && <span className="text-sm text-down" role="alert">{saveError}</span>}
-              {scope === "demo" && <span className="text-sm text-ink-3">This is the sample business. Your own profile is kept separately.</span>}
+              {scope === "demo" && <span className="text-sm text-ink-3">This is a made-up sample person. Your own answers are kept separately.</span>}
             </div>
           </form>
         </Card>

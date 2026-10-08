@@ -14,25 +14,41 @@ from app.analysis.themes import THEMES
 ThemeName = Literal[tuple(THEMES)]  # type: ignore[valid-type]
 
 
-class Insight(BaseModel):
-    finding: str = Field(min_length=10, description="What the evidence shows, stated plainly. Numbers only if they appear in the facts.")
-    evidence_ids: list[str] = Field(min_length=1, max_length=15, description="IDs of facts (F1, F2...) or records (VS-, CO-, FB-, NW-) that support the finding.")
-    interpretation: str = Field(min_length=10, description="What this might mean for the business owner's tours.")
-    customer_segment: str | None = Field(description="Visitor segment ONLY if the evidence supports it; otherwise null.")
-    segment_support: str | None = Field(description="Why the evidence supports that segment; null when customer_segment is null.")
-    proposed_experiment: str = Field(min_length=10, description="A small, reversible test that fits the business profile and budget.")
-    success_measure: str = Field(min_length=5, description="Concrete, measurable signal and threshold to judge the experiment.")
-    limitations: list[str] = Field(min_length=1, max_length=6)
-    alternative_explanations: list[str] = Field(min_length=1, max_length=6)
+BusinessType = Literal["tours_activities", "food_drink", "accommodation", "retail_shopping",
+                       "transport_mobility", "wellness_beauty", "events_entertainment", "services_other"]
+
+
+class Opportunity(BaseModel):
+    business_idea: str = Field(min_length=5, max_length=120, description="A short name for the business, e.g. 'Small-group sake tasting evenings'.")
+    business_type: BusinessType
+    demand_evidence: str = Field(min_length=10, description="What the data shows about demand. Numbers only as stated in the facts.")
+    evidence_ids: list[str] = Field(min_length=1, max_length=15, description="IDs of facts (F1, F2...) or records (VS-, SP-, CO-, FB-, NW-) that support the demand evidence.")
+    why_it_could_work: str = Field(min_length=10, description="Why this could suit this person, using their profile (budget, skills, languages, time).")
+    target_visitors: str | None = Field(description="Visitor group to aim at ONLY if the evidence supports it; otherwise null.")
+    target_support: str | None = Field(description="Which evidence supports that visitor group; null when target_visitors is null.")
+    first_test: str = Field(min_length=10, description="A small, cheap way to test demand before committing money, within the person's budget.")
+    success_measure: str = Field(min_length=5, description="A concrete, measurable signal and threshold that would justify going further.")
+    checks_before_starting: list[str] = Field(min_length=1, max_length=8, description="What to verify first: competition, permits or licences to ask about, start-up costs, location. Name what to check; do not state legal requirements as fact.")
+    risks: list[str] = Field(min_length=1, max_length=6, description="Weaknesses in the evidence and business risks.")
+    alternative_explanations: list[str] = Field(min_length=1, max_length=6, description="Other reasons the data could look like this.")
     confidence: Literal["low", "medium", "high"]
+    why_now: str = Field(min_length=5, description="Timing: what is changing (growth, momentum, Tokyo share, season) that makes this worth doing now, from the facts.")
+    fit_with_you: Literal["strong", "moderate", "weak", "unknown"] = Field(description="How well the idea fits the founder profile; 'unknown' if the profile is empty.")
+    spending_items: list[str] = Field(max_length=3, description="Item keys from 'spending_items' in the pack (e.g. 'entertainment/local_tours_guides') whose demand this idea depends on; empty if none fits.")
+
+
+class RejectedIdea(BaseModel):
+    idea: str = Field(min_length=3, max_length=120)
+    reason: str = Field(min_length=5, description="Why it was not recommended: weak or shrinking demand, poor fit with the founder, or no evidence.")
 
 
 class ReportOutput(BaseModel):
-    summary: str = Field(min_length=10, description="Three to five sentences for the business owner.")
+    summary: str = Field(min_length=10, description="Three to five sentences for the person choosing a business.")
     data_sufficiency: Literal["sufficient", "limited", "insufficient"]
     sufficiency_notes: list[str] = Field(max_length=8, description="What data is missing or weak, and how that limits conclusions.")
-    insights: list[Insight] = Field(max_length=8)
-    customer_needs_to_investigate: list[str] = Field(max_length=8, description="Open questions about visitor needs worth researching further.")
+    opportunities: list[Opportunity] = Field(max_length=8, description="Ranked best first.")
+    questions_to_research: list[str] = Field(max_length=8, description="Open questions worth answering before choosing, e.g. by talking to visitors or businesses.")
+    rejected_ideas: list[RejectedIdea] = Field(max_length=6, description="Obvious ideas you considered and did not recommend, with the reason.")
 
 
 class FeedbackLabel(BaseModel):

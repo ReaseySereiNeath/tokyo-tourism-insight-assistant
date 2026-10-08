@@ -14,7 +14,7 @@ The exact pack is stored with each report, so every claim can be traced.
 import json
 import sqlite3
 
-from app.analysis import stats
+from app.analysis import signals, spending, stats
 from app.config import Settings
 from app.db import rows, utcnow
 
@@ -96,10 +96,14 @@ def build_evidence_pack(conn: sqlite3.Connection, scope: str, settings: Settings
         gaps.append("No Tokyo-specific visitor statistics: Japan-wide arrivals do not show how many visit Tokyo "
                     "or join tours.")
 
+    _spending_facts(conn, b, gaps)
+    scorecards = _scorecard_facts(conn, b)
+    _long_term_facts(conn, b, gaps)
+
     # --- competitors --------------------------------------------------------
     comp = stats.competitor_summary(conn)
     if comp["offers"] == 0:
-        gaps.append("No competitor offers imported.")
+        gaps.append("No competitor offers imported, so competition for any idea is unknown.")
     else:
         for c in comp["by_currency"]:
             b.fact("competitor_price",
@@ -169,12 +173,168 @@ def build_evidence_pack(conn: sqlite3.Connection, scope: str, settings: Settings
     return {
         "generated_at": utcnow(),
         "scope": scope,
-        "business_profile": load_profile(conn),
+        "founder_profile": load_profile(conn),
+        # Items an opportunity may link to; the full scorecards are attached to the saved report.
+        "spending_items": [{"key": c["key"], "label": c["label"], "scorecard": c} for c in scorecards],
         "facts": b.facts,
         "documents": b.documents,
         "data_gaps": gaps,
         "size": {"chars": b.chars, "documents_dropped": b.dropped, "limit_chars": settings.ai_max_evidence_chars},
     }
+
+
+def _yen(n: float | None) -> str:
+    if n is None:
+        return "missing"
+    if abs(n) >= 1e9:
+        return f"¥{n / 1e9:,.1f} billion"
+    if abs(n) >= 1e6:
+        return f"¥{n / 1e6:,.1f} million"
+    return f"¥{n:,.0f}"
+
+
+def _spending_facts(conn: sqlite3.Connection, b: PackBuilder, gaps: list[str]) -> None:
+    """What visitors spend money on (Japan Tourism Agency survey), computed in analysis/spending.py."""
+    period = spending.latest_period(conn)
+    if period is None:
+        gaps.append("No visitor spending data (Japan Tourism Agency) imported, so the report cannot say what "
+                    "visitors spend money on.")
+        return
+    data = spending.items(conn, period=period)
+    prev = data["comparison_period"]
+    tag = f"[Japan-wide, JTA spending survey, {period}]"
+    if any(r["value_status"] == "preliminary" for r in data["rows"]):
+        gaps.append(f"Spending figures for {period} are preliminary (速報) and may be revised.")
+    last_year = spending.items(conn, period=prev)["total_spend_per_person"]
+    b.fact("spend_total",
+           f"{tag} Average spending per visitor while in Japan: {_yen(data['total_spend_per_person'])}; "
+           f"{prev}: {_yen(last_year)}.", [])
+
+    for r in [r for r in data["rows"] if not r["item"]]:
+        b.fact("spend_category",
+               f"{tag} {r['label']}: {_yen(r['spend_per_person'])} per visitor, change vs {prev}: "
+               f"{_pct(r['spend_change'])}; bought by {_rate(r['purchase_rate'])} of visitors.",
+               [r["evidence_id"], r["evidence_id_last_year"], r["purchase_rate_evidence_id"]])
+
+    def item_fact(kind: str, r: dict) -> None:
+        market = (f" Estimated national market for the quarter: about {_yen(r['estimated_market'])} "
+                  f"(spend per visitor x JNTO arrivals; an estimate, not a published figure)."
+                  if r["estimated_market"] else "")
+        b.fact(kind,
+               f"{tag} {r['label']} ({r['category_label']}): {_yen(r['spend_per_person'])} per visitor on average, "
+               f"change vs {prev}: {_pct(r['spend_change'])}. Bought by {_rate(r['purchase_rate'])} of visitors "
+               f"(was {_rate(r['purchase_rate_last_year'])}), who spent {_yen(r['spend_per_purchaser'])} each "
+               f"(n={r['buyers']} buyers).{market}",
+               [r["evidence_id"], r["evidence_id_last_year"], r["purchase_rate_evidence_id"],
+                *((data["arrivals"] or {}).get("evidence_ids", []) if r["estimated_market"] else [])])
+
+    items = [r for r in data["rows"] if r["item"] and not r["small_sample"] and r["buyers"]]
+    for r in sorted(items, key=lambda r: -r["spend_per_person"])[:8]:
+        item_fact("spend_item_largest", r)
+    if data["arrivals"] is None:
+        gaps.append(f"No complete JNTO arrivals for {period}, so national market sizes per item can't be estimated.")
+
+    # Tokyo: only 7 broad categories are published per prefecture.
+    m = spending.market(conn, "Tokyo")
+    if m["period"] is None:
+        gaps.append("No Tokyo spending figures (JTA prefecture tables) imported.")
+    else:
+        t = f"[Tokyo, JTA prefecture tables, {m['period']}]"
+        v = m["visitors"]
+        b.fact("tokyo_spend_total",
+               f"{t} Visitor spending in Tokyo: {_yen(m['total']['value'])}, change vs {m['comparison_period']}: "
+               f"{_pct(m['total']['change'])}. Visitors to Tokyo: {_fmt(v['value'])} ({_pct(v['change'])}).",
+               [m["total"]["evidence_id"], m["total"]["evidence_id_last_year"], v["evidence_id"]])
+        for c in m["categories"]:
+            b.fact("tokyo_spend_category",
+                   f"{t} {c['label']} spending in Tokyo: {_yen(c['value'])}, change vs {m['comparison_period']}: "
+                   f"{_pct(c['change'])}.", [c["evidence_id"], c["evidence_id_last_year"]])
+        gaps.append("Item-level spending (e.g. tours, spas, sweets) is published for Japan as a whole only; for "
+                    "Tokyo there are just 7 broad categories.")
+        _tokyo_signal_facts(conn, b, gaps)
+        # The prefecture tables do give Tokyo visitor numbers, so that earlier gap no longer applies as stated.
+        gaps[:] = [g if not g.startswith("No Tokyo-specific visitor statistics") else
+                   "Tokyo visitor numbers come only from the quarterly spending survey (JTA), not from monthly counts."
+                   for g in gaps]
+
+    # Growing visitor groups and what they buy more often than average.
+    growth = spending.arrival_growth_by_origin(conn, period)
+    groups = []
+    for seg in conn.execute(f"SELECT DISTINCT segment FROM spending_stats WHERE {spending.CURRENT} AND geography = 'Japan' AND "
+                            "reporting_period = ?", (period,)).fetchall():
+        name = seg[0]
+        g = growth.get(spending.JNTO_ORIGIN.get(name, name))
+        if name in ("All nationalities", *spending.NOT_COMPARABLE_SEGMENTS) or not g or g["change"]["status"] != "ok":
+            continue
+        groups.append((name, g))
+    if not groups:
+        gaps.append("Visitor spending can't be matched to arrival growth by nationality (JNTO data missing).")
+    for name, g in sorted(groups, key=lambda x: -x[1]["change"]["value"])[:6]:
+        prefs = spending.segment_preferences(conn, period, name)
+        likes = "; ".join(f"{p['label']} {p['rate']:.1f}% vs {p['rate_all']:.1f}% of all visitors (n={p['buyers']})"
+                          for p in prefs) or "no item stands out with enough respondents"
+        b.fact("segment_preference",
+               f"{tag} Visitors from {name}: {_fmt(g['value'])} arrivals in {period} vs {_fmt(g['value_last_year'])} "
+               f"in {prev} ({_pct(g['change'])}, JNTO). Bought more often than the average visitor: {likes}.",
+               [*(p["evidence_id"] for p in prefs), *(p["evidence_id_all"] for p in prefs), *g["evidence_ids"][:6]])
+
+
+def _scorecard_facts(conn: sqlite3.Connection, b: PackBuilder) -> list[dict]:
+    """Demand scorecards (analysis/signals.py): the strongest items, plus the weakest few for contrast."""
+    s = signals.item_scorecards(conn)
+    cards = s["items"]
+    if not cards:
+        return []
+    chosen = cards[:14] + [c for c in cards[-4:] if c not in cards[:14]]
+    for c in chosen:
+        market = f" Estimated market {_yen(c['estimated_market'])} for the quarter (an estimate)." if c["estimated_market"] else ""
+        b.fact("item_signal",
+               f"[Demand scorecard, Japan-wide, {s['period']}] {c['label']} (item key {c['key']}): demand score "
+               f"{c['score']}/5 (size {c['score_parts']['size']:.2f}, growth {c['score_parts']['growth']:.2f}, "
+               f"momentum {c['score_parts']['momentum']:.2f}). {_yen(c['spend_per_person'])} per visitor, "
+               f"{_pct(c['change'])} vs {s['comparison_period']}; grew year on year in {c['quarters_growing']} of the "
+               f"last {c['quarters_compared']} quarters; bought by {_rate(c['purchase_rate'])} of visitors "
+               f"(n={c['buyers']} buyers), {_yen(c['spend_per_purchaser'])} per buyer.{market}",
+               c["evidence_ids"], {"key": c["key"]})
+    return chosen
+
+
+def _tokyo_signal_facts(conn: sqlite3.Connection, b: PackBuilder, gaps: list[str]) -> None:
+    share = signals.tokyo_share(conn)
+    for c in share["categories"]:
+        if c["category"] == "other":
+            continue
+        moved = (f", {c['share_change_points']:+.1f} points vs {share['comparison_period']}"
+                 if c["share_change_points"] is not None else "")
+        b.fact("tokyo_share",
+               f"[Tokyo vs Japan, {share['period']}] Tokyo took {c['share']}% of visitor spending on "
+               f"{c['label'].lower()} (base: the 47 prefecture figures added up){moved}.", c["evidence_ids"])
+    season = signals.seasonality(conn)
+    for c in season["categories"]:
+        if c["category"] == "total":
+            continue
+        b.fact("seasonality",
+               f"[Tokyo seasons, current survey, {c['years']} year(s) of data] {c['label']} spending peaks in "
+               f"{c['peak']} and is lowest in {c['low']} ({c['peak_vs_low_pct']}% higher at the peak).", [])
+    if season["categories"]:
+        gaps.append("Seasonality rests on only " + str(min(c["years"] for c in season["categories"]))
+                    + " year(s) of the current survey: treat peaks as indications.")
+
+
+def _long_term_facts(conn: sqlite3.Connection, b: PackBuilder, gaps: list[str]) -> None:
+    trends = signals.long_term(conn)
+    for t in trends:
+        b.fact("long_term",
+               f"[Long-term, within the {t['design']} only] {t['label']} spending per visitor (share who buy x spend "
+               f"per buyer, nominal yen): {_yen(t['value_from'])} in {t['from']} -> {_yen(t['value_to'])} in {t['to']} "
+               f"({_pct(t['change'])}). Not comparable with other survey designs.", t["evidence_ids"])
+    if trends:
+        gaps.append("Long-term figures are nominal yen (not adjusted for inflation or exchange rates) and are only "
+                    "comparable within one survey design; there is no category data from April 2020 to September 2022.")
+
+
+def _rate(v: float | None) -> str:
+    return "missing" if v is None else f"{v:.1f}%"
 
 
 def citable_ids(pack: dict) -> set[str]:

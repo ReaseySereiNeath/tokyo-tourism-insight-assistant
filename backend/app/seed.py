@@ -19,17 +19,18 @@ DEMO_FILES = {
     "competitor_offers": "demo_competitor_offers.csv",
     "feedback": "demo_feedback.csv",
     "news": "demo_news.csv",
+    "spending_stats": "demo_spending.csv",
 }
 
 DEMO_PROFILE = {
-    "business_name": "Sample Walking & Food Tours (demo profile)",
-    "offerings": "English-language evening food walk in Shinjuku (3h, 6 stops); morning old-town walk in Yanaka (2.5h)",
-    "operating_area": "Shinjuku, Yanaka, Asakusa",
-    "capacity": "2 guides, up to 10 guests per tour, about 12 tours per week",
-    "price_range": "JPY 8,000-14,000 per adult",
-    "monthly_budget": "JPY 150,000 for marketing and experiments",
-    "goals": "Raise weekday occupancy; test one new tour format this quarter; improve review ratings above 4.7",
-    "notes": "Synthetic profile used with demonstration data.",
+    "budget": "About JPY 3 million of savings, could borrow a little more (sample profile)",
+    "time_available": "Full time from next spring; evenings and weekends until then",
+    "location": "Tokyo, ideally Taito or Sumida ward",
+    "languages": "English (fluent), Japanese (conversational), some Spanish",
+    "skills": "Five years in hotel guest services; home cook; comfortable with social media",
+    "interests": "Open to anything in tourism; enjoys food and meeting people",
+    "limits": "Does not want to sign a long shop lease in the first year",
+    "goals": "Replace a salary of about JPY 350,000 a month within two years",
 }
 
 

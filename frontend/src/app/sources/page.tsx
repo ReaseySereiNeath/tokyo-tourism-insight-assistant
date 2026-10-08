@@ -1,21 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useScope } from "@/components/providers";
 import { Badge, Button, Callout, Card, EmptyState, ErrorState, inputClass, Loading, MoreDetail, PageHeader } from "@/components/ui";
 import { api, buildUrl } from "@/lib/api";
-import { fmtDateTime, humanize } from "@/lib/format";
-import type { DatasetGuide, ImportBatch } from "@/lib/types";
+import { fmtDateTime, fmtMonthLong, fmtQuarter, humanize } from "@/lib/format";
+import type { DatasetGuide, ImportBatch, UpdateStatus } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
 
 interface Source { name: string; publisher: string; url: string; attribution: string; license_note: string; access_method: string }
 
 const DATASET_ABOUT: Record<string, string> = {
   visitor_stats: "Official monthly arrival numbers, such as the JNTO workbook.",
+  spending_stats: "What visitors spend money on: the Japan Tourism Agency's survey tables.",
   competitor_offers: "Other operators' tours: name, price, length and language.",
   feedback: "Your guests' reviews and survey answers.",
   news: "Headlines and short excerpts about Tokyo tourism.",
 };
+// File types that only make sense for one kind of data.
+const IMPORTERS_FOR: Record<string, string[]> = {
+  visitor_stats: ["auto", "jnto_monthly_xlsx"],
+  spending_stats: ["jta_spending_xlsx", "auto"],
+};
+
 const RESULT_WORDS: Record<ImportBatch["status"], { label: string; tone: "good" | "bad" }> = {
   success: { label: "Imported", tone: "good" },
   rejected: { label: "Rejected", tone: "bad" },
@@ -39,7 +46,7 @@ export default function SourcesPage() {
   return (
     <>
       <PageHeader title="Add your data"
-        description="Import files from your Mac. If any row has a problem, nothing is imported and you'll see exactly what to fix. Importing the same file twice never creates duplicates." />
+        description="Official statistics download by themselves. You can also import your own files: if any row has a problem, nothing is imported and you'll see exactly what to fix." />
       {scope === "demo" && (
         <Callout tone="caution" className="mb-6">
           You&apos;re adding to the <strong>sample data</strong>, so files imported here won&apos;t show up in your own data.
@@ -47,6 +54,8 @@ export default function SourcesPage() {
           <DemoReset onDone={() => history.reload()} />
         </Callout>
       )}
+
+      <OfficialData onImported={history.reload} demo={scope === "demo"} />
 
       <UploadCard guides={guides.data?.datasets ?? []} importers={guides.data?.importers ?? {}} onImported={onImported} />
       {result && <BatchResult batch={result} onClose={() => setResult(null)} />}
@@ -119,6 +128,108 @@ export default function SourcesPage() {
   );
 }
 
+const SOURCES = [
+  { key: "JNTO", what: "Visitor numbers", publisher: "Japan National Tourism Organization", latest: (s: UpdateStatus) => fmtMonthLong(s.latest.visitor_month) },
+  { key: "JTA", what: "Visitor spending", publisher: "Japan Tourism Agency", latest: (s: UpdateStatus) => fmtQuarter(s.latest.spending_period) },
+] as const;
+
+const DESIGN_NAMES: Record<string, string> = {
+  "JTA (2010-2017 design)": "2010–2017 survey",
+  "JTA (2018-2024 design)": "2018–2024 survey",
+  JTA: "Current survey",
+};
+
+function OfficialData({ onImported, demo }: { onImported: () => void; demo: boolean }) {
+  const status = useApi(() => api.get<UpdateStatus>("/api/updates", null), []);
+  const [starting, setStarting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const running = starting || !!status.data?.running;
+
+  // While a check runs, look again every two seconds; refresh the import list when it ends.
+  useEffect(() => {
+    if (!status.data?.running) return;
+    const timer = setInterval(status.reload, 2000);
+    return () => { clearInterval(timer); onImported(); };
+  }, [status.data?.running, status.reload, onImported]);
+
+  async function start(path: "/api/updates/check" | "/api/updates/history") {
+    setStarting(true);
+    setError(null);
+    try {
+      await api.post(path, null);
+      status.reload();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setStarting(false);
+    }
+  }
+
+  const s = status.data;
+  return (
+    <Card title="Official data"
+      subtitle="The app checks these sources once a day while it's running, and downloads only what's new. Everything goes into your own data."
+      actions={<Button variant="primary" onClick={() => start("/api/updates/check")} disabled={running}>{running ? "Working…" : "Check for new data now"}</Button>}>
+      {demo && <p className="mb-4 text-sm text-ink-2">You&apos;re viewing sample data. Checks always update your own data.</p>}
+      {status.loading && !s && <Loading />}
+      {status.error && <ErrorState message={status.error} onRetry={status.reload} />}
+      {error && <ErrorState message={error} />}
+      {s && (
+        <ul className="divide-y divide-line">
+          {SOURCES.map((src) => {
+            const last = s.last_checks[src.key];
+            const imported = last?.files.filter((f) => f.result === "imported").length ?? 0;
+            return (
+              <li key={src.key} className="grid gap-x-6 gap-y-1 py-4 first:pt-0 last:pb-0 sm:grid-cols-[1fr_auto]">
+                <div>
+                  <div className="font-bold text-ink">{src.what}</div>
+                  <div className="text-sm text-ink-2">{src.publisher}. {s.schedule[src.key]}</div>
+                </div>
+                <div className="text-sm sm:text-right">
+                  <div className="text-ink">Up to <strong>{src.latest(s)}</strong></div>
+                  <div className={last?.status === "failed" ? "text-down" : "text-ink-3"}>
+                    {!last ? "Not checked yet"
+                      : last.status === "failed" ? `Last check failed ${fmtDateTime(last.checked_at)}: ${last.message}`
+                      : `Checked ${fmtDateTime(last.checked_at)}${imported ? `, ${imported} new file${imported === 1 ? "" : "s"} imported` : ", nothing new"}`}
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+          <HistoryRow s={s} running={running} onStart={() => start("/api/updates/history")} />
+        </ul>
+      )}
+    </Card>
+  );
+}
+
+function HistoryRow({ s, running, onStart }: { s: UpdateStatus; running: boolean; onStart: () => void }) {
+  const old = s.history.filter((h) => h.source !== "JTA" && DESIGN_NAMES[h.source]);
+  const last = s.last_checks["JTA history"];
+  return (
+    <li className="grid gap-x-6 gap-y-2 py-4 last:pb-0 sm:grid-cols-[1fr_auto]">
+      <div>
+        <div className="font-bold text-ink">Spending history, 2010 to early 2024</div>
+        <div className="text-sm text-ink-2">
+          Earlier survey designs, for the long view on Spending. A one-off download of about 50 files, from the Japan Tourism
+          Agency and the National Diet Library&apos;s web archive. It doesn&apos;t change, so it isn&apos;t checked daily.
+        </div>
+      </div>
+      <div className="text-sm sm:text-right">
+        {old.length > 0 ? (
+          <ul className="text-ink">
+            {old.map((h) => <li key={h.source}>{DESIGN_NAMES[h.source]}: {h.quarters} quarters</li>)}
+          </ul>
+        ) : <div className="text-ink-3">Not downloaded</div>}
+        {last?.status === "failed" && <div className="text-down">Last attempt failed: {last.message}</div>}
+        <Button className="mt-2" onClick={onStart} disabled={running}>
+          {old.length ? "Check the history again" : "Download history"}
+        </Button>
+      </div>
+    </li>
+  );
+}
+
 function UploadCard({ guides, importers, onImported }: { guides: DatasetGuide[]; importers: Record<string, string>; onImported: (b: ImportBatch) => void }) {
   const { scope } = useScope();
   const [dataset, setDataset] = useState("visitor_stats");
@@ -147,7 +258,7 @@ function UploadCard({ guides, importers, onImported }: { guides: DatasetGuide[];
   }
 
   return (
-    <Card title="Import a file" subtitle={`A CSV or Excel file up to 20 MB. It goes into ${scope === "demo" ? "the sample data" : "your data"}.`}>
+    <Card className="mt-6" title="Import a file yourself" subtitle={`A CSV or Excel file up to 20 MB. It goes into ${scope === "demo" ? "the sample data" : "your data"}.`}>
       <form onSubmit={submit} className="space-y-6">
         <fieldset>
           <legend className="mb-2 text-sm font-bold text-ink">What kind of data is it?</legend>
@@ -156,7 +267,7 @@ function UploadCard({ guides, importers, onImported }: { guides: DatasetGuide[];
               <label key={g.dataset}
                 className={`flex cursor-pointer gap-3 rounded-lg border p-3 text-sm ${dataset === g.dataset ? "border-route bg-route-soft" : "border-line hover:border-ink-3"}`}>
                 <input type="radio" name="dataset" value={g.dataset} checked={dataset === g.dataset} className="mt-1 accent-route"
-                  onChange={() => { setDataset(g.dataset); if (g.dataset !== "visitor_stats") setImporter("auto"); }} />
+                  onChange={() => { setDataset(g.dataset); setImporter((IMPORTERS_FOR[g.dataset] ?? ["auto"])[0]); }} />
                 <span>
                   <span className="block font-bold text-ink">{g.label}</span>
                   <span className="block text-ink-2">{DATASET_ABOUT[g.dataset]}</span>
@@ -166,10 +277,10 @@ function UploadCard({ guides, importers, onImported }: { guides: DatasetGuide[];
           </div>
         </fieldset>
 
-        {dataset === "visitor_stats" && (
+        {IMPORTERS_FOR[dataset] && (
           <label className="block text-sm font-bold text-ink">File type
-            <select className={`${inputClass} mt-1 block w-full max-w-md font-normal`} value={importer} onChange={(e) => setImporter(e.target.value)}>
-              {Object.entries(importers).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            <select className={`${inputClass} mt-1 block w-full max-w-xl font-normal`} value={importer} onChange={(e) => setImporter(e.target.value)}>
+              {IMPORTERS_FOR[dataset].filter((k) => importers[k]).map((k) => <option key={k} value={k}>{importers[k]}</option>)}
             </select>
           </label>
         )}
@@ -183,7 +294,7 @@ function UploadCard({ guides, importers, onImported }: { guides: DatasetGuide[];
 
         <div>
           <label className="block text-sm font-bold text-ink" htmlFor="file">Choose the file</label>
-          <input id="file" type="file" accept=".csv,.xlsx,.xlsm" onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          <input id="file" type="file" accept=".csv,.xlsx,.xlsm,.xls" onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             className="mt-1 block w-full text-sm text-ink-2 file:mr-3 file:rounded-lg file:border file:border-line file:bg-sunken file:px-4 file:py-2 file:text-sm file:font-bold file:text-ink" />
           {guide && (
             <p className="mt-2 text-sm text-ink-2">

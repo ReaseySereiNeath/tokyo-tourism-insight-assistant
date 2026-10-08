@@ -39,6 +39,19 @@ DEFAULT_SOURCES = [
         "access_method": "Manual download of the monthly XLSX, then import",
     },
     {
+        "name": "JTA",
+        "publisher": "Japan Tourism Agency (観光庁), Ministry of Land, Infrastructure, Transport and Tourism",
+        "url": "https://www.mlit.go.jp/kankocho/tokei_hakusyo/gaikokujinshohidoko.html",
+        "attribution": "Source: Japan Tourism Agency, インバウンド消費動向調査 (Inbound Consumption Trend Survey)",
+        "license_note": (
+            "MLIT/JTA site content may be reused under the Public Data License (公共データ利用規約 PDL1.0) "
+            "with the source credited, unless a page says otherwise. Quarterly figures are first published as "
+            "preliminary (速報) and revised later; annual figures become final (確報). Survey-based estimates, "
+            "not counts: small segments have few respondents."
+        ),
+        "access_method": "Download the quarterly 集計表 and 都道府県別集計表 workbooks, or use 'Check for new data'",
+    },
+    {
         "name": "Tokyo Tourism Data Catalog",
         "publisher": "Tokyo Metropolitan Government, Bureau of Industrial and Labor Affairs",
         "url": "https://data.tourism.metro.tokyo.lg.jp/en/",

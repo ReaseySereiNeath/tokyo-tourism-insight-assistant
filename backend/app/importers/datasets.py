@@ -8,6 +8,7 @@ Each dataset declares:
   'estimate' statistic later published as 'final'). Any other difference
   produces a new record because the key changed.
 """
+import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
@@ -83,6 +84,37 @@ def normalize_visitor_stat(row: dict) -> dict:
         "metric": _required_text(row, "metric").lower().replace(" ", "_"),
         "value": _wrap("value", parse_number, row.get("value"), required=True),
         "unit": _required_text(row, "unit").lower(),
+        "value_status": status,
+        "source": _required_text(row, "source"),
+        "original_label": clean_text(row.get("original_label")),
+        "publication_date": _wrap("publication_date", parse_date, row.get("publication_date"), required=False),
+        "collection_date": _wrap("collection_date", parse_date, row.get("collection_date")),
+    }
+
+
+SPENDING_STATUSES = {"final", "preliminary", "estimate", "unknown"}
+
+
+def normalize_spending_stat(row: dict) -> dict:
+    status = (clean_text(row.get("value_status")) or "unknown").lower()
+    if status not in SPENDING_STATUSES:
+        raise ParseError(f"value_status must be one of {sorted(SPENDING_STATUSES)}")
+    period = _required_text(row, "reporting_period")
+    if not re.fullmatch(r"\d{4}(-Q[1-4])?", period):
+        raise ParseError("reporting_period must look like 2026-Q2 (a quarter) or 2026 (a calendar year)")
+    respondents = _wrap("respondents", parse_number, row.get("respondents"))
+    return {
+        "reporting_period": period,
+        "period_type": "quarter" if "-Q" in period else "year",
+        "geography": _required_text(row, "geography"),
+        "segment": clean_text(row.get("segment")) or "All nationalities",
+        "purpose": (clean_text(row.get("purpose")) or "all").lower(),
+        "category": _required_text(row, "category").lower().replace(" ", "_"),
+        "item": (clean_text(row.get("item")) or "").lower().replace(" ", "_"),
+        "metric": _required_text(row, "metric").lower().replace(" ", "_"),
+        "value": _wrap("value", parse_number, row.get("value"), required=True),
+        "unit": _required_text(row, "unit"),
+        "respondents": None if respondents is None else int(respondents),
         "value_status": status,
         "source": _required_text(row, "source"),
         "original_label": clean_text(row.get("original_label")),
@@ -167,6 +199,36 @@ DATASETS: dict[str, Dataset] = {
         notes=[
             "Japan-wide arrivals (JNTO) and Tokyo visitor counts are different populations; never sum or compare them as one series.",
             "Nationality does not tell you which tour language a visitor wants.",
+        ],
+    ),
+    "spending_stats": Dataset(
+        name="spending_stats",
+        label="Visitor spending",
+        table="spending_stats",
+        id_prefix="SP",
+        columns=[
+            Column("reporting_period", True, "Quarter (2026-Q2) or calendar year (2026) the figure describes", "2026-Q2"),
+            Column("geography", True, "'Japan' for national tables, or a prefecture such as 'Tokyo'", "Tokyo"),
+            Column("segment", False, "Visitor group, e.g. a nationality (default: All nationalities)", "All nationalities"),
+            Column("purpose", False, "all | leisure (default: all)", "all"),
+            Column("category", True, "Spending category", "entertainment"),
+            Column("item", False, "Item within the category, blank for the category itself", "local_tours_guides"),
+            Column("metric", True, "spend_per_person | purchase_rate | spend_per_purchaser | total_spend | visitors", "spend_per_person"),
+            Column("value", True, "The number, in base units (yen, persons, percent)", "2226.7"),
+            Column("unit", True, "Unit of the value", "JPY per person"),
+            Column("respondents", False, "Survey respondents behind the figure", "7896"),
+            Column("value_status", False, "final | preliminary | unknown", "preliminary"),
+            Column("source", True, "Who published it", "JTA"),
+            Column("original_label", False, "Label as written in the source", "現地ツアー・観光ガイド"),
+            Column("publication_date", False, "When the source published it (YYYY-MM-DD)", "2026-09-30"),
+            Column("collection_date", True, "When you downloaded it (YYYY-MM-DD)", "2026-10-06"),
+        ],
+        key_fields=["source", "geography", "segment", "purpose", "category", "item", "metric", "reporting_period"],
+        mutable_fields=["value", "unit", "respondents", "value_status", "original_label", "publication_date"],
+        normalize=normalize_spending_stat,
+        notes=[
+            "Use 'Japan Tourism Agency spending workbook' as the file type to import the official files unchanged.",
+            "These are survey estimates. Figures for small visitor groups rest on few respondents.",
         ],
     ),
     "competitor_offers": Dataset(

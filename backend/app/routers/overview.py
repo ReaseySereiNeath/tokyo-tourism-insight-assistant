@@ -2,9 +2,10 @@ import sqlite3
 
 from fastapi import APIRouter, Depends
 
-from app.analysis import stats
+from app.analysis import spending, stats
 from app.config import get_settings
 from app.db import Scope, rows
+from app.ai.provider import local_status
 from app.local_model import model_dir
 from app.routers.deps import db, scope_param
 
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/api", tags=["overview"])
 def health():
     s = get_settings()
     return {"status": "ok", "ai_configured": s.ai_configured, "model": s.anthropic_model if s.ai_configured else None,
-            "local_model_trained": (model_dir() / "meta.json").exists()}
+            "local_model_trained": (model_dir() / "meta.json").exists(), "local_ai": local_status(s)}
 
 
 @router.get("/overview")
@@ -25,6 +26,8 @@ def overview(scope: Scope = Depends(scope_param), conn: sqlite3.Connection = Dep
         "scope": scope,
         "coverage": stats.coverage(conn),
         "key_trends": stats.key_trends(conn, top_n=3),
+        "tokyo_market": spending.market(conn, "Tokyo"),
+        "spending_highlights": spending.highlights(conn),
         "competitors": stats.competitor_summary(conn),
         "top_themes": themes["themes"][:5],
         "theme_method": themes["method"],

@@ -27,21 +27,25 @@ def seeded_demo():
     conn.close()
 
 
-def good_insight(ids):
+def good_opportunity(ids):
     return {
-        "finding": "Several customers mention dietary restrictions.",
+        "business_idea": "Vegetarian food walks",
+        "business_type": "food_drink",
+        "demand_evidence": "Several customers mention dietary restrictions.",
         "evidence_ids": ids,
-        "interpretation": "A clearly labeled vegetarian route might reduce disappointment.",
-        "customer_segment": None, "segment_support": None,
-        "proposed_experiment": "Offer a vegetarian variant on one weekly departure for six weeks.",
-        "success_measure": "At least 10 vegetarian bookings and average rating >= 4.5 on that departure.",
-        "limitations": ["Small sample"], "alternative_explanations": ["Selection bias"], "confidence": "low",
+        "why_it_could_work": "The founder cooks and speaks English, and the walk needs no lease.",
+        "target_visitors": None, "target_support": None,
+        "first_test": "Sell six trial walks through an online booking page.",
+        "success_measure": "At least 10 bookings and average rating >= 4.5.",
+        "checks_before_starting": ["Competition nearby"], "risks": ["Small sample"],
+        "alternative_explanations": ["Selection bias"], "confidence": "low",
+        "why_now": "Demand for this item grew in each recent quarter.", "fit_with_you": "moderate", "spending_items": [],
     }
 
 
-def report_with(insights):
-    return {"summary": "Summary text for the owner.", "data_sufficiency": "limited", "sufficiency_notes": [],
-            "insights": insights, "customer_needs_to_investigate": []}
+def report_with(opportunities):
+    return {"summary": "Summary text for the founder.", "data_sufficiency": "limited", "sufficiency_notes": [],
+            "opportunities": opportunities, "questions_to_research": [], "rejected_ideas": []}
 
 
 # ------------------------------------------------------------ validation
@@ -53,27 +57,27 @@ def test_schema_invalid_response_is_rejected(seeded_demo):
     assert validation["schema_valid"] is False and validation["schema_errors"]
 
 
-def test_insight_without_evidence_is_schema_invalid(seeded_demo):
+def test_opportunity_without_evidence_is_schema_invalid(seeded_demo):
     pack = build_evidence_pack(seeded_demo, "demo", get_settings())
-    result, validation = validate_report(report_with([good_insight([])]), pack, seeded_demo)
+    result, validation = validate_report(report_with([good_opportunity([])]), pack, seeded_demo)
     assert result is None
 
 
-def test_nonexistent_citation_removes_only_that_insight(seeded_demo):
+def test_nonexistent_citation_removes_only_that_opportunity(seeded_demo):
     pack = build_evidence_pack(seeded_demo, "demo", get_settings())
     real_fact = pack["facts"][0]["id"]
-    raw = report_with([good_insight([real_fact]), good_insight(["FB-000000000000"]), good_insight(["F999"])])
+    raw = report_with([good_opportunity([real_fact]), good_opportunity(["FB-000000000000"]), good_opportunity(["F999"])])
     result, validation = validate_report(raw, pack, seeded_demo)
-    assert len(result["insights"]) == 1
-    assert {r["index"] for r in validation["removed_insights"]} == {1, 2}
+    assert len(result["opportunities"]) == 1
+    assert {r["index"] for r in validation["removed_opportunities"]} == {1, 2}
 
 
 def test_id_in_pack_but_missing_from_database_is_rejected(seeded_demo):
     pack = build_evidence_pack(seeded_demo, "demo", get_settings())
     pack["documents"].append({"evidence_id": "DEMO-FB-ABCDEFABCDEF", "type": "feedback", "text": "ghost"})
-    result, validation = validate_report(report_with([good_insight(["DEMO-FB-ABCDEFABCDEF"])]), pack, seeded_demo)
-    assert result["insights"] == []
-    assert validation["removed_insights"][0]["invalid_ids"][0]["reason"] == "no such record in the database"
+    result, validation = validate_report(report_with([good_opportunity(["DEMO-FB-ABCDEFABCDEF"])]), pack, seeded_demo)
+    assert result["opportunities"] == []
+    assert validation["removed_opportunities"][0]["invalid_ids"][0]["reason"] == "no such record in the database"
 
 
 class FixedProvider:
@@ -90,16 +94,17 @@ class FixedProvider:
 
 def test_report_status_partial_and_failed(seeded_demo):
     s = get_settings()
-    partial = FixedProvider(lambda p: report_with([good_insight([p["facts"][0]["id"]]), good_insight(["NOPE"])]))
+    partial = FixedProvider(lambda p: report_with([good_opportunity([p["facts"][0]["id"]]), good_opportunity(["NOPE"])]))
     assert load_report(seeded_demo, generate_report(seeded_demo, "demo", partial, s))["status"] == "partial"
-    failed = FixedProvider(report_with([good_insight(["NOPE"])]))
+    failed = FixedProvider(report_with([good_opportunity(["NOPE"])]))
     r = load_report(seeded_demo, generate_report(seeded_demo, "demo", failed, s))
     assert r["status"] == "failed" and "does not exist" in r["error"]
 
 
-def test_insufficient_evidence_with_no_insights_is_allowed(real_conn):
+def test_insufficient_evidence_with_no_opportunities_is_allowed(real_conn):
     raw = {"summary": "There is not enough data to draw conclusions.", "data_sufficiency": "insufficient",
-           "sufficiency_notes": ["No feedback imported."], "insights": [], "customer_needs_to_investigate": []}
+           "sufficiency_notes": ["No spending data imported."], "opportunities": [], "questions_to_research": [],
+           "rejected_ideas": []}
     r = load_report(real_conn, generate_report(real_conn, "real", FixedProvider(raw), get_settings()))
     assert r["status"] == "success" and r["result"]["data_sufficiency"] == "insufficient"
 
@@ -116,9 +121,14 @@ def test_provider_error_is_stored_as_failed_report(real_conn):
 def test_demo_report_is_labeled_example_and_cites_real_demo_records(seeded_demo):
     r = load_report(seeded_demo, generate_report(seeded_demo, "demo", DemoProvider(), get_settings()))
     assert r["is_example"] is True and r["provider"] == "demo" and r["model"] is None
-    assert r["status"] == "success" and r["result"]["insights"]
+    assert r["status"] == "success" and r["result"]["opportunities"]
     assert "No AI model was called" in r["result"]["summary"]
-    assert all(i["finding"].startswith("EXAMPLE") for i in r["result"]["insights"])
+    assert all(o["business_idea"].startswith("EXAMPLE") and o["demand_evidence"].startswith("EXAMPLE")
+               for o in r["result"]["opportunities"])
+    # The synthetic spending data feeds the example: at least one idea rests on a spending fact.
+    facts = {f["id"]: f for f in r["evidence"]["facts"]}
+    assert any(facts[o["evidence_ids"][0]]["kind"].startswith(("spend_", "tokyo_"))
+               for o in r["result"]["opportunities"])
 
 
 def test_provider_selection_guards(monkeypatch):
@@ -166,7 +176,7 @@ def response(text, stop_reason="end_turn"):
 def test_api_failures_become_provider_errors(exc, kind):
     provider = AnthropicProvider(get_settings(), client=FakeClient(exc))
     with pytest.raises(ProviderError) as err:
-        provider.generate_report({"business_profile": {}, "facts": [], "data_gaps": [], "documents": []})
+        provider.generate_report({"founder_profile": {}, "facts": [], "data_gaps": [], "documents": []})
     assert err.value.kind == kind
 
 
@@ -178,7 +188,7 @@ def test_api_failures_become_provider_errors(exc, kind):
 def test_bad_responses_become_provider_errors(resp, kind):
     provider = AnthropicProvider(get_settings(), client=FakeClient(resp))
     with pytest.raises(ProviderError) as err:
-        provider.generate_report({"business_profile": {}, "facts": [], "data_gaps": [], "documents": []})
+        provider.generate_report({"founder_profile": {}, "facts": [], "data_gaps": [], "documents": []})
     assert err.value.kind == kind
 
 
@@ -187,7 +197,7 @@ def test_request_is_bounded_and_uses_structured_output(monkeypatch):
     get_settings.cache_clear()
     client = FakeClient(response(json.dumps(report_with([]))))
     provider = AnthropicProvider(get_settings(), client=client)
-    provider.generate_report({"business_profile": {}, "facts": [], "data_gaps": [], "documents": []})
+    provider.generate_report({"founder_profile": {}, "facts": [], "data_gaps": [], "documents": []})
     call = client.calls[0]
     assert call["output_config"]["format"]["type"] == "json_schema"
     assert call["max_tokens"] == get_settings().ai_max_output_tokens
@@ -252,3 +262,220 @@ def test_llm_classification_rejects_themes_outside_taxonomy(seeded_demo):
             return {"labels": [{"evidence_id": items[0]["evidence_id"], "themes": ["made_up"], "sentiment": "positive"}]}
     summary = classify_feedback_llm(seeded_demo, BadThemes(), get_settings())
     assert summary["classified"] == 0 and "unexpected format" in summary["error"]
+
+
+def test_pack_includes_spending_facts_traceable_to_records(seeded_demo):
+    pack = build_evidence_pack(seeded_demo, "demo", get_settings())
+    kinds = {f["kind"] for f in pack["facts"]}
+    assert {"spend_total", "spend_category", "spend_item_largest", "tokyo_spend_total"} <= kinds
+    tour = next(f for f in pack["facts"] if "Local tours and guides" in f["statement"])
+    assert "2025-Q2" in tour["statement"] and tour["evidence_ids"]
+    from app.ai.report import record_exists
+    assert all(record_exists(seeded_demo, i) for i in tour["evidence_ids"])
+    gaps = " ".join(pack["data_gaps"])
+    assert "Japan as a whole only" in gaps and "preliminary" in gaps
+    assert pack["founder_profile"]["budget"].startswith("About JPY")
+
+
+def test_pack_says_when_spending_data_is_missing(real_conn):
+    gaps = " ".join(build_evidence_pack(real_conn, "real", get_settings())["data_gaps"])
+    assert "No visitor spending data" in gaps
+
+
+def test_reports_saved_in_the_old_format_still_load(real_conn):
+    old = {"summary": "Old style report.", "data_sufficiency": "limited", "sufficiency_notes": [],
+           "insights": [{"finding": "Guests mention food a lot.", "evidence_ids": ["F1"], "interpretation": "Food matters.",
+                         "customer_segment": None, "segment_support": None, "proposed_experiment": "Add a tasting.",
+                         "success_measure": "Ratings up.", "limitations": ["Small"], "alternative_explanations": ["Bias"],
+                         "confidence": "low"}],
+           "customer_needs_to_investigate": ["Which foods?"]}
+    real_conn.execute(
+        "INSERT INTO reports (created_at, provider, model, is_example, status, evidence_json, result_json, validation_json) "
+        "VALUES ('2026-01-01', 'anthropic', 'm', 0, 'success', ?, ?, ?)",
+        (json.dumps({"business_profile": {}, "facts": [], "documents": [], "data_gaps": []}), json.dumps(old),
+         json.dumps({"removed_insights": [{"index": 1, "finding": "x", "invalid_ids": []}]})))
+    r = load_report(real_conn, 1)
+    assert r["result"]["opportunities"][0]["demand_evidence"] == "Guests mention food a lot."
+    assert r["result"]["questions_to_research"] == ["Which foods?"]
+    assert r["validation"]["removed_opportunities"][0]["idea"] == "x"
+    assert "founder_profile" in r["evidence"]
+
+
+
+def test_item_links_attach_scorecards_and_unknown_links_are_dropped(seeded_demo):
+    pack = build_evidence_pack(seeded_demo, "demo", get_settings())
+    key = pack["spending_items"][0]["key"]
+    opp = {**good_opportunity([pack["facts"][0]["id"]]), "spending_items": [key, "shopping/made_up"]}
+    result, validation = validate_report(report_with([opp]), pack, seeded_demo)
+    kept = result["opportunities"][0]
+    assert kept["spending_items"] == [key]
+    assert kept["scorecards"][0]["key"] == key and 1 <= kept["scorecards"][0]["score"] <= 5
+    assert validation["dropped_item_links"] == [{"index": 0, "keys": ["shopping/made_up"]}]
+
+
+def test_pack_has_scorecards_tokyo_share_and_reasoning_steps(seeded_demo):
+    pack = build_evidence_pack(seeded_demo, "demo", get_settings())
+    kinds = {f["kind"] for f in pack["facts"]}
+    assert {"item_signal", "tokyo_share"} <= kinds
+    signal = next(f for f in pack["facts"] if f["kind"] == "item_signal")
+    assert "demand score" in signal["statement"] and signal["data"]["key"] in {i["key"] for i in pack["spending_items"]}
+    msg = report_user_message(pack)
+    assert '"spending_items"' in msg and "scorecard" not in msg.split("<untrusted_documents>")[0].split('"spending_items"')[1][:400]
+    from app.ai.prompts import REPORT_SYSTEM
+    assert "Work in this order" in REPORT_SYSTEM and "rejected_ideas" in REPORT_SYSTEM
+
+
+def test_demo_report_links_items_and_lists_rejected_ideas(seeded_demo):
+    r = load_report(seeded_demo, generate_report(seeded_demo, "demo", DemoProvider(), get_settings()))
+    assert any(o["scorecards"] for o in r["result"]["opportunities"])
+    assert r["result"]["rejected_ideas"][0]["idea"].startswith("EXAMPLE")
+
+
+# ------------------------------------------------------------ local (Ollama) provider with a fake server
+
+import httpx  # noqa: E402
+
+from app.ai.provider import LocalProvider, _inline_refs  # noqa: E402
+from app.ai.schemas import ReportOutput  # noqa: E402
+
+EMPTY_PACK = {"founder_profile": {}, "facts": [], "data_gaps": [], "documents": []}
+
+
+def ollama(handler):
+    return httpx.Client(base_url="http://ollama.test", transport=httpx.MockTransport(handler))
+
+
+def test_local_provider_sends_the_schema_and_parses_the_answer():
+    seen = {}
+
+    def handler(request):
+        seen.update(json.loads(request.content))
+        return httpx.Response(200, json={"model": "qwen2.5:14b", "done_reason": "stop",
+                                         "message": {"content": json.dumps(report_with([]))}})
+    provider = LocalProvider(get_settings(), client=ollama(handler))
+    assert provider.generate_report(EMPTY_PACK)["opportunities"] == []
+    assert seen["model"] == "qwen2.5:14b" and seen["stream"] is False
+    assert seen["format"]["properties"]["opportunities"]["items"]["properties"]["business_idea"]
+    assert "$ref" not in json.dumps(seen["format"])  # refs inlined for Ollama
+    assert seen["options"]["num_ctx"] >= 16384
+
+
+@pytest.mark.parametrize("response,kind", [
+    (httpx.Response(404, json={"error": "model not found"}), "model"),
+    (httpx.Response(200, json={"done_reason": "length", "message": {"content": "{"}}), "truncated"),
+    (httpx.Response(200, json={"done_reason": "stop", "message": {"content": "not json"}}), "invalid_response"),
+])
+def test_local_provider_failures_are_explained(response, kind):
+    provider = LocalProvider(get_settings(), client=ollama(lambda r: response))
+    with pytest.raises(ProviderError) as err:
+        provider.generate_report(EMPTY_PACK)
+    assert err.value.kind == kind
+
+
+def test_local_provider_says_how_to_start_ollama():
+    def down(request):
+        raise httpx.ConnectError("refused")
+    with pytest.raises(ProviderError) as err:
+        LocalProvider(get_settings(), client=ollama(down)).generate_report(EMPTY_PACK)
+    assert err.value.kind == "network" and "brew services start ollama" in err.value.message
+
+
+def test_local_reports_run_end_to_end_and_are_validated(seeded_demo):
+    def handler(request):
+        pack_fact = json.loads(request.content)["messages"][1]["content"].split('"id": "')[1].split('"')[0]
+        good = {**good_opportunity([pack_fact])}
+        bad = {**good_opportunity(["F999"])}
+        return httpx.Response(200, json={"model": "qwen2.5:14b", "done_reason": "stop",
+                                         "message": {"content": json.dumps(report_with([good, bad]))}})
+    r = load_report(seeded_demo, generate_report(seeded_demo, "demo", LocalProvider(get_settings(), client=ollama(handler)),
+                                                 get_settings()))
+    assert r["provider"] == "local" and r["is_example"] is False and r["status"] == "partial"
+    assert len(r["result"]["opportunities"]) == 1  # the made-up citation was removed
+
+
+def test_inline_refs_and_provider_choice():
+    schema = _inline_refs(ReportOutput.model_json_schema())
+    assert "$defs" not in schema and "$ref" not in json.dumps(schema)
+    assert isinstance(get_provider("real", "local", get_settings()), LocalProvider)
+
+
+# ------------------------------------------------------------ quality guardrails (any provider)
+
+from app.ai import quality  # noqa: E402
+
+
+def quality_pack(profile=None, gaps=()):
+    return {"facts": [{"id": "F1", "kind": "item_signal", "evidence_ids": [],
+                       "statement": "Local tours: ¥2,227 per visitor, +32.2% vs 2025-Q2; demand score 3.9/5; ¥23.2 billion."}],
+            "founder_profile": profile or {}, "data_gaps": list(gaps)}
+
+
+def opp(**kw):
+    return {**good_opportunity(["F1"]), **kw}
+
+
+def test_id_only_evidence_is_replaced_by_the_cited_facts():
+    result = report_with([opp(demand_evidence="F1, F1")])
+    q = quality.check(result, quality_pack())
+    assert result["opportunities"][0]["demand_evidence"].startswith("Local tours: ¥2,227")
+    assert q["actions"][0]["check"] == "evidence_filled"
+
+
+def test_numbers_missing_from_the_evidence_are_flagged_and_rounding_is_allowed():
+    result = report_with([opp(demand_evidence="Tours earn ¥2,227 per visitor, up 32% (score 3.9/5), market ¥23.2 billion.",
+                              why_now="Spending rose 47.5% last year.")])
+    q = quality.check(result, quality_pack(profile={"budget": "x"}))
+    flagged = [a for a in q["actions"] if a["check"] == "unverified_numbers"]
+    assert flagged and flagged[0]["numbers"] == ["47.5%"]  # 32% rounds 32.2%; the rest are exact
+    assert "47.5%" in result["opportunities"][0]["risks"][-1]
+
+
+def test_confidence_and_sufficiency_are_capped_without_a_profile():
+    result = {**report_with([opp(confidence="high")]), "data_sufficiency": "sufficient"}
+    quality.check(result, quality_pack())
+    assert result["opportunities"][0]["confidence"] == "medium"
+    assert result["data_sufficiency"] == "limited"
+    result = report_with([opp(confidence="high")])
+    quality.check(result, quality_pack(profile={"budget": "JPY 3 million"}))
+    assert result["opportunities"][0]["confidence"] == "high"  # profile filled, no preliminary data
+
+
+def test_a_full_launch_is_flagged_as_a_first_test_but_a_pop_up_is_not():
+    launch = report_with([opp(first_test="Open a small shop in Ginza selling watches.")])
+    popup = report_with([opp(first_test="Run a weekend pop-up stall selling watches.")])
+    assert any(a["check"] == "big_first_test" for a in quality.check(launch, quality_pack())["actions"])
+    assert not any(a["check"] == "big_first_test" for a in quality.check(popup, quality_pack())["actions"])
+
+
+def test_rejected_idea_numbers_are_checked_too():
+    result = {**report_with([]), "rejected_ideas": [{"idea": "Spa", "reason": "Score 1.2/5 is too weak."}]}
+    quality.check(result, quality_pack())
+    assert "Numbers not found in the evidence: 1.2/5" in result["rejected_ideas"][0]["reason"]
+
+
+
+def test_business_type_follows_the_linked_items_when_clearly_wrong():
+    wrong = report_with([opp(business_type="food_drink", spending_items=["shopping/clothing"])])
+    sake = report_with([opp(business_type="food_drink", spending_items=["shopping/alcohol"])])
+    q = quality.check(wrong, quality_pack())
+    assert wrong["opportunities"][0]["business_type"] == "retail_shopping"
+    assert any(a["check"] == "type_corrected" for a in q["actions"])
+    quality.check(sake, quality_pack())
+    assert sake["opportunities"][0]["business_type"] == "food_drink"  # alcohol can be a food-and-drink business
+
+
+
+def test_citations_about_a_different_item_are_replaced():
+    pack = {"facts": [
+        {"id": "F1", "kind": "item_signal", "evidence_ids": [], "data": {"key": "entertainment/local_tours_guides"},
+         "statement": "[Demand scorecard, Japan-wide, 2026-Q2] Local tours and guides (item key x): score 3.9/5."},
+        {"id": "F2", "kind": "spend_item_largest", "evidence_ids": [], "data": {},
+         "statement": "[Japan-wide, JTA spending survey, 2026-Q2] Other shopping (Shopping): ¥3,090 per visitor."},
+        {"id": "F3", "kind": "tokyo_share", "evidence_ids": [], "data": {}, "statement": "Tokyo took 35.6%."}],
+        "founder_profile": {}, "data_gaps": [],
+        "spending_items": [{"key": "entertainment/local_tours_guides", "label": "Local tours and guides"}]}
+    result = report_with([opp(evidence_ids=["F2", "F3"], spending_items=["entertainment/local_tours_guides"])])
+    q = quality.check(result, pack)
+    assert result["opportunities"][0]["evidence_ids"] == ["F1", "F3"]  # wrong item fact out, scorecard in, Tokyo kept
+    assert q["actions"][0] == {"index": 0, "check": "citations_fixed", "removed": ["F2"],
+                               "note": "Cited facts about a different item were replaced by the linked item's scorecard."}

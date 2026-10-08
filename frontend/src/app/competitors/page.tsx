@@ -35,13 +35,14 @@ export default function CompetitorsPage() {
   return (
     <>
       <PageHeader title="Competitors"
-        description="Tours by other operators that you have recorded. Prices are what was listed on the day you checked, so they don't show discounts or how well a tour sells." />
+        description="Businesses already doing something like an idea you're considering. Record a few for any idea you're serious about. Prices are what was listed on the day you checked, so they don't show discounts or how well something sells." />
       {error && <ErrorState message={error} onRetry={reload} />}
       {loading && !data && <Loading />}
 
       {nothingImported && (
-        <EmptyState title="No competitor tours yet" href="/sources" action="Add your data">
-          Fill in the competitor-tours template with a few tours you compete with: name, price, length, language and link.
+        <EmptyState title="No competitors recorded yet" href="/sources" action="Add your data">
+          Pick your favourite idea from Business ideas, find five to ten businesses already offering something similar, and
+          note each one&apos;s name, price, length, language and link in the competitor template.
         </EmptyState>
       )}
 

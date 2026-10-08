@@ -65,7 +65,7 @@ export default function FeedbackPage() {
   return (
     <>
       <PageHeader title="Guest feedback"
-        description="What your guests write about, grouped into topics. A topic that comes up often is worth a closer look, but it doesn't tell you how many people would pay for a change." />
+        description="Once you have customers, import their reviews here to see what they talk about, grouped into topics. A topic that comes up often is worth a closer look, but it doesn't tell you how many people would pay for a change." />
 
       {notice && <Callout tone={notice.tone} className="mb-6">{notice.text}</Callout>}
       {summary.loading && !d && <Loading />}

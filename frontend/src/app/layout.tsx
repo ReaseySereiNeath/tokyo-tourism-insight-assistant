@@ -10,8 +10,8 @@ const body = Lexend({ variable: "--font-body", subsets: ["latin"] });
 const display = Zen_Kaku_Gothic_New({ variable: "--font-display-face", subsets: ["latin"], weight: ["500", "700", "900"] });
 
 export const metadata: Metadata = {
-  title: "Tokyo Tour Insights",
-  description: "Market insights for a small Tokyo walking and food tour business",
+  title: "Tokyo Tourism Insights",
+  description: "Find a tourism business worth starting in Tokyo, from official visitor and spending statistics",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

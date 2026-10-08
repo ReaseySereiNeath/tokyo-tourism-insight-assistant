@@ -1,0 +1,479 @@
+reporting_period,geography,segment,purpose,category,item,metric,value,unit,respondents,value_status,source,original_label,publication_date,collection_date
+2025-Q2,Japan,All nationalities,all,lodging,,spend_per_person,88414.5,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,lodging,,purchase_rate,81.07,%,6404,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,lodging,,spend_per_purchaser,109063.3,JPY per person,6404,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,food_drink,,spend_per_person,52784.9,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,food_drink,,purchase_rate,89.02,%,7033,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,food_drink,,spend_per_purchaser,59293.1,JPY per person,7033,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,transport,,spend_per_person,24086.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,transport,,purchase_rate,88.79,%,7015,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,transport,,spend_per_purchaser,27126.7,JPY per person,7015,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,,spend_per_person,10035.9,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,,purchase_rate,56.04,%,4427,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,,spend_per_purchaser,17907.9,JPY per person,4427,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,,spend_per_person,55317.5,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,,purchase_rate,97.35,%,7691,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,,spend_per_purchaser,56823.5,JPY per person,7691,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,local_tours_guides,spend_per_person,2105.4,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,local_tours_guides,purchase_rate,8.44,%,667,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,local_tours_guides,spend_per_purchaser,24945.6,JPY per person,667,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,theme_parks,spend_per_person,3076.6,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,theme_parks,purchase_rate,17.56,%,1387,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,theme_parks,spend_per_purchaser,17524.8,JPY per person,1387,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,museums_zoos_aquariums,spend_per_person,1828.5,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,museums_zoos_aquariums,purchase_rate,32.09,%,2535,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,5698.7,JPY per person,2535,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,onsen_spa_relaxation,spend_per_person,911.5,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,onsen_spa_relaxation,purchase_rate,5.22,%,413,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,17448.2,JPY per person,413,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,stage_music,spend_per_person,856.6,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,stage_music,purchase_rate,3.36,%,266,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,entertainment,stage_music,spend_per_purchaser,25455.8,JPY per person,266,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,sweets_snacks,spend_per_person,8171.5,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,sweets_snacks,purchase_rate,68.74,%,5430,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,sweets_snacks,spend_per_purchaser,11888.3,JPY per person,5430,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,clothing,spend_per_person,14501.9,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,clothing,purchase_rate,50.91,%,4022,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,clothing,spend_per_purchaser,28487.5,JPY per person,4022,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,cosmetics_perfume,spend_per_person,8101.2,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,cosmetics_perfume,purchase_rate,33.66,%,2659,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,cosmetics_perfume,spend_per_purchaser,24066.0,JPY per person,2659,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,crafts_traditional,spend_per_person,1275.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,crafts_traditional,purchase_rate,9.08,%,717,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,shopping,crafts_traditional,spend_per_purchaser,14045.8,JPY per person,717,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,transport,taxi,spend_per_person,2904.2,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,transport,taxi,purchase_rate,26.21,%,2071,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,transport,taxi,spend_per_purchaser,11079.7,JPY per person,2071,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,All nationalities,all,total,,spend_per_person,234500,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,lodging,,spend_per_person,114062.8,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,lodging,,purchase_rate,82.93,%,580,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,lodging,,spend_per_purchaser,137544.1,JPY per person,580,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,food_drink,,spend_per_person,65310.3,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,food_drink,,purchase_rate,88.93,%,623,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,food_drink,,spend_per_purchaser,73436.9,JPY per person,623,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,transport,,spend_per_person,28678.8,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,transport,,purchase_rate,87.35,%,611,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,transport,,spend_per_purchaser,32830.7,JPY per person,611,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,,spend_per_person,13361.8,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,,purchase_rate,55.59,%,389,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,,spend_per_purchaser,24034.3,JPY per person,389,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,,spend_per_person,71152.6,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,,purchase_rate,98.84,%,692,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,,spend_per_purchaser,71988.7,JPY per person,692,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,local_tours_guides,spend_per_person,2737.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,local_tours_guides,purchase_rate,8.62,%,60,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,local_tours_guides,spend_per_purchaser,31739.2,JPY per person,60,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,theme_parks,spend_per_person,3989.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,theme_parks,purchase_rate,17.34,%,121,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,theme_parks,spend_per_purchaser,23007.3,JPY per person,121,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,museums_zoos_aquariums,spend_per_person,2314.2,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,museums_zoos_aquariums,purchase_rate,33.25,%,233,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,6961.0,JPY per person,233,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,onsen_spa_relaxation,spend_per_person,1127.8,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,onsen_spa_relaxation,purchase_rate,5.19,%,36,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,21741.1,JPY per person,36,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,stage_music,spend_per_person,1086.9,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,stage_music,purchase_rate,3.33,%,23,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,entertainment,stage_music,spend_per_purchaser,32659.6,JPY per person,23,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,sweets_snacks,spend_per_person,10218.2,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,sweets_snacks,purchase_rate,69.25,%,485,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,sweets_snacks,spend_per_purchaser,14755.5,JPY per person,485,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,clothing,spend_per_person,17356.7,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,clothing,purchase_rate,53.34,%,373,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,clothing,spend_per_purchaser,32541.5,JPY per person,373,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,cosmetics_perfume,spend_per_person,10134.6,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,cosmetics_perfume,purchase_rate,34.96,%,245,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,cosmetics_perfume,spend_per_purchaser,28987.9,JPY per person,245,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,crafts_traditional,spend_per_person,1550.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,crafts_traditional,purchase_rate,8.95,%,63,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,shopping,crafts_traditional,spend_per_purchaser,17323.6,JPY per person,63,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,transport,taxi,spend_per_person,3849.2,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,transport,taxi,purchase_rate,26.19,%,183,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,transport,taxi,spend_per_purchaser,14697.3,JPY per person,183,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United States,all,total,,spend_per_person,293125,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,lodging,,spend_per_person,112055.2,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,lodging,,purchase_rate,90.68,%,381,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,lodging,,spend_per_purchaser,123573.4,JPY per person,381,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,food_drink,,spend_per_person,63618.6,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,food_drink,,purchase_rate,99.0,%,416,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,food_drink,,spend_per_purchaser,64261.3,JPY per person,416,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,transport,,spend_per_person,29030.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,transport,,purchase_rate,98.57,%,414,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,transport,,spend_per_purchaser,29452.3,JPY per person,414,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,,spend_per_person,13028.4,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,,purchase_rate,64.34,%,270,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,,spend_per_purchaser,20249.5,JPY per person,270,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,,spend_per_person,69419.7,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,,purchase_rate,99.0,%,416,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,,spend_per_purchaser,70120.9,JPY per person,416,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,local_tours_guides,spend_per_person,2524.0,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,local_tours_guides,purchase_rate,9.88,%,41,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,local_tours_guides,spend_per_purchaser,25559.5,JPY per person,41,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,theme_parks,spend_per_person,3774.7,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,theme_parks,purchase_rate,19.62,%,82,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,theme_parks,spend_per_purchaser,19237.2,JPY per person,82,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,museums_zoos_aquariums,spend_per_person,2353.4,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,museums_zoos_aquariums,purchase_rate,35.52,%,149,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,6625.9,JPY per person,149,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,onsen_spa_relaxation,spend_per_person,1067.7,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,onsen_spa_relaxation,purchase_rate,5.59,%,23,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,19090.1,JPY per person,23,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,stage_music,spend_per_person,971.3,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,stage_music,purchase_rate,3.73,%,16,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,entertainment,stage_music,spend_per_purchaser,26070.5,JPY per person,16,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,sweets_snacks,spend_per_person,9049.3,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,sweets_snacks,purchase_rate,76.17,%,320,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,sweets_snacks,spend_per_purchaser,11880.8,JPY per person,320,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,clothing,spend_per_person,16059.0,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,clothing,purchase_rate,58.73,%,247,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,clothing,spend_per_purchaser,27341.9,JPY per person,247,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,cosmetics_perfume,spend_per_person,9706.4,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,cosmetics_perfume,purchase_rate,37.53,%,158,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,cosmetics_perfume,spend_per_purchaser,25864.1,JPY per person,158,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,crafts_traditional,spend_per_person,1543.0,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,crafts_traditional,purchase_rate,10.04,%,42,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,shopping,crafts_traditional,spend_per_purchaser,15369.1,JPY per person,42,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,transport,taxi,spend_per_person,3449.0,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,transport,taxi,purchase_rate,28.45,%,120,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,transport,taxi,spend_per_purchaser,12121.1,JPY per person,120,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,Australia,all,total,,spend_per_person,281400,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,lodging,,spend_per_person,104011.7,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,lodging,,purchase_rate,99.0,%,257,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,lodging,,spend_per_purchaser,105062.3,JPY per person,257,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,food_drink,,spend_per_person,61709.3,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,food_drink,,purchase_rate,99.0,%,257,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,food_drink,,spend_per_purchaser,62332.6,JPY per person,257,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,transport,,spend_per_person,26988.4,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,transport,,purchase_rate,99.0,%,257,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,transport,,spend_per_purchaser,27261.1,JPY per person,257,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,,spend_per_person,11904.5,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,,purchase_rate,69.78,%,181,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,,spend_per_purchaser,17059.6,JPY per person,181,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,,spend_per_person,69753.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,,purchase_rate,99.0,%,257,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,,spend_per_purchaser,70457.6,JPY per person,257,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,local_tours_guides,spend_per_person,2448.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,local_tours_guides,purchase_rate,10.28,%,27,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,local_tours_guides,spend_per_purchaser,23821.1,JPY per person,27,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,theme_parks,spend_per_person,3469.9,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,theme_parks,purchase_rate,20.37,%,53,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,theme_parks,spend_per_purchaser,17035.1,JPY per person,53,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,museums_zoos_aquariums,spend_per_person,2204.5,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,museums_zoos_aquariums,purchase_rate,38.66,%,101,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,5702.1,JPY per person,101,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,onsen_spa_relaxation,spend_per_person,983.7,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,onsen_spa_relaxation,purchase_rate,5.95,%,15,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,16528.5,JPY per person,15,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,stage_music,spend_per_person,964.7,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,stage_music,purchase_rate,4.11,%,11,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,entertainment,stage_music,spend_per_purchaser,23489.3,JPY per person,11,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,sweets_snacks,spend_per_person,9376.4,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,sweets_snacks,purchase_rate,88.05,%,229,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,sweets_snacks,spend_per_purchaser,10649.5,JPY per person,229,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,clothing,spend_per_person,16124.9,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,clothing,purchase_rate,63.13,%,164,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,clothing,spend_per_purchaser,25540.9,JPY per person,164,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,cosmetics_perfume,spend_per_person,9830.2,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,cosmetics_perfume,purchase_rate,40.13,%,104,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,cosmetics_perfume,spend_per_purchaser,24497.9,JPY per person,104,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,crafts_traditional,spend_per_person,1554.7,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,crafts_traditional,purchase_rate,10.86,%,28,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,shopping,crafts_traditional,spend_per_purchaser,14321.9,JPY per person,28,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,transport,taxi,spend_per_person,3579.2,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,transport,taxi,purchase_rate,32.13,%,84,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,transport,taxi,spend_per_purchaser,11140.0,JPY per person,84,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,United Kingdom,all,total,,spend_per_person,269675,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,lodging,,spend_per_person,40064.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,lodging,,purchase_rate,66.52,%,599,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,lodging,,spend_per_purchaser,60227.7,JPY per person,599,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,food_drink,,spend_per_person,22472.3,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,food_drink,,purchase_rate,75.4,%,679,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,food_drink,,spend_per_purchaser,29804.4,JPY per person,679,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,transport,,spend_per_person,10327.2,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,transport,,purchase_rate,68.88,%,620,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,transport,,spend_per_purchaser,14992.0,JPY per person,620,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,,spend_per_person,4587.4,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,,purchase_rate,43.29,%,390,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,,spend_per_purchaser,10597.6,JPY per person,390,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,,spend_per_person,25682.5,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,,purchase_rate,74.89,%,674,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,,spend_per_purchaser,34292.7,JPY per person,674,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,local_tours_guides,spend_per_person,940.5,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,local_tours_guides,purchase_rate,6.79,%,61,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,local_tours_guides,spend_per_purchaser,13842.4,JPY per person,61,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,theme_parks,spend_per_person,1339.4,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,theme_parks,purchase_rate,13.41,%,121,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,theme_parks,spend_per_purchaser,9984.7,JPY per person,121,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,museums_zoos_aquariums,spend_per_person,814.4,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,museums_zoos_aquariums,purchase_rate,27.39,%,246,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,2973.7,JPY per person,246,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,onsen_spa_relaxation,spend_per_person,409.6,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,onsen_spa_relaxation,purchase_rate,3.86,%,35,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,10613.5,JPY per person,35,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,stage_music,spend_per_person,373.0,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,stage_music,purchase_rate,2.68,%,24,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,entertainment,stage_music,spend_per_purchaser,13926.6,JPY per person,24,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,sweets_snacks,spend_per_person,3462.3,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,sweets_snacks,purchase_rate,55.43,%,499,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,sweets_snacks,spend_per_purchaser,6246.6,JPY per person,499,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,clothing,spend_per_person,6519.8,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,clothing,purchase_rate,43.65,%,393,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,clothing,spend_per_purchaser,14936.2,JPY per person,393,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,cosmetics_perfume,spend_per_person,3767.1,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,cosmetics_perfume,purchase_rate,27.95,%,252,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,cosmetics_perfume,spend_per_purchaser,13475.9,JPY per person,252,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,crafts_traditional,spend_per_person,560.8,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,crafts_traditional,purchase_rate,6.76,%,61,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,shopping,crafts_traditional,spend_per_purchaser,8295.6,JPY per person,61,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,transport,taxi,spend_per_person,1328.8,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,transport,taxi,purchase_rate,20.31,%,183,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,transport,taxi,spend_per_purchaser,6542.1,JPY per person,183,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Japan,South Korea,all,total,,spend_per_person,105525,JPY per person,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Tokyo,All nationalities,all,package_tours,,total_spend,55000000000,JPY,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Tokyo,All nationalities,all,lodging,,total_spend,350000000000,JPY,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Tokyo,All nationalities,all,food_drink,,total_spend,165000000000,JPY,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Tokyo,All nationalities,all,transport,,total_spend,22000000000,JPY,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Tokyo,All nationalities,all,entertainment,,total_spend,26000000000,JPY,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Tokyo,All nationalities,all,shopping,,total_spend,260000000000,JPY,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Tokyo,All nationalities,all,other,,total_spend,500000000,JPY,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Tokyo,All nationalities,all,total,,total_spend,878500000000,JPY,,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2025-Q2,Tokyo,All nationalities,all,total,,visitors,5450000,persons,13000,final,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,lodging,,spend_per_person,91100.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,lodging,,purchase_rate,80.34,%,6347,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,lodging,,spend_per_purchaser,113393.1,JPY per person,6347,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,food_drink,,spend_per_person,52491.3,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,food_drink,,purchase_rate,99.0,%,7821,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,food_drink,,spend_per_purchaser,53021.5,JPY per person,7821,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,transport,,spend_per_person,24789.9,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,transport,,purchase_rate,88.11,%,6961,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,transport,,spend_per_purchaser,28134.5,JPY per person,6961,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,,spend_per_person,11810.8,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,,purchase_rate,56.46,%,4460,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,,spend_per_purchaser,20918.1,JPY per person,4460,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,,spend_per_person,61071.2,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,,purchase_rate,99.0,%,7821,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,,spend_per_purchaser,61688.1,JPY per person,7821,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,local_tours_guides,spend_per_person,2963.9,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,local_tours_guides,purchase_rate,10.23,%,808,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,local_tours_guides,spend_per_purchaser,28971.6,JPY per person,808,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,theme_parks,spend_per_person,3147.0,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,theme_parks,purchase_rate,17.11,%,1351,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,theme_parks,spend_per_purchaser,18397.4,JPY per person,1351,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,museums_zoos_aquariums,spend_per_person,1873.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,museums_zoos_aquariums,purchase_rate,34.23,%,2705,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,5472.4,JPY per person,2705,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,onsen_spa_relaxation,spend_per_person,1065.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,onsen_spa_relaxation,purchase_rate,5.58,%,441,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,19084.2,JPY per person,441,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,stage_music,spend_per_person,910.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,stage_music,purchase_rate,3.45,%,273,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,entertainment,stage_music,spend_per_purchaser,26387.0,JPY per person,273,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,sweets_snacks,spend_per_person,7640.8,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,sweets_snacks,purchase_rate,73.58,%,5813,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,sweets_snacks,spend_per_purchaser,10384.4,JPY per person,5813,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,clothing,spend_per_person,16522.8,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,clothing,purchase_rate,57.22,%,4520,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,clothing,spend_per_purchaser,28875.8,JPY per person,4520,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,cosmetics_perfume,spend_per_person,9187.4,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,cosmetics_perfume,purchase_rate,36.9,%,2915,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,cosmetics_perfume,spend_per_purchaser,24898.8,JPY per person,2915,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,crafts_traditional,spend_per_person,1403.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,crafts_traditional,purchase_rate,9.29,%,734,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,shopping,crafts_traditional,spend_per_purchaser,15112.1,JPY per person,734,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,transport,taxi,spend_per_person,3163.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,transport,taxi,purchase_rate,25.63,%,2025,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,transport,taxi,spend_per_purchaser,12344.5,JPY per person,2025,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,All nationalities,all,total,,spend_per_person,243880,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,lodging,,spend_per_person,105045.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,lodging,,purchase_rate,81.32,%,569,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,lodging,,spend_per_purchaser,129173.1,JPY per person,569,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,food_drink,,spend_per_person,67240.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,food_drink,,purchase_rate,97.59,%,683,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,food_drink,,spend_per_purchaser,68899.3,JPY per person,683,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,transport,,spend_per_person,32310.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,transport,,purchase_rate,90.86,%,636,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,transport,,spend_per_purchaser,35561.7,JPY per person,636,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,,spend_per_person,15342.4,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,,purchase_rate,62.16,%,435,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,,spend_per_purchaser,24683.3,JPY per person,435,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,,spend_per_person,79588.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,,purchase_rate,99.0,%,693,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,,spend_per_purchaser,80392.6,JPY per person,693,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,local_tours_guides,spend_per_person,3475.1,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,local_tours_guides,purchase_rate,9.76,%,68,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,local_tours_guides,spend_per_purchaser,35607.1,JPY per person,68,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,theme_parks,spend_per_person,3907.8,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,theme_parks,purchase_rate,16.82,%,118,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,theme_parks,spend_per_purchaser,23227.2,JPY per person,118,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,museums_zoos_aquariums,spend_per_person,2452.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,museums_zoos_aquariums,purchase_rate,34.66,%,243,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,7075.5,JPY per person,243,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,onsen_spa_relaxation,spend_per_person,1372.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,onsen_spa_relaxation,purchase_rate,5.42,%,38,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,25325.3,JPY per person,38,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,stage_music,spend_per_person,1175.8,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,stage_music,purchase_rate,3.66,%,26,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,entertainment,stage_music,spend_per_purchaser,32161.4,JPY per person,26,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,sweets_snacks,spend_per_person,8877.9,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,sweets_snacks,purchase_rate,71.3,%,499,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,sweets_snacks,spend_per_purchaser,12450.8,JPY per person,499,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,clothing,spend_per_person,20767.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,clothing,purchase_rate,57.09,%,400,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,clothing,spend_per_purchaser,36377.9,JPY per person,400,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,cosmetics_perfume,spend_per_person,11408.4,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,cosmetics_perfume,purchase_rate,35.96,%,252,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,cosmetics_perfume,spend_per_purchaser,31729.2,JPY per person,252,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,crafts_traditional,spend_per_person,1745.8,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,crafts_traditional,purchase_rate,9.54,%,67,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,shopping,crafts_traditional,spend_per_purchaser,18300.5,JPY per person,67,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,transport,taxi,spend_per_person,3945.3,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,transport,taxi,purchase_rate,27.7,%,194,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,transport,taxi,spend_per_purchaser,14241.1,JPY per person,194,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United States,all,total,,spend_per_person,304850,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,lodging,,spend_per_person,110832.0,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,lodging,,purchase_rate,90.52,%,380,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,lodging,,spend_per_purchaser,122441.2,JPY per person,380,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,food_drink,,spend_per_person,65491.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,food_drink,,purchase_rate,99.0,%,416,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,food_drink,,spend_per_purchaser,66153.3,JPY per person,416,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,transport,,spend_per_person,30330.8,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,transport,,purchase_rate,97.16,%,408,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,transport,,spend_per_purchaser,31217.9,JPY per person,408,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,,spend_per_person,13585.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,,purchase_rate,62.92,%,264,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,,spend_per_purchaser,21593.0,JPY per person,264,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,,spend_per_person,76038.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,,purchase_rate,99.0,%,416,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,,spend_per_purchaser,76806.7,JPY per person,416,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,local_tours_guides,spend_per_person,3310.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,local_tours_guides,purchase_rate,11.4,%,48,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,local_tours_guides,spend_per_purchaser,29047.0,JPY per person,48,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,theme_parks,spend_per_person,4054.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,theme_parks,purchase_rate,19.37,%,81,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,theme_parks,spend_per_purchaser,20932.2,JPY per person,81,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,museums_zoos_aquariums,spend_per_person,2290.8,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,museums_zoos_aquariums,purchase_rate,36.84,%,155,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,6218.3,JPY per person,155,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,onsen_spa_relaxation,spend_per_person,1227.4,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,onsen_spa_relaxation,purchase_rate,5.68,%,24,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,21592.3,JPY per person,24,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,stage_music,spend_per_person,1164.2,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,stage_music,purchase_rate,3.96,%,17,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,entertainment,stage_music,spend_per_purchaser,29374.7,JPY per person,17,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,sweets_snacks,spend_per_person,8915.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,sweets_snacks,purchase_rate,80.54,%,338,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,sweets_snacks,spend_per_purchaser,11069.6,JPY per person,338,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,clothing,spend_per_person,19025.2,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,clothing,purchase_rate,63.34,%,266,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,clothing,spend_per_purchaser,30035.1,JPY per person,266,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,cosmetics_perfume,spend_per_person,11033.3,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,cosmetics_perfume,purchase_rate,38.49,%,162,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,cosmetics_perfume,spend_per_purchaser,28663.3,JPY per person,162,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,crafts_traditional,spend_per_person,1688.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,crafts_traditional,purchase_rate,9.99,%,42,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,shopping,crafts_traditional,spend_per_purchaser,16907.6,JPY per person,42,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,transport,taxi,spend_per_person,3752.1,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,transport,taxi,purchase_rate,29.84,%,125,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,transport,taxi,spend_per_purchaser,12574.0,JPY per person,125,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,Australia,all,total,,spend_per_person,292656,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,lodging,,spend_per_person,98989.2,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,lodging,,purchase_rate,98.98,%,257,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,lodging,,spend_per_purchaser,100010.6,JPY per person,257,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,food_drink,,spend_per_person,61049.4,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,food_drink,,purchase_rate,99.0,%,257,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,food_drink,,spend_per_purchaser,61666.1,JPY per person,257,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,transport,,spend_per_person,28012.3,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,transport,,purchase_rate,99.0,%,257,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,transport,,spend_per_purchaser,28295.3,JPY per person,257,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,,spend_per_person,13636.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,,purchase_rate,73.99,%,192,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,,spend_per_purchaser,18429.7,JPY per person,192,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,,spend_per_person,69479.1,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,,purchase_rate,99.0,%,257,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,,spend_per_purchaser,70180.9,JPY per person,257,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,local_tours_guides,spend_per_person,3289.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,local_tours_guides,purchase_rate,12.08,%,31,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,local_tours_guides,spend_per_purchaser,27234.5,JPY per person,31,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,theme_parks,spend_per_person,3716.3,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,theme_parks,purchase_rate,19.8,%,51,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,theme_parks,spend_per_purchaser,18766.7,JPY per person,51,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,museums_zoos_aquariums,spend_per_person,2215.4,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,museums_zoos_aquariums,purchase_rate,38.73,%,101,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,5720.5,JPY per person,101,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,onsen_spa_relaxation,spend_per_person,1160.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,onsen_spa_relaxation,purchase_rate,6.71,%,17,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,17291.4,JPY per person,17,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,stage_music,spend_per_person,1030.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,stage_music,purchase_rate,4.25,%,11,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,entertainment,stage_music,spend_per_purchaser,24258.0,JPY per person,11,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,sweets_snacks,spend_per_person,8713.4,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,sweets_snacks,purchase_rate,84.69,%,220,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,sweets_snacks,spend_per_purchaser,10288.8,JPY per person,220,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,clothing,spend_per_person,18034.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,clothing,purchase_rate,66.75,%,174,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,clothing,spend_per_purchaser,27019.3,JPY per person,174,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,cosmetics_perfume,spend_per_person,10296.4,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,cosmetics_perfume,purchase_rate,44.47,%,116,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,cosmetics_perfume,spend_per_purchaser,23153.1,JPY per person,116,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,crafts_traditional,spend_per_person,1594.1,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,crafts_traditional,purchase_rate,11.19,%,29,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,shopping,crafts_traditional,spend_per_purchaser,14242.1,JPY per person,29,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,transport,taxi,spend_per_person,3598.7,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,transport,taxi,purchase_rate,31.55,%,82,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,transport,taxi,spend_per_purchaser,11404.9,JPY per person,82,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,United Kingdom,all,total,,spend_per_person,280462,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,lodging,,spend_per_person,40770.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,lodging,,purchase_rate,66.58,%,599,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,lodging,,spend_per_purchaser,61239.3,JPY per person,599,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,food_drink,,spend_per_person,24957.1,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,food_drink,,purchase_rate,78.59,%,707,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,food_drink,,spend_per_purchaser,31755.7,JPY per person,707,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,transport,,spend_per_person,11582.9,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,transport,,purchase_rate,72.66,%,654,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,transport,,spend_per_purchaser,15941.8,JPY per person,654,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,,spend_per_person,5351.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,,purchase_rate,47.44,%,427,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,,spend_per_purchaser,11281.1,JPY per person,427,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,,spend_per_person,27438.3,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,,purchase_rate,81.88,%,737,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,,spend_per_purchaser,33508.6,JPY per person,737,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,local_tours_guides,spend_per_person,1280.9,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,local_tours_guides,purchase_rate,8.05,%,72,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,local_tours_guides,spend_per_purchaser,15904.4,JPY per person,72,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,theme_parks,spend_per_person,1447.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,theme_parks,purchase_rate,14.48,%,130,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,theme_parks,spend_per_purchaser,9996.2,JPY per person,130,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,museums_zoos_aquariums,spend_per_person,889.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,museums_zoos_aquariums,purchase_rate,27.67,%,249,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,museums_zoos_aquariums,spend_per_purchaser,3215.0,JPY per person,249,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,onsen_spa_relaxation,spend_per_person,499.0,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,onsen_spa_relaxation,purchase_rate,4.24,%,38,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,onsen_spa_relaxation,spend_per_purchaser,11767.8,JPY per person,38,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,stage_music,spend_per_person,419.4,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,stage_music,purchase_rate,2.97,%,27,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,entertainment,stage_music,spend_per_purchaser,14142.2,JPY per person,27,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,sweets_snacks,spend_per_person,3447.9,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,sweets_snacks,purchase_rate,54.1,%,487,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,sweets_snacks,spend_per_purchaser,6372.6,JPY per person,487,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,clothing,spend_per_person,6910.2,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,clothing,purchase_rate,44.16,%,397,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,clothing,spend_per_purchaser,15648.4,JPY per person,397,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,cosmetics_perfume,spend_per_person,3835.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,cosmetics_perfume,purchase_rate,28.08,%,253,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,cosmetics_perfume,spend_per_purchaser,13659.2,JPY per person,253,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,crafts_traditional,spend_per_person,621.6,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,crafts_traditional,purchase_rate,7.54,%,68,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,shopping,crafts_traditional,spend_per_purchaser,8241.4,JPY per person,68,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,transport,taxi,spend_per_person,1485.5,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,transport,taxi,purchase_rate,22.37,%,201,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,transport,taxi,spend_per_purchaser,6640.7,JPY per person,201,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Japan,South Korea,all,total,,spend_per_person,109746,JPY per person,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Tokyo,All nationalities,all,package_tours,,total_spend,61600000000,JPY,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Tokyo,All nationalities,all,lodging,,total_spend,339500000000,JPY,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Tokyo,All nationalities,all,food_drink,,total_spend,181500000000,JPY,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Tokyo,All nationalities,all,transport,,total_spend,23760000000,JPY,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Tokyo,All nationalities,all,entertainment,,total_spend,33280000000,JPY,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Tokyo,All nationalities,all,shopping,,total_spend,299000000000,JPY,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Tokyo,All nationalities,all,other,,total_spend,500000000,JPY,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Tokyo,All nationalities,all,total,,total_spend,939140000000,JPY,,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
+2026-Q2,Tokyo,All nationalities,all,total,,visitors,5400000,persons,13000,preliminary,SYNTHETIC DEMO DATA,,,2026-07-15
